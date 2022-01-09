@@ -1,20 +1,54 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
-    "sourceMap": true,
-    "declaration": false,
+    // TYPE CHECKING
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strict": true,
+
+    // strictNullChecks must somehow be set explicitly although strict=true 
+    // should imply it.
+    "strictNullChecks": true,
+
+    // MODULES
+    "baseUrl": ".",
+    "module": "esnext",
     "moduleResolution": "node",
+    "paths": {
+      "@openxmldev/linq-to-xml": ["packages/linq-to-xml/src/index.ts"]
+    },
+    "rootDir": ".",
+    "typeRoots": ["node_modules/@types"],
+
+    // EMIT
+    "declaration": false,
+    "importHelpers": true,
+    "outDir": "dist",
+    "sourceMap": true,
+
+    // INTEROP CONSTTRAINTS
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // LANGUAGE AND ENVIRONMENT
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "lib": ["es2020", "DOM"],
     "target": "es2015",
-    "module": "esnext",
-    "lib": ["es2017", "dom"],
+
+    // OUTPUT FORMATTING
+    "pretty": true,
+
+    // COMPLETETESS
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "baseUrl": ".",
-    "paths": {}
+    "skipDefaultLibCheck": true
   },
   "exclude": ["node_modules", "tmp"]
 }

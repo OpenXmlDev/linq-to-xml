@@ -1,0 +1,33 @@
+{
+  "root": "packages/linq-to-xml",
+  "sourceRoot": "packages/linq-to-xml/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/linq-to-xml",
+        "main": "packages/linq-to-xml/src/index.ts",
+        "tsConfig": "packages/linq-to-xml/tsconfig.lib.json",
+        "assets": ["packages/linq-to-xml/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/linq-to-xml/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/packages/linq-to-xml"],
+      "options": {
+        "jestConfig": "packages/linq-to-xml/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
