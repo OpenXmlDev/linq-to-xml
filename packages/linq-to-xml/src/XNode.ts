@@ -6,8 +6,12 @@
 import {
   Inserter,
   InvalidOperationError,
+  ILinqIterableOfXElement,
+  LinqIterableOfXElement,
   StringBuilder,
   XContainer,
+  XElement,
+  XName,
   XObject,
 } from './internal';
 
@@ -54,6 +58,18 @@ export abstract class XNode extends XObject {
     }
 
     return previousNode;
+  }
+
+  /**
+   * Returns the collection of the ancestor elements for this node.
+   *
+   * @param name The optional name of the ancestor elements to find.
+   * @returns The ancestor elements of this node.
+   */
+  public ancestors(name?: XName | null): ILinqIterableOfXElement {
+    return name === null
+      ? new LinqIterableOfXElement(XElement.emptySequence)
+      : new LinqIterableOfXElement(getAncestors(this, name ?? null, false));
   }
 
   /** @internal */
@@ -109,5 +125,13 @@ export abstract class XNode extends XObject {
     }
 
     return this._parent;
+  }
+}
+
+export function* getAncestors(node: XNode, name: XName | null, self: boolean) {
+  let e = (self ? node : node._parent) as XElement | null;
+  while (e !== null) {
+    if (name === null || e._name === name) yield e;
+    e = e._parent as XElement | null;
   }
 }

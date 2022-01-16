@@ -8,10 +8,13 @@ import {
   DomFactory,
   DomParser,
   DomReader,
+  getAncestors,
   getDescendants,
   InvalidOperationError,
-  IterableOfXAttribute,
-  IterableOfXElement,
+  ILinqIterableOfXAttribute,
+  ILinqIterableOfXElement,
+  LinqIterableOfXAttribute,
+  LinqIterableOfXElement,
   StringBuilder,
   XAttribute,
   XContainer,
@@ -24,6 +27,15 @@ import {
  * Represents an XML element.
  */
 export class XElement extends XContainer {
+  /**
+   * Gets an empty collection of elements.
+   */
+  public static readonly emptySequence: Iterable<XElement> = {
+    *[Symbol.iterator](): Iterator<XElement> {
+      // Do not return anything.
+    },
+  };
+
   /** @internal */
   _name: XName;
 
@@ -45,38 +57,6 @@ export class XElement extends XContainer {
     for (const contentArrayItem of contentArray) {
       this.addContentSkipNotify(contentArrayItem);
     }
-  }
-
-  /**
-   * Gets an empty collection of elements.
-   */
-  public static readonly emptySequence: Iterable<XElement> = {
-    *[Symbol.iterator](): Iterator<XElement> {
-      // Do not return anything.
-    },
-  };
-
-  /**
-   * Loads an `XElement` from the given DOM `Element`.
-   *
-   * @param element The DOM `Element`.
-   * @returns A new `XElement` instance.
-   */
-  public static load(element: Element): XElement {
-    return DomReader.loadXElement(element);
-  }
-
-  /**
-   * Creates a mew `XElement` instance from the given XML string.
-   *
-   * @param text The XML string.
-   * @returns A new `XElement` instance.
-   */
-  public static parse(text: string): XElement {
-    const element = DomParser.parseElement(text);
-    if (!element) throw new ArgumentError('Invalid XML string.', 'text');
-
-    return XElement.load(element);
   }
 
   /**
@@ -158,6 +138,20 @@ export class XElement extends XContainer {
     this.add(content);
   }
 
+  /**
+   * Returns this `XElement` and all of it's ancestors up to the root node.
+   * Optionally an `XName` can be passed in to target a specific ancestor(s).
+   *
+   * @param name The optional `XName` of the target ancestor.
+   * @returns An iterable containing this `XElement` and its ancestors (with
+   *          a matching `XName` if `name` was provided).
+   */
+  public ancestorsAndSelf(name?: XName | null): ILinqIterableOfXElement {
+    return name === null
+      ? new LinqIterableOfXElement(XElement.emptySequence)
+      : new LinqIterableOfXElement(getAncestors(this, name ?? null, true));
+  }
+
   /** @internal */
   override addAttributeSkipNotify(a: XAttribute): void {
     if (this.attribute(a.name)) {
@@ -214,10 +208,10 @@ export class XElement extends XContainer {
    * @returns All attributes associated with this element or the attribute
    *          having the given name.
    */
-  public attributes(name?: XName | null): IterableOfXAttribute {
+  public attributes(name?: XName | null): ILinqIterableOfXAttribute {
     return name === null
-      ? new IterableOfXAttribute(XAttribute.emptySequence)
-      : new IterableOfXAttribute(getAttributes(this, name ?? null));
+      ? new LinqIterableOfXAttribute(XAttribute.emptySequence)
+      : new LinqIterableOfXAttribute(getAttributes(this, name ?? null));
   }
 
   /** @internal */
@@ -258,10 +252,33 @@ export class XElement extends XContainer {
    * @param name The optional name of the descendants to return.
    * @returns This `XElement` and the descendant `XElement`s of this `XElement`.
    */
-  public descendantsAndSelf(name?: XName | null): IterableOfXElement {
+  public descendantsAndSelf(name?: XName | null): ILinqIterableOfXElement {
     return name === null
-      ? new IterableOfXElement(XElement.emptySequence)
-      : new IterableOfXElement(getDescendants(this, name ?? null, true));
+      ? new LinqIterableOfXElement(XElement.emptySequence)
+      : new LinqIterableOfXElement(getDescendants(this, name ?? null, true));
+  }
+
+  /**
+   * Loads an `XElement` from the given DOM `Element`.
+   *
+   * @param element The DOM `Element`.
+   * @returns A new `XElement` instance.
+   */
+  public static load(element: Element): XElement {
+    return DomReader.loadXElement(element);
+  }
+
+  /**
+   * Creates a mew `XElement` instance from the given XML string.
+   *
+   * @param text The XML string.
+   * @returns A new `XElement` instance.
+   */
+  public static parse(text: string): XElement {
+    const element = DomParser.parseElement(text);
+    if (!element) throw new ArgumentError('Invalid XML string.', 'text');
+
+    return XElement.load(element);
   }
 
   /**

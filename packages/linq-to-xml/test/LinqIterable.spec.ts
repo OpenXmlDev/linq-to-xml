@@ -1,3 +1,8 @@
+/**
+ * @author Thomas Barnekow
+ * @license MIT
+ */
+
 import { XElement } from '../src/internal';
 import { createWordDocumentPackage, W } from './TestHelpers';
 
@@ -5,10 +10,18 @@ import { createWordDocumentPackage, W } from './TestHelpers';
 const wordPackage: XElement = createWordDocumentPackage();
 
 //
-// count()
+// Resolutions
 //
 
-describe('count() and overloads', () => {
+describe('all(predicate: PredicateWithIndex<T>): boolean', () => {
+  // TODO: Add unit tests.
+});
+
+describe('any(predicate?: PredicateWithIndex<T>): boolean', () => {
+  // TODO: Add unit tests.
+});
+
+describe('count(predicate?: PredicateWithIndex<T>): number', () => {
   test('count() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.p);
@@ -57,11 +70,7 @@ describe('count() and overloads', () => {
   });
 });
 
-//
-// first()
-//
-
-describe('first() and overloads', () => {
+describe('first(predicate?: PredicateWithIndex<T>): T', () => {
   test('first() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.p);
@@ -105,11 +114,7 @@ describe('first() and overloads', () => {
   });
 });
 
-//
-// firstOrDefault()
-//
-
-describe('firstOrDefault() and overloads', () => {
+describe('firstOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
   test('firstOrDefault() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.p);
@@ -159,11 +164,7 @@ describe('firstOrDefault() and overloads', () => {
   });
 });
 
-//
-// last()
-//
-
-describe('last() and overloads', () => {
+describe('last(predicate?: PredicateWithIndex<T>): T', () => {
   test('last() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.p);
@@ -207,11 +208,7 @@ describe('last() and overloads', () => {
   });
 });
 
-//
-// lastOrDefault()
-//
-
-describe('lastOrDefault() and overloads', () => {
+describe('lastOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
   test('lastOrDefault() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.p);
@@ -261,11 +258,7 @@ describe('lastOrDefault() and overloads', () => {
   });
 });
 
-//
-// single()
-//
-
-describe('single() and overloads', () => {
+describe('single(predicate?: PredicateWithIndex<T>): T', () => {
   test('single() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.document);
@@ -309,11 +302,7 @@ describe('single() and overloads', () => {
   });
 });
 
-//
-// singleOrDefault()
-//
-
-describe('singleOrDefault() and overloads', () => {
+describe('singleOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
   test('singleOrDefault() for non-empty sequence', () => {
     // Arrange
     const iterable = wordPackage.descendants(W.document);
@@ -361,4 +350,32 @@ describe('singleOrDefault() and overloads', () => {
     // Assert
     expect(paragraph).toBeNull();
   });
+});
+
+describe('toArray(): T[]', () => {
+  // test('', () => {
+  //   // TODO: Implement
+  // });
+});
+
+//
+// Transformations
+//
+
+describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): ILinqIterable<GroupingResult<TKey, T>>', () => {
+  // test('', () => {
+  //   // TODO: Implement
+  // });
+});
+
+describe('select<TSelect>(selector: SelectorWithIndex<T, TSelect>): ILinqIterable<TSelect>', () => {
+  // test('', () => {
+  //   // TODO: Implement
+  // });
+});
+
+describe('selectMany<TSelect>(selector: SelectorWithIndex<T, Iterable<TSelect>>): ILinqIterable<TSelect>', () => {
+  // test('', () => {
+  //   // TODO: Implement
+  // });
 });

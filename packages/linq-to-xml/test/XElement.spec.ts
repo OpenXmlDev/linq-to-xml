@@ -3,6 +3,8 @@
  * @license MIT
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {
   XAttribute,
   XContainer,
@@ -12,183 +14,166 @@ import {
   XObject,
 } from '../src/internal';
 
+import {
+  createWordDocumentPackage,
+  PKG,
+  PKG_NAME,
+  PKG_CONTENT_TYPE,
+  W,
+  WML_NAMESPACE_DECLARATIONS,
+} from './TestHelpers';
+
 const xmlns_pkg = XNamespace.xmlns.getName('pkg');
 const xmlns_w = XNamespace.xmlns.getName('w');
 
-const NAMESPACE_NAME_PKG =
-  'http://schemas.microsoft.com/office/2006/xmlPackage';
+describe('constructor(name: XName, ...contentArray: any[])', () => {
+  test('an XElement constructed with content parameters has such parameters as elements', () => {
+    const element = new XElement(
+      W.body,
+      new XElement(W.p),
+      new XElement(W.tbl)
+    );
 
-const pkg = XNamespace.get(NAMESPACE_NAME_PKG, 'pkg');
+    expect(
+      element
+        .elements()
+        .select((e) => e.name)
+        .toArray()
+    ).toEqual([W.p, W.tbl]);
+  });
 
-const pkg_package = pkg.getName('package');
-const pkg_part = pkg.getName('part');
-const pkg_xmlData = pkg.getName('xmlData');
+  test('an XElement constructed with an array of elements has the array items as elements', () => {
+    const element = new XElement(W.body, [
+      new XElement(W.p),
+      new XElement(W.tbl),
+    ]);
 
-const pkg_name = pkg.getName('name');
-const pkg_contentType = pkg.getName('contentType');
+    expect(
+      element
+        .elements()
+        .select((e) => e.name)
+        .toArray()
+    ).toEqual([W.p, W.tbl]);
+  });
 
-const NAMESPACE_NAME_W =
-  'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  test('an XElement constructed with elemetns and nested arrays has the linearized elements', () => {
+    const element = new XElement(
+      W.body,
+      new XElement(W.p),
+      [
+        new XElement(W.p),
+        new XElement(W.tbl),
+        [new XElement(W.p), new XElement(W.tbl)],
+      ],
+      new XElement(W.p)
+    );
 
-const w = XNamespace.get(NAMESPACE_NAME_W, 'w');
-
-const w_document = w.getName('document');
-const w_body = w.getName('body');
-const w_p = w.getName('p');
-const w_t = w.getName('t');
-const w_tbl = w.getName('tbl');
-
-const w_rsidR = w.getName('rsidR');
-const w_rsidRDefault = w.getName('rsidRDefault');
-const w_rsidP = w.getName('rsidP');
-
-const PKG_NAME = 'pkg:name="/word/document.xml"';
-const PKG_CONTENT_TYPE =
-  'pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"';
-
-const NAMESPACE_DECLARATIONS = `
-xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
-xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
-xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
-mc:Ignorable="w14"
-`
-  .trim()
-  .replace(/[\r\n]+/g, ' ');
-
-const PKG_PACKAGE_TEXT = `
-<?xml version="1.0" standalone="yes"?>
-<?mso-application progid="Word.Document"?>
-<pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
-  <pkg:part ${PKG_NAME} ${PKG_CONTENT_TYPE}>
-    <pkg:xmlData>
-      <w:document ${NAMESPACE_DECLARATIONS}>
-        <w:body>
-          <w:p w:rsidR="007A3403" w:rsidRDefault="007A3403" w:rsidP="00034153">
-            <w:pPr>
-              <w:pStyle w:val="Heading1"/>
-            </w:pPr>
-            <w:r>
-              <w:t>Heading</w:t>
-            </w:r>
-          </w:p>
-          <w:p w:rsidR="00000000" w:rsidRDefault="007A3403"/>
-        </w:body>
-      </w:document>
-    </pkg:xmlData>
-  </pkg:part>
-</pkg:package>
-`
-  .replace(/[\s]+</g, '<')
-  .replace(/>[\s]+/g, '>');
-
-describe('An XElement instance', () => {
-  const element = new XElement(w_body);
-
-  it('should be an instance of its class and the superclasses', () => {
-    expect(element instanceof XElement).toBe(true);
-    expect(element instanceof XContainer).toBe(true);
-    expect(element instanceof XNode).toBe(true);
-    expect(element instanceof XObject).toBe(true);
-    expect(element instanceof Object).toBe(true);
+    expect(
+      element
+        .elements()
+        .select((e) => e.name)
+        .toArray()
+    ).toEqual([W.p, W.p, W.tbl, W.p, W.tbl, W.p]);
+    2;
   });
 });
 
-describe('An empty XElement without nodes and attributes', () => {
-  const element = new XElement(w_body);
+describe('get firstAttribute(): XAttribute | null', () => {
+  // TODO: Add unit tests.
+});
 
-  it('should have the given name', () => {
-    expect(element.name).toBe(w_body);
+describe('get hasAttributes(): boolean', () => {
+  // TODO: Add unit tests.
+});
+
+describe('get hasElements(): boolean', () => {
+  // TODO: Add unit tests.
+});
+
+describe('get isEmpty(): boolean', () => {
+  // TODO: Add unit tests.
+});
+
+describe('get lastAttribute(): XAttribute | null', () => {
+  // TODO: Add unit tests.
+});
+
+describe('get name(): XName', () => {
+  // TODO: Add unit tests.
+});
+
+describe('set name(value: XName)', () => {
+  // TODO: Add unit tests.
+});
+
+describe('get value(): string', () => {
+  // TODO: Add unit tests.
+});
+
+describe('set value(content: string)', () => {
+  // TODO: Add unit tests.
+});
+
+describe('ancestorsAndSelf(name?: XName | null): IterableOfXElement; name === undefined', () => {
+  const package_: XElement = createWordDocumentPackage();
+
+  it('should return itself for the root element', () => {
+    const ancestors = package_.ancestorsAndSelf();
+    const ancestorNames = [...ancestors].map((e) => e.name);
+    expect(ancestorNames).toEqual([PKG.package]);
   });
 
-  it('should indicate that it has no nodes', () => {
-    expect(element.firstNode).toBeNull();
-    expect(element.hasElements).toBe(false);
-    expect(element.lastNode).toBeNull();
-    expect(element.isEmpty).toBe(true);
+  it('should return itself and the parent element for a child of the root element', () => {
+    const part = package_.elements(PKG.part).single();
+    const ancestors = part.ancestorsAndSelf();
+    const ancestorNames = [...ancestors].map((e) => e.name);
+    expect(ancestorNames).toEqual([PKG.part, PKG.package]);
   });
 
-  it('should indicate that it has no attributes', () => {
-    expect(element.firstAttribute).toBeNull();
-    expect(element.hasAttributes).toBe(false);
-    expect(element.lastAttribute).toBeNull();
-    expect([...element.attributes()].length).toBe(0);
+  it('should return itself and the ancestors in reverse document order', () => {
+    const element = package_
+      .elements(PKG.part)
+      .elements(PKG.xmlData)
+      .elements(W.document)
+      .single();
+
+    const ancestors = element.ancestorsAndSelf();
+    const ancestorNames = [...ancestors].map((e) => e.name);
+
+    expect(ancestorNames).toEqual([
+      W.document,
+      PKG.xmlData,
+      PKG.part,
+      PKG.package,
+    ]);
   });
 });
 
-describe('An XElement with two child elements', () => {
-  const paragraph = new XElement(w_p);
-  const table = new XElement(w_tbl);
-  const element = new XElement(w_body, paragraph, table);
+describe('ancestorsAndSelf(name?: XName | null): IterableOfXElement; name !== undefined', () => {
+  const package_: XElement = createWordDocumentPackage();
+  const document = package_
+    .elements(PKG.part)
+    .elements(PKG.xmlData)
+    .elements(W.document)
+    .single();
 
-  it('should not be empty', () => {
-    expect(element.isEmpty).toBe(false);
-  });
-
-  it('should have its _content member point to the last element', () => {
-    expect(element._content).toBe(table);
-  });
-});
-
-describe('An XElement with an array parameter', () => {
-  const paragraph = new XElement(w_p);
-  const table = new XElement(w_tbl);
-
-  const element = new XElement(w_body, [paragraph, table]);
-
-  it('should not be empty', () => {
-    expect(element.isEmpty).toBe(false);
-    expect(element._content).toBe(table);
+  it('should return the named element(s)', () => {
+    const ancestors = document.ancestorsAndSelf(PKG.part);
+    const ancestor = ancestors.single();
+    expect(ancestor.name).toBe(PKG.part);
   });
 });
 
-describe('XElement.add(undefined)', () => {
-  const element = new XElement(w_p);
-  element.add(undefined);
-
-  it('should not add anything', () => {
-    expect(element.isEmpty).toBe(true);
-  });
+describe('attribute(name: XName): XAttribute | null', () => {
+  // TODO: Add unit tests.
 });
 
-describe('XElement.add(null)', () => {
-  const element = new XElement(w_p);
-  element.add(null);
-
-  it('should not add anything', () => {
-    expect(element.isEmpty).toBe(true);
-  });
-});
-
-describe('XElement.add("")', () => {
-  const element = new XElement(w_p);
-  element.add('');
-
-  it('should not add anything', () => {
-    expect(element.isEmpty).toBe(true);
-  });
-});
-
-describe('XElement.add(0)', () => {
-  const element = new XElement(w_t);
-  element.add(0);
-
-  it('should not leave the element empty', () => {
-    expect(element.isEmpty).toBe(false);
-  });
-
-  it('should add string content with a value of "0"', () => {
-    expect(typeof element._content).toEqual('string');
-    expect(element._content).toEqual('0');
-  });
-});
-
-describe('XElement.attributes()', () => {
+describe('attributes(name?: XName | null): IterableOfXAttribute', () => {
   it('should be iterable', () => {
-    const rsidR = new XAttribute(w_rsidR, '00000001');
-    const rsidRDefault = new XAttribute(w_rsidRDefault, '00000002');
-    const rsidP = new XAttribute(w_rsidP, '00000003');
-    const element = new XElement(w_p, rsidR, rsidRDefault, rsidP);
+    const rsidR = new XAttribute(W.rsidR, '00000001');
+    const rsidRDefault = new XAttribute(W.rsidRDefault, '00000002');
+    const rsidP = new XAttribute(W.rsidP, '00000003');
+    const element = new XElement(W.p, rsidR, rsidRDefault, rsidP);
 
     const attributes = [...element.attributes()];
 
@@ -198,10 +183,10 @@ describe('XElement.attributes()', () => {
   });
 
   it('should offer a remove() method', () => {
-    const rsidR = new XAttribute(w_rsidR, '00000001');
-    const rsidRDefault = new XAttribute(w_rsidRDefault, '00000002');
-    const rsidP = new XAttribute(w_rsidP, '00000003');
-    const element = new XElement(w_p, rsidR, rsidRDefault, rsidP);
+    const rsidR = new XAttribute(W.rsidR, '00000001');
+    const rsidRDefault = new XAttribute(W.rsidRDefault, '00000002');
+    const rsidP = new XAttribute(W.rsidP, '00000003');
+    const element = new XElement(W.p, rsidR, rsidRDefault, rsidP);
 
     const attributes = element.attributes();
 
@@ -209,40 +194,61 @@ describe('XElement.attributes()', () => {
   });
 });
 
-describe('XElement.parse()', () => {
-  const text = PKG_PACKAGE_TEXT;
+describe('descendantsAndSelf(name?: XName | null): IterableOfXElement; name === undefined', () => {
+  // TODO: Add unit tests.
+});
 
-  const element = XElement.parse(text);
-  const part = element.element(pkg_part)!;
-  const xmlData = part.element(pkg_xmlData)!;
-  const document = xmlData.element(w_document)!;
-  const body = document.element(w_body)!;
+describe('descendantsAndSelf(name?: XName | null): IterableOfXElement; name !== undefined', () => {
+  // TODO: Add unit tests.
+});
+
+describe('static load(element: Element): XElement', () => {
+  // TODO: Add unit tests.
+});
+
+describe('static parse(text: string): XElement', () => {
+  const element = createWordDocumentPackage();
+  const part = element.element(PKG.part)!;
+  const xmlData = part.element(PKG.xmlData)!;
+  const document = xmlData.element(W.document)!;
+  const body = document.element(W.body)!;
 
   it('should parse the node tree', () => {
-    expect(element.name).toBe(pkg_package);
-    expect(part?.name).toBe(pkg_part);
-    expect(xmlData.name).toBe(pkg_xmlData);
-    expect(document.name).toBe(w_document);
-    expect(body.name).toBe(w_body);
+    expect(element.name).toBe(PKG.package);
+    expect(part?.name).toBe(PKG.part);
+    expect(xmlData.name).toBe(PKG.xmlData);
+    expect(document.name).toBe(W.document);
+    expect(body.name).toBe(W.body);
   });
 
   it('should parse attributes', () => {
-    expect(part.attribute(pkg_name)!.value).toEqual('/word/document.xml');
-    expect(part.attribute(pkg_contentType)!.value).toEqual(
+    expect(part.attribute(PKG.name_)!.value).toEqual('/word/document.xml');
+    expect(part.attribute(PKG.contentType)!.value).toEqual(
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml'
     );
   });
 
   it('should parse namespace declarations (i.e., specific kinds of attributes)', () => {
-    expect(element.attribute(xmlns_pkg)!.value).toEqual(NAMESPACE_NAME_PKG);
-    expect(document.attribute(xmlns_w)!.value).toEqual(NAMESPACE_NAME_W);
+    expect(element.attribute(xmlns_pkg)!.value).toEqual(PKG.pkg.namespaceName);
+    expect(document.attribute(xmlns_w)!.value).toEqual(W.w.namespaceName);
   });
 });
 
-describe('XElement.toString()', () => {
-  const text = PKG_PACKAGE_TEXT;
-  const element = XElement.parse(text);
-  const part = element.element(pkg_part)!;
+describe('removeAll(): void', () => {
+  // TODO: Add unit tests.
+});
+
+describe('removeAttributes(): void', () => {
+  // TODO: Add unit tests.
+});
+
+describe('setAttributeValue(name: XName, value: any): void', () => {
+  // TODO: Add unit tests.
+});
+
+describe('toString(): string', () => {
+  const element = createWordDocumentPackage();
+  const part = element.element(PKG.part)!;
 
   it('should produce the expected string representation', () => {
     const xml = part.toString();
@@ -250,7 +256,7 @@ describe('XElement.toString()', () => {
     expect(xml).toContain('<pkg:part');
     expect(xml).toContain(`${PKG_NAME} ${PKG_CONTENT_TYPE}`);
     expect(xml).toContain('<pkg:xmlData>');
-    expect(xml).toContain(`<w:document ${NAMESPACE_DECLARATIONS}>`);
+    expect(xml).toContain(`<w:document ${WML_NAMESPACE_DECLARATIONS}>`);
     expect(xml).toContain('<w:body>');
     expect(xml).toContain(
       '<w:p w:rsidR="007A3403" w:rsidRDefault="007A3403" w:rsidP="00034153">'
@@ -260,32 +266,5 @@ describe('XElement.toString()', () => {
     expect(xml).toContain(
       '<w:p w:rsidR="00000000" w:rsidRDefault="007A3403"/>'
     );
-  });
-});
-
-describe('checks for undefined, null, or empty string', () => {
-  let undefinedValue: any;
-  const nullValue: any = null;
-  const emptyString = '';
-  const zeroNumber = 0;
-
-  it('should produce the expected result', () => {
-    expect(!undefinedValue).toBe(true);
-    expect(!nullValue).toBe(true);
-    expect(!emptyString).toBe(true);
-    expect(!zeroNumber).toBe(true);
-
-    expect(!!undefinedValue).toBe(false);
-    expect(!!nullValue).toBe(false);
-    expect(!!emptyString).toBe(false);
-    expect(!!zeroNumber).toBe(false);
-
-    expect(undefinedValue == null).toBe(true);
-    expect(undefinedValue === null).toBe(false);
-
-    expect(nullValue == undefined).toBe(true);
-    expect(nullValue === undefined).toBe(false);
-
-    expect(nullValue != undefined).toBe(false);
   });
 });

@@ -6,15 +6,17 @@
 import {
   ArgumentError,
   InvalidOperationError,
-  IterableOfXElement,
-  IterableOfXNode,
+  ILinqIterableOfXElement,
+  ILinqIterableOfXNode,
+  LinqIterableOfXElement,
+  LinqIterableOfXNode,
+  StringBuilder,
   XAttribute,
   XElement,
   XName,
   XNode,
   XText,
 } from './internal';
-import { StringBuilder } from './StringBuilder';
 
 /**
  * Represents a node that can contain other nodes.
@@ -28,11 +30,19 @@ export abstract class XContainer extends XNode {
     super();
   }
 
+  /**
+   * Gets this container's first `XNode` or `null`, if this container does not
+   * have any nodes.
+   */
   public get firstNode(): XNode | null {
     const last = this.lastNode;
     return last ? last._next : null;
   }
 
+  /**
+   * Gets this container's last `XNode` or `null`, if this container does not
+   * have any nodes.
+   */
   public get lastNode(): XNode | null {
     if (!this._content) {
       return null;
@@ -151,6 +161,7 @@ export abstract class XContainer extends XNode {
     this._content = node;
   }
 
+  /** @internal */
   override appendText(sb: StringBuilder): void {
     if (typeof this._content === 'string') {
       sb.append(this._content as string);
@@ -196,10 +207,10 @@ export abstract class XContainer extends XNode {
    * @param name The optional name of the descendants to return.
    * @returns The descendant `XElement`s of this `XContainer`.
    */
-  public descendants(name?: XName | null): IterableOfXElement {
+  public descendants(name?: XName | null): ILinqIterableOfXElement {
     return name === null
-      ? new IterableOfXElement(XElement.emptySequence)
-      : new IterableOfXElement(getDescendants(this, name ?? null, false));
+      ? new LinqIterableOfXElement(XElement.emptySequence)
+      : new LinqIterableOfXElement(getDescendants(this, name ?? null, false));
   }
 
   public element(name: XName): XElement | null {
@@ -224,10 +235,10 @@ export abstract class XContainer extends XNode {
    * @param name The optional name of the elements to return.
    * @returns The child `XElement`s of this `XContainer`.
    */
-  public elements(name?: XName | null): IterableOfXElement {
+  public elements(name?: XName | null): ILinqIterableOfXElement {
     return name === null
-      ? new IterableOfXElement(XElement.emptySequence)
-      : new IterableOfXElement(getElements(this, name ?? null, false));
+      ? new LinqIterableOfXElement(XElement.emptySequence)
+      : new LinqIterableOfXElement(getElements(this, name ?? null, false));
   }
 
   /** @internal */
@@ -250,8 +261,14 @@ export abstract class XContainer extends XNode {
     }
   }
 
-  public nodes(): IterableOfXNode {
-    return new IterableOfXNode(getNodes(this));
+  /**
+   * Returns the content of this `XContainer`.
+   * Note that the content does not include `XAttribute`s.
+   *
+   * @returns The content of this `XContainer` as an `IterableOfXNode`.
+   */
+  public nodes(): ILinqIterableOfXNode {
+    return new LinqIterableOfXNode(getNodes(this));
   }
 
   /** @internal */
@@ -351,6 +368,7 @@ export abstract class XContainer extends XNode {
     return list;
   }
 
+  /** @internal */
   private static addContentToList(list: any[], content: any): void {
     if (!this.isIterable(content)) {
       list.push(content);
@@ -361,6 +379,7 @@ export abstract class XContainer extends XNode {
     }
   }
 
+  /** @internal */
   private static isIterable(content: any): boolean {
     return (
       typeof content !== 'string' &&
@@ -452,7 +471,7 @@ export function* getElements(
 }
 
 /** @internal */
-function* getNodes(container: XContainer) {
+export function* getNodes(container: XContainer) {
   // Getting container.lastNode will convert string content into XNode content
   // if required.
   let node: XNode | null = container.lastNode;
