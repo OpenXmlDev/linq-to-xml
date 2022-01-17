@@ -202,7 +202,8 @@ export class LinqIterableOfXAttribute
   }
 
   remove(): void {
-    for (const attribute of this.source) {
+    const attributes = [...this.source];
+    for (const attribute of attributes) {
       attribute.remove();
     }
   }
