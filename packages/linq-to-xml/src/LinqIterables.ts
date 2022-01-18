@@ -174,7 +174,7 @@ export class LinqIterable<T> implements ILinqIterable<T> {
   groupBy<TKey>(
     keySelector: SelectorWithIndex<T, TKey>
   ): ILinqIterable<GroupingResult<TKey, T>> {
-    return new LinqIterable(groupBy(keySelector)(this.source));
+    return new LinqIterable([...groupBy(keySelector)(this.source)]);
   }
 
   select<TSelect>(

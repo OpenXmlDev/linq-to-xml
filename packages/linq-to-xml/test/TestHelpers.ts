@@ -36,10 +36,16 @@ export class W {
   public static readonly tc: XName = W.w.getName('tc');
   public static readonly tr: XName = W.w.getName('tr');
 
+  public static readonly b: XName = W.w.getName('b');
+  public static readonly i: XName = W.w.getName('i');
+  public static readonly u: XName = W.w.getName('u');
+
   public static readonly rsidP: XName = W.w.getName('rsidP');
   public static readonly rsidR: XName = W.w.getName('rsidR');
   public static readonly rsidRDefault: XName = W.w.getName('rsidRDefault');
   public static readonly rsidRPr: XName = W.w.getName('rsidRPr');
+
+  public static readonly val: XName = W.w.getName('val');
 }
 
 export const PKG_NAME = 'pkg:name="/word/document.xml"';
