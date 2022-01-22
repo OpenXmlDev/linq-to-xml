@@ -5,14 +5,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-  XAttribute,
-  XContainer,
-  XElement,
-  XNamespace,
-  XNode,
-  XObject,
-} from '../src/internal';
+import { XAttribute, XElement, XNamespace, XText } from '../src/internal';
 
 import {
   createWordDocumentPackage,
@@ -21,6 +14,7 @@ import {
   PKG_CONTENT_TYPE,
   W,
   WML_NAMESPACE_DECLARATIONS,
+  W14,
 } from './TestHelpers';
 
 const xmlns_pkg = XNamespace.xmlns.getName('pkg');
@@ -78,59 +72,177 @@ describe('constructor(name: XName, ...contentArray: any[])', () => {
   });
 });
 
+describe('constructor(other: XElement)', () => {
+  it('creates a deep copy of the other elements', () => {
+    const nsAttribute = new XAttribute(xmlns_w, W.w.namespaceName);
+    const paraIdAttribute = new XAttribute(W14.paraId, '12345678');
+
+    const other = new XElement(
+      W.document,
+      nsAttribute,
+      new XElement(
+        W.body,
+        new XElement(
+          W.p,
+          paraIdAttribute,
+          new XElement(W.r, new XElement(W.t, 'Hello World!'))
+        )
+      )
+    );
+
+    const element = new XElement(other);
+
+    expect(element.name).toBe(W.document);
+    expect(element.attributes().single().name).toBe(xmlns_w);
+  });
+});
+
 describe('get firstAttribute(): XAttribute | null', () => {
-  // TODO: Add unit tests.
+  it('returns the first attribute, if it exists', () => {
+    const element = new XElement(
+      W.p,
+      new XAttribute(W14.paraId, '11111111'),
+      new XAttribute(W14.textId, '22222222')
+    );
+
+    const attribute = element.firstAttribute;
+
+    expect(attribute).not.toBeNull();
+    expect(attribute!.name).toBe(W14.paraId);
+  });
+
+  it('returns null, if the element has no attributes', () => {
+    const element = new XElement(W.p);
+    expect(element.firstAttribute).toBeNull();
+  });
 });
 
 describe('get hasAttributes(): boolean', () => {
-  // TODO: Add unit tests.
+  it('returns true if the element has attributes', () => {
+    const element = new XElement(W.p, new XAttribute(W14.paraId, '12345678'));
+    expect(element.hasAttributes).toBe(true);
+  });
+
+  it('returns false if the element has no attributes', () => {
+    const element = new XElement(W.p);
+    expect(element.hasAttributes).toBe(false);
+  });
 });
 
 describe('get hasElements(): boolean', () => {
-  // TODO: Add unit tests.
+  it('returns true, if the element contains elements', () => {
+    const element = new XElement(W.p, new XElement(W.r));
+    expect(element.hasElements).toBe(true);
+  });
+
+  it('returns true, if the element contains nodes and elements', () => {
+    const element = new XElement(
+      W.p,
+      new XText('\n  '),
+      new XElement(W.r),
+      new XText('\n')
+    );
+    console.log(element.toString());
+    expect(element.hasElements).toBe(true);
+  });
+
+  it('returns false, if the element has no elements', () => {
+    const element = new XElement(W.p);
+    expect(element.hasElements).toBe(false);
+  });
 });
 
 describe('get isEmpty(): boolean', () => {
-  // TODO: Add unit tests.
+  // TODO: Add unit tests (covered by other tests)
 });
 
 describe('get lastAttribute(): XAttribute | null', () => {
-  // TODO: Add unit tests.
+  it('returns the last attribute, if it exists', () => {
+    const element = new XElement(
+      W.p,
+      new XAttribute(W14.paraId, '11111111'),
+      new XAttribute(W14.textId, '22222222')
+    );
+
+    const attribute = element.lastAttribute;
+
+    expect(attribute).not.toBeNull();
+    expect(attribute!.name).toBe(W14.textId);
+  });
+
+  it('returns null, if the element has no attributes', () => {
+    const element = new XElement(W.p);
+    expect(element.lastAttribute).toBeNull();
+  });
 });
 
 describe('get name(): XName', () => {
-  // TODO: Add unit tests.
+  // TODO: Add unit tests (covered by other tests).
 });
 
 describe('set name(value: XName)', () => {
-  // TODO: Add unit tests.
+  it('sets the name', () => {
+    const element = new XElement(W.p);
+    element.name = W.r;
+    expect(element.name).toBe(W.r);
+  });
 });
 
 describe('get value(): string', () => {
-  // TODO: Add unit tests.
+  it('returns the empty string, if the element is empty', () => {
+    const element = new XElement(W.p);
+    expect(element.value).toEqual('');
+  });
+
+  it('returns the content, if the content is a string', () => {
+    const expectedValue = 'Hello World!';
+    const element = new XElement(W.t, expectedValue);
+    expect(element.value).toEqual(expectedValue);
+  });
+
+  it('it concatenates the values of the child nodes, if the element has nodes', () => {
+    const element = new XElement(
+      W.p,
+      new XElement(W.r, new XElement(W.t, 'a')),
+      new XElement(W.r, new XElement(W.t, 'b')),
+      new XElement(W.r, new XElement(W.t, 'c'))
+    );
+
+    expect(element.value).toEqual('abc');
+  });
 });
 
 describe('set value(content: string)', () => {
-  // TODO: Add unit tests.
+  const element = new XElement(
+    W.p,
+    new XElement(W.r, new XElement(W.t, 'a')),
+    new XElement(W.r, new XElement(W.t, 'b')),
+    new XElement(W.r, new XElement(W.t, 'c'))
+  );
+
+  element.value = 'foo';
+
+  expect(element._content).toEqual('foo');
+  expect(element.value).toEqual('foo');
 });
 
 describe('ancestorsAndSelf(name?: XName | null): IterableOfXElement; name === undefined', () => {
   const package_: XElement = createWordDocumentPackage();
 
-  it('should return itself for the root element', () => {
+  it('returns itself for the root element', () => {
     const ancestors = package_.ancestorsAndSelf();
     const ancestorNames = [...ancestors].map((e) => e.name);
     expect(ancestorNames).toEqual([PKG.package]);
   });
 
-  it('should return itself and the parent element for a child of the root element', () => {
+  it('returns itself and the parent element for a child of the root element', () => {
     const part = package_.elements(PKG.part).single();
     const ancestors = part.ancestorsAndSelf();
     const ancestorNames = [...ancestors].map((e) => e.name);
     expect(ancestorNames).toEqual([PKG.part, PKG.package]);
   });
 
-  it('should return itself and the ancestors in reverse document order', () => {
+  it('returns itself and the ancestors in reverse document order', () => {
     const element = package_
       .elements(PKG.part)
       .elements(PKG.xmlData)
@@ -164,42 +276,75 @@ describe('ancestorsAndSelf(name?: XName | null): IterableOfXElement; name !== un
   });
 });
 
+describe('ancestorsAndSelf(name?: XName | null): IterableOfXElement; name === null', () => {
+  it('returns an empty sequence if the name is null', () => {
+    const body = new XElement(W.body);
+    const document = new XElement(W.document, body);
+
+    expect(body.ancestorsAndSelf().toArray()).toEqual([body, document]);
+
+    const sequence = body.ancestorsAndSelf(null);
+
+    expect(sequence.count()).toBe(0);
+  });
+});
+
 describe('attribute(name: XName): XAttribute | null', () => {
-  // TODO: Add unit tests.
+  // TODO: Add unit tests (covered by other unit tests).
 });
 
 describe('attributes(name?: XName | null): IterableOfXAttribute', () => {
-  it('should be iterable', () => {
-    const rsidR = new XAttribute(W.rsidR, '00000001');
-    const rsidRDefault = new XAttribute(W.rsidRDefault, '00000002');
-    const rsidP = new XAttribute(W.rsidP, '00000003');
-    const element = new XElement(W.p, rsidR, rsidRDefault, rsidP);
+  const rsidR = new XAttribute(W.rsidR, '00000001');
+  const rsidRDefault = new XAttribute(W.rsidRDefault, '00000002');
+  const rsidP = new XAttribute(W.rsidP, '00000003');
+  const element = new XElement(W.p, rsidR, rsidRDefault, rsidP);
 
-    const attributes = [...element.attributes()];
-
-    expect(attributes[0]).toBe(rsidR);
-    expect(attributes[1]).toBe(rsidRDefault);
-    expect(attributes[2]).toBe(rsidP);
+  it('returns the named attribute(s), if a name is passed in', () => {
+    const attributes = element.attributes(W.rsidRDefault);
+    expect(attributes.single()).toBe(rsidRDefault);
   });
 
-  it('should offer a remove() method', () => {
-    const rsidR = new XAttribute(W.rsidR, '00000001');
-    const rsidRDefault = new XAttribute(W.rsidRDefault, '00000002');
-    const rsidP = new XAttribute(W.rsidP, '00000003');
-    const element = new XElement(W.p, rsidR, rsidRDefault, rsidP);
-
+  it('returns all attributes, if no name is passed in', () => {
     const attributes = element.attributes();
+    expect(attributes.toArray()).toEqual([rsidR, rsidRDefault, rsidP]);
+  });
 
-    attributes.remove();
+  it('returns an empty sequence if the element does not have attributes', () => {
+    const element = new XElement(W.p);
+    const attributes = element.attributes();
+    expect(attributes.count()).toBe(0);
+  });
+
+  it('returns an empty sequence if the element does not have the named attribute', () => {
+    const attributes = element.attributes(W14.paraId);
+    expect(attributes.count()).toBe(0);
+  });
+
+  it('returns an empty sequence if the name is null', () => {
+    const attributes = element.attributes(null);
+    expect(attributes.count()).toBe(0);
   });
 });
 
-describe('descendantsAndSelf(name?: XName | null): IterableOfXElement; name === undefined', () => {
-  // TODO: Add unit tests.
-});
+describe('descendantsAndSelf(name?: XName | null): IterableOfXElement', () => {
+  const t = new XElement(W.t);
+  const r = new XElement(W.r, t);
+  const p = new XElement(W.p, r);
 
-describe('descendantsAndSelf(name?: XName | null): IterableOfXElement; name !== undefined', () => {
-  // TODO: Add unit tests.
+  it('returns the named decsendant if a name is passed in', () => {
+    const sequence = p.descendantsAndSelf(W.r);
+    expect(sequence.single()).toBe(r);
+  });
+
+  it('returns itself and all descendants if no name is passed in', () => {
+    const sequence = p.descendantsAndSelf();
+    expect(sequence.toArray()).toEqual([p, r, t]);
+  });
+
+  it('returns an empty sequence if the name is null', () => {
+    const sequence = p.descendantsAndSelf(null);
+    expect(sequence.count()).toBe(0);
+  });
 });
 
 describe('static load(element: Element): XElement', () => {
@@ -235,15 +380,63 @@ describe('static parse(text: string): XElement', () => {
 });
 
 describe('removeAll(): void', () => {
-  // TODO: Add unit tests.
+  it('removes all attributes and nodes', () => {
+    const wordPackage = createWordDocumentPackage();
+    const paragraph = wordPackage.descendants(W.p).first();
+
+    expect(paragraph.attributes().count() > 0).toBe(true);
+    expect(paragraph.nodes().count() > 0).toBe(true);
+
+    paragraph.removeAll();
+
+    expect(paragraph.attributes().count()).toBe(0);
+    expect(paragraph.nodes().count()).toBe(0);
+  });
 });
 
 describe('removeAttributes(): void', () => {
   // TODO: Add unit tests.
 });
 
-describe('setAttributeValue(name: XName, value: any): void', () => {
-  // TODO: Add unit tests.
+describe('setAttributeValue(name: XName, value: Stringifyable): void', () => {
+  it('sets the value of an existing attribute', () => {
+    const element = new XElement(
+      W.p,
+      new XAttribute(W14.paraId, '12345678'),
+      new XAttribute(W14.textId, '12345678'),
+      new XAttribute(W.rsidR, '11223344')
+    );
+
+    element.setAttributeValue(W14.textId, '00000001');
+
+    expect(element.attribute(W14.paraId)?.value).toEqual('12345678');
+    expect(element.attribute(W14.textId)?.value).toEqual('00000001');
+  });
+
+  it('creates new attributes if they do not exist', () => {
+    const element = new XElement(W.p);
+    element.setAttributeValue(W14.paraId, '12345678');
+    expect(element.attribute(W14.paraId)?.value).toEqual('12345678');
+  });
+
+  it('removes one of multiple existing attributes if the value is null', () => {
+    const element = new XElement(
+      W.p,
+      new XAttribute(W14.paraId, '12345678'),
+      new XAttribute(W14.textId, '12345678'),
+      new XAttribute(W.rsidR, '11223344')
+    );
+
+    element.setAttributeValue(W.rsidR, null);
+
+    expect(element.attribute(W.rsidR)).toBeNull();
+  });
+
+  it('removes the single existing attribute if the value is null', () => {
+    const element = new XElement(W.p, new XAttribute(W14.textId, '12345678'));
+    element.setAttributeValue(W14.textId, null);
+    expect(element.attribute(W14.textId)).toBeNull();
+  });
 });
 
 describe('toString(): string', () => {

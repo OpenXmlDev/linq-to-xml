@@ -16,6 +16,7 @@ import {
   LinqIterableOfXAttribute,
   LinqIterableOfXElement,
   StringBuilder,
+  Stringifyable,
   XAttribute,
   XContainer,
   XDocument,
@@ -48,14 +49,36 @@ export class XElement extends XContainer {
    * @param name The name of the element.
    * @param contentArray Zero or more content items.
    */
-  public constructor(name: XName, ...contentArray: any[]) {
+  public constructor(name: XName | string, ...contentArray: any[]);
+
+  /**
+   * Initializes a new instance of the `XElement` class from another `XElement` object.
+   *
+   * @param other Another element that will be copied to this element.
+   */
+  public constructor(other: XElement);
+
+  public constructor(
+    nameOrOther: XName | string | XElement,
+    ...contentArray: any[]
+  ) {
     super();
 
-    this._name = name;
     this._lastAttr = null;
 
-    for (const contentArrayItem of contentArray) {
-      this.addContentSkipNotify(contentArrayItem);
+    if (nameOrOther instanceof XName || typeof nameOrOther === 'string') {
+      this._name =
+        nameOrOther instanceof XName ? nameOrOther : XName.get(nameOrOther);
+
+      for (const contentArrayItem of contentArray) {
+        this.addContentSkipNotify(contentArrayItem);
+      }
+    } else if (nameOrOther instanceof XElement) {
+      this._name = nameOrOther._name;
+      this.copyNodes(nameOrOther);
+      this.copyAttributes(nameOrOther);
+    } else {
+      throw new ArgumentError('Invalid argument', 'nameOrOther');
     }
   }
 
@@ -216,20 +239,7 @@ export class XElement extends XContainer {
 
   /** @internal */
   override cloneNode(): XNode {
-    return XElement.copy(this);
-  }
-
-  /**
-   * Copies the given `XElement`, creating a new `XElement` that does not have a parent.
-   *
-   * @param other The other `XElement` to copy.
-   * @returns The copied `XElement`.
-   */
-  public static copy(other: XElement): XElement {
-    const element = new XElement(other._name);
-    element.copyNodes(other);
-    element.copyAttributes(other);
-    return element;
+    return new XElement(this);
   }
 
   /** @internal */
@@ -337,9 +347,17 @@ export class XElement extends XContainer {
     this._lastAttr = null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public setAttributeValue(_name: XName, _value: any): void {
-    throw new Error('Not implemented.');
+  public setAttributeValue(name: XName, value: Stringifyable | null): void {
+    const attr = this.attribute(name);
+    if (value === null || value === undefined) {
+      if (attr !== null) this.removeAttribute(attr);
+    } else {
+      if (attr !== null) {
+        attr.value = XContainer.getStringValue(value);
+      } else {
+        this.appendAttributeSkipNotify(new XAttribute(name, value));
+      }
+    }
   }
 
   public toString(): string {

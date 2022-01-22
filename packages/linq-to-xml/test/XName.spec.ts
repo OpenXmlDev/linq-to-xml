@@ -4,34 +4,67 @@
  */
 
 import { XName, XNamespace } from '../src/internal';
+import { W } from './TestHelpers';
 
-const namespaceName =
-  'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+const localName = W.document.localName;
+const namespaceName = W.w.namespaceName;
 
-const localName = 'document';
+describe('get namespaceName()', () => {
+  it('returns the namespaceName', () => {
+    expect(XName.get(localName).namespaceName).toEqual(
+      XNamespace.none.namespaceName
+    );
 
-describe('The XName.get() method', () => {
-  it('should return names with the empty namespace', () => {
+    expect(XName.get(`{${namespaceName}}${localName}`).namespaceName).toEqual(
+      namespaceName
+    );
+  });
+});
+
+describe('static get(expandedName: string): XName', () => {
+  it('returns names with the empty namespace', () => {
     expect(XName.get(localName)).toMatchObject({
       namespace: XNamespace.none,
       localName: localName,
     });
   });
 
-  it('should return names with namespaces', () => {
+  it('returns names with namespaces', () => {
     expect(XName.get(`{${namespaceName}}${localName}`)).toBe(
       XNamespace.get(namespaceName).getName(localName)
     );
   });
+
+  it('throws if the expandedName is empty', () => {
+    expect(() => XName.get('')).toThrow();
+  });
+
+  it('throws if the expandedName is malformed', () => {
+    expect(() => XName.get(`{${namespaceName}${localName}`)).toThrow();
+    expect(() => XName.get(`{}${localName}`)).toThrow();
+    expect(() => XName.get(`{${namespaceName}}`)).toThrow();
+  });
 });
 
-describe('The XName.toString() method', () => {
-  it('should return the local name for unqualified XName instances.', () => {
+describe('static get(localName: string, namespaceName: string, prefix: string | null): XName', () => {
+  it('returns the the XName having the given localName, namespaceName, and prefix', () => {
+    const name = XName.get(
+      W.document.localName,
+      W.document.namespaceName,
+      W.document.prefix
+    );
+
+    expect(name).toBe(W.document);
+  });
+});
+
+describe('toString(): string', () => {
+  it('returns the local name for unqualified XName instances.', () => {
     const unqualifiedXName: XName = XName.get(localName);
     expect(unqualifiedXName.toString()).toEqual(localName);
   });
 
-  it('should return the expanded name for qualified XName instances.', () => {
+  it('returns the expanded name for qualified XName instances.', () => {
     const qualifiedXName: XName =
       XNamespace.get(namespaceName).getName(localName);
 

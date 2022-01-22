@@ -5,23 +5,19 @@
 
 export class XDeclaration {
   constructor(
-    public version: string | null,
-    public encoding: string | null,
-    public standalone: string | null
+    public version: string = '1.0',
+    public encoding?: string,
+    public standalone?: string
   ) {}
 
   public toString(): string {
-    let s = '<?xml';
+    let s = `<?xml version="${this.version}"`;
 
-    if (this.version !== null) {
-      s += ` version="${this.version}"`;
-    }
-
-    if (this.encoding !== null) {
+    if (this.encoding) {
       s += ` encoding="${this.encoding}"`;
     }
 
-    if (this.standalone !== null) {
+    if (this.standalone) {
       s += ` standalone="${this.standalone}"`;
     }
 

@@ -3,7 +3,14 @@
  * @license MIT
  */
 
-import { XObject, XContainer, XElement, XName } from './internal';
+import {
+  InvalidOperationError,
+  Stringifyable,
+  XObject,
+  XContainer,
+  XElement,
+  XName,
+} from './internal';
 
 /**
  * Represents an XML attribute.
@@ -24,7 +31,7 @@ export class XAttribute extends XObject {
    * @param name The name of the attribute.
    * @param value The value of the attribute.
    */
-  public constructor(name: XName, value: any) {
+  public constructor(name: XName, value: Stringifyable) {
     super();
 
     const stringValue = XContainer.getStringValue(value);
@@ -85,6 +92,10 @@ export class XAttribute extends XObject {
    * Removes this attribute from its parent.
    */
   public remove(): void {
+    if (this._parent === null) {
+      throw new InvalidOperationError('The parent is missing.');
+    }
+
     (this._parent as XElement).removeAttribute(this);
   }
 

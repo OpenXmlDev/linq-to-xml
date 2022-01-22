@@ -20,7 +20,10 @@ export class W {
     'w'
   );
 
+  public static readonly alias: XName = W.w.getName('alias');
   public static readonly body: XName = W.w.getName('body');
+  public static readonly bookmarkEnd: XName = W.w.getName('bookmarkEnd');
+  public static readonly bookmarkStart: XName = W.w.getName('bookmarkStart');
   public static readonly document: XName = W.w.getName('document');
   public static readonly numPr: XName = W.w.getName('numPr');
   public static readonly p: XName = W.w.getName('p');
@@ -29,7 +32,12 @@ export class W {
   public static readonly r: XName = W.w.getName('r');
   public static readonly rPr: XName = W.w.getName('rPr');
   public static readonly rStyle: XName = W.w.getName('rStyle');
+  public static readonly sectPr: XName = W.w.getName('sectPr');
+  public static readonly sdt: XName = W.w.getName('sdt');
+  public static readonly sdtContent: XName = W.w.getName('sdtContent');
+  public static readonly sdtPr: XName = W.w.getName('sdtPr');
   public static readonly t: XName = W.w.getName('t');
+  public static readonly tag: XName = W.w.getName('tag');
   public static readonly tbl: XName = W.w.getName('tbl');
   public static readonly tblPr: XName = W.w.getName('tblPr');
   public static readonly tblGrid: XName = W.w.getName('tblGrid');
@@ -46,6 +54,17 @@ export class W {
   public static readonly rsidRPr: XName = W.w.getName('rsidRPr');
 
   public static readonly val: XName = W.w.getName('val');
+}
+
+export class W14 {
+  public static readonly w14: XNamespace = XNamespace.get(
+    'http://schemas.microsoft.com/office/word/2010/wordml',
+    'w14'
+  );
+
+  public static readonly docId: XName = W14.w14.getName('docId');
+  public static readonly paraId: XName = W14.w14.getName('paraId');
+  public static readonly textId: XName = W14.w14.getName('textId');
 }
 
 export const PKG_NAME = 'pkg:name="/word/document.xml"';

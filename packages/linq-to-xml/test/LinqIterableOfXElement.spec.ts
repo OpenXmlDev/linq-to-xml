@@ -6,10 +6,6 @@
 import { XElement } from '../src/internal';
 import { createWordDocumentPackage, W } from './TestHelpers';
 
-describe('ancestors(name?: XName): ILinqIterableOfXElement', () => {
-  // TODO: Add unit tests.
-});
-
 describe('ancestorsAndSelf(name?: XName): ILinqIterableOfXElement', () => {
   // TODO: Add unit tests.
 });

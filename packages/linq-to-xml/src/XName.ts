@@ -15,7 +15,7 @@ export class XName {
   /**
    * Gets the namespace name.
    */
-  public get namespaceName() {
+  public get namespaceName(): string {
     return this.namespace.namespaceName;
   }
 

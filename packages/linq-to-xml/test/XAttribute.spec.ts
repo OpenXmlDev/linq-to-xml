@@ -3,28 +3,76 @@
  * @license MIT
  */
 
-import { XNamespace, XAttribute } from '../src/internal';
+import { XAttribute, XElement, XName } from '../src/internal';
+import { W, W14 } from './TestHelpers';
 
-const namespaceName =
-  'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+describe('get name(): XName', () => {
+  it('gets the attribute name', () => {
+    const attr = new XAttribute(W.val, '100');
+    expect(attr.name).toBe(W.val);
+  });
+});
 
-const localName = 'val';
+describe('get nextAttribute(): XAttribute | null', () => {
+  const paraId = new XAttribute(W14.paraId, '12345678');
+  const textId = new XAttribute(W14.textId, '12345678');
+  const element = new XElement(W.p, paraId, textId);
 
-const namespace = XNamespace.get(namespaceName);
-const name = namespace.getName('w', localName);
-const value = 'Normal';
+  expect(element.firstAttribute).toBe(paraId);
+  expect(element.lastAttribute).toBe(textId);
 
-describe('An XAttribute instance', () => {
-  const attribute = new XAttribute(name, value);
+  it('returns the next attribute if it exists', () => {
+    const firstAttr = element.firstAttribute!;
+    const nextAttr = firstAttr.nextAttribute;
+    expect(nextAttr).toBe(textId);
+  });
 
-  it('should have expected attribute and field values', () => {
-    expect(attribute.name).toBe(attribute._name);
-    expect(attribute.value).toEqual(attribute._value);
+  it('returns null if there is no next attribute', () => {
+    const lastAttr = element.lastAttribute!;
+    const nextAttr = lastAttr.nextAttribute;
+    expect(nextAttr).toBeNull();
+  });
+});
 
-    expect(attribute._name).toBe(name);
-    expect(attribute._value).toBe(value);
+describe('get value(): string', () => {
+  it('gets the attribute value', () => {
+    const attr = new XAttribute(W.val, '100');
+    expect(attr.value).toEqual('100');
+  });
+});
 
-    expect(attribute._next).toBeNull();
-    expect(attribute._parent).toBeNull();
+describe('set value(value: string)', () => {
+  it('sets the attribute value', () => {
+    const attr = new XAttribute(W.val, '100');
+    attr.value = '200';
+    expect(attr.value).toEqual('200');
+  });
+});
+
+describe('remove(): void', () => {
+  it('removes the attribute from its parent', () => {
+    const attr = new XAttribute(W.val, 'Heading1');
+    const element = new XElement(W.pStyle, attr);
+
+    expect(attr.parent).toBe(element);
+
+    attr.remove();
+
+    expect(attr.parent).toBeNull();
+  });
+
+  it('throws if the attribute has no parent', () => {
+    const attr = new XAttribute(W.val, 'Heading1');
+    expect(() => attr.remove()).toThrow('The parent is missing.');
+  });
+});
+
+describe('toString(): string', () => {
+  it('returns the string representation', () => {
+    expect(new XAttribute(W.val, 'Heading1').toString()).toEqual(
+      'w:val="Heading1"'
+    );
+
+    expect(new XAttribute(XName.get('id'), '1').toString()).toEqual('id="1"');
   });
 });

@@ -5,42 +5,75 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-  XAttribute,
-  XContainer,
-  XElement,
-  XNamespace,
-  XNode,
-  XObject,
-} from '../src/internal';
-
-import {
-  createWordDocumentPackage,
-  PKG,
-  PKG_NAME,
-  PKG_CONTENT_TYPE,
-  W,
-  WML_NAMESPACE_DECLARATIONS,
-} from './TestHelpers';
+import { XAttribute, XElement } from '../src/internal';
+import { createWordDocumentPackage, PKG, W, W14 } from './TestHelpers';
 
 describe('get nextNode(): XNode | null', () => {
-  // TODO: Add unit tests.
+  const wordPackage: XElement = createWordDocumentPackage();
+
+  it('returns the next node if it exists', () => {
+    const body = wordPackage.descendants(W.body).single();
+    const firstNode = body.firstNode!;
+
+    const nextNode = firstNode.nextNode;
+
+    expect(nextNode).not.toBeNull();
+  });
+
+  it('returns null if the current node is the last node', () => {
+    const body = wordPackage.descendants(W.body).single();
+    const lastNode = body.lastNode!;
+
+    const nextNode = lastNode.nextNode;
+
+    expect(nextNode).toBeNull();
+  });
+
+  it('returns null if the node does not have a parent', () => {
+    const node = new XElement(W.p);
+    const nextNode = node.nextNode;
+    expect(nextNode).toBeNull();
+  });
 });
 
 describe('get previousNode(): XNode | null', () => {
-  // TODO: Add unit tests.
+  const wordPackage: XElement = createWordDocumentPackage();
+
+  it('returns the previous node if it exists', () => {
+    const body = wordPackage.descendants(W.body).single();
+    const lastNode = body.lastNode!;
+
+    const previousNode = lastNode.previousNode;
+
+    expect(previousNode).not.toBeNull();
+  });
+
+  it('returns null if the current node is the first node', () => {
+    const body = wordPackage.descendants(W.body).single();
+    const firstNode = body.firstNode!;
+
+    const previousNode = firstNode.previousNode;
+
+    expect(previousNode).toBeNull();
+  });
+
+  it('returns null if the node does not have a parent', () => {
+    const node = new XElement(W.p);
+    const previousNode = node.previousNode;
+    expect(previousNode).toBeNull();
+  });
 });
 
 describe('ancestors(name?: XName | null): IterableOfXElement; where name === undefined', () => {
-  const package_: XElement = createWordDocumentPackage();
+  const wordPackage: XElement = createWordDocumentPackage();
 
-  it('should return an empty sequence for the root element', () => {
-    const ancestors = package_.ancestors();
+  it('returns an empty sequence for the root element', () => {
+    const ancestors = wordPackage.ancestors();
     expect(ancestors.count()).toBe(0);
   });
 
-  it('should return the parent element for a child of the root element', () => {
-    const element = package_.elements().first();
+  it('return the parent element for a child of the root element', () => {
+    const element = wordPackage.elements().first();
 
     const ancestors = element.ancestors();
 
@@ -48,8 +81,8 @@ describe('ancestors(name?: XName | null): IterableOfXElement; where name === und
     expect(ancestorNames).toEqual([PKG.package]);
   });
 
-  it('should return the ancestors in reverse document order', () => {
-    const document = package_
+  it('returns the ancestors in reverse document order', () => {
+    const document = wordPackage
       .elements(PKG.part)
       .elements(PKG.xmlData)
       .elements(W.document)
@@ -63,24 +96,95 @@ describe('ancestors(name?: XName | null): IterableOfXElement; where name === und
 });
 
 describe('ancestors(name?: XName | null): IterableOfXElement; where name !== undefined', () => {
-  const package_: XElement = createWordDocumentPackage();
-  const document = package_
+  const wordPackage: XElement = createWordDocumentPackage();
+  const document = wordPackage
     .elements(PKG.part)
     .elements(PKG.xmlData)
     .elements(W.document)
     .single();
 
-  it('should return the named element(s)', () => {
+  const body = document.elements(W.body).single();
+
+  it('returns the named element(s)', () => {
     const ancestors = document.ancestors(PKG.part);
     const ancestor = ancestors.single();
     expect(ancestor.name).toBe(PKG.part);
   });
+
+  it('returns an empty sequence when the name is null', () => {
+    const ancestors = body.ancestors(null);
+    expect(ancestors.count()).toBe(0);
+  });
+
+  it('returns an empty sequence when the element does not have the named ancestor', () => {
+    // w:body does not have a w:p ancestor.
+    const ancestors = body.ancestors(W.p);
+    expect(ancestors.count()).toBe(0);
+  });
 });
 
 describe('remove(): void', () => {
-  // TODO: Add unit tests.
+  it('removes the node from its parent', () => {
+    const wordPackage: XElement = createWordDocumentPackage();
+    const part = wordPackage.elements().single();
+
+    part.remove();
+
+    expect(part.parent).toBeNull();
+    expect(wordPackage.elements().count()).toBe(0);
+  });
+
+  it('throws if the node does not have a parent', () => {
+    const node = new XElement(W.p);
+    expect(() => node.remove()).toThrow();
+  });
 });
 
 describe('replaceWith(...content: any[]): void', () => {
-  // TODO: Add unit tests.
+  it('replaces a single child node with another node', () => {
+    const wordPackage: XElement = createWordDocumentPackage();
+    const body = wordPackage.descendants(W.body).single();
+    const newBody = new XElement(W.body, new XElement(W.p));
+
+    body.replaceWith(newBody);
+
+    expect(wordPackage.descendants(W.body).single()).toBe(newBody);
+  });
+
+  it('replaces a child node with siblings with other nodes', () => {
+    const paragraph = new XElement(W.p, new XAttribute(W14.paraId, '00000001'));
+
+    const body = new XElement(
+      W.body,
+      new XElement(W.tbl),
+      paragraph,
+      new XElement(W.tbl)
+    );
+
+    expect(body.elements(W.p).count()).toBe(1);
+
+    paragraph.replaceWith(
+      new XElement(W.p, new XAttribute(W14.paraId, '00000002')),
+      new XElement(W.p, new XAttribute(W14.paraId, '00000003'))
+    );
+
+    expect(
+      body
+        .elements()
+        .select((e) => e.name)
+        .toArray()
+    ).toEqual([W.tbl, W.p, W.p, W.tbl]);
+
+    expect(
+      body
+        .elements(W.p)
+        .select((e) => e.attribute(W14.paraId)?.value)
+        .toArray()
+    ).toEqual(['00000002', '00000003']);
+  });
+
+  it('throws if the node does not have a parent', () => {
+    const node = new XElement(W.p);
+    expect(() => node.replaceWith(new XElement(W.p))).toThrow();
+  });
 });

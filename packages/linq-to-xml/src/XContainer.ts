@@ -4,7 +4,6 @@
  */
 
 import {
-  ArgumentError,
   InvalidOperationError,
   ILinqIterableOfXElement,
   ILinqIterableOfXNode,
@@ -17,6 +16,17 @@ import {
   XNode,
   XText,
 } from './internal';
+
+export type StringifyableObject = {
+  toString: () => string;
+};
+
+export type Stringifyable =
+  | string
+  | number
+  | boolean
+  | Date
+  | StringifyableObject;
 
 /**
  * Represents a node that can contain other nodes.
@@ -238,11 +248,11 @@ export abstract class XContainer extends XNode {
   public elements(name?: XName | null): ILinqIterableOfXElement {
     return name === null
       ? new LinqIterableOfXElement(XElement.emptySequence)
-      : new LinqIterableOfXElement(getElements(this, name ?? null, false));
+      : new LinqIterableOfXElement(getElements(this, name ?? null));
   }
 
   /** @internal */
-  static getStringValue(value: any): string {
+  static getStringValue(value: Stringifyable): string {
     if (typeof value === 'string') {
       return value;
     } else if (typeof value === 'number') {
@@ -250,14 +260,10 @@ export abstract class XContainer extends XNode {
     } else if (typeof value === 'boolean') {
       return value ? 'true' : 'false';
     } else if (value instanceof Date) {
-      return value.toISOString();
+      // Transform 2022-01-21T12:00:00.000Z into 2022-01-21T12:00:00Z
+      return value.toISOString().slice(0, 19) + 'Z';
     } else {
-      console.log('UNSUPPORTED TYPE');
-      console.log(value);
-      throw new ArgumentError(
-        `Type is not supported: "${typeof value}"`,
-        'value'
-      );
+      return value.toString();
     }
   }
 
@@ -430,43 +436,15 @@ export function* getDescendants(
 }
 
 /** @internal */
-export function* getElements(
-  container: XContainer,
-  name: XName | null,
-  self: boolean
-) {
-  if (self) {
-    if (container instanceof XElement) {
-      if (name === null || container.name === name) yield container;
-    }
-  }
-
-  let n: XNode = container;
-  let c: XContainer | null = container;
-
-  while (true) {
-    if (c !== null && c._content instanceof XNode) {
-      // The current container is the root container or the last-visited
-      // element. Thus, move to the current container's first child node.
-      n = c._content._next!;
-    } else {
-      // Move back up the parent hierarchy as long as the current node is
-      // not the root container but a last child node.
-      while (n !== container && n === n._parent!._content) n = n._parent!;
-      if (n === container) break;
-
-      // The current node has been visited already and is not a last child
-      // node. Thus, move to the current node's next sibling.
-      n = n._next!;
-    }
-
-    // Emit the current node, if it is an element.
-    const e = n instanceof XElement ? n : null;
-    if (e !== null && (name === null || e._name === name)) yield e;
-
-    // The current element, if any, becomes the next container, the child
-    // elements of which will be traversed next.
-    c = e;
+export function* getElements(container: XContainer, name: XName | null) {
+  if (container._content instanceof XNode) {
+    let node: XNode = container._content;
+    do {
+      node = node._next!;
+      if (node instanceof XElement && (name === null || node._name === name)) {
+        yield node;
+      }
+    } while (node._parent === container && node !== container._content);
   }
 }
 

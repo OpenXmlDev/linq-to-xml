@@ -9,6 +9,7 @@ import {
   DomReader,
   XContainer,
   XDeclaration,
+  XElement,
   XNode,
 } from './internal';
 
@@ -20,15 +21,18 @@ export class XDocument extends XContainer {
 
   constructor(declaration: XDeclaration | null, ...contentArray: any[]);
   constructor(...contentArray: any[]);
-  constructor();
 
-  constructor(declaration?: XDeclaration | null, ...contentArray: any[]) {
+  constructor(...contentArray: any[]) {
     super();
 
-    this._declaration = declaration ?? null;
+    this._declaration = null;
 
     for (const contentArrayItem of contentArray) {
-      this.addContentSkipNotify(contentArrayItem);
+      if (contentArrayItem instanceof XDeclaration) {
+        this._declaration = contentArrayItem;
+      } else {
+        this.addContentSkipNotify(contentArrayItem);
+      }
     }
   }
 
@@ -45,9 +49,27 @@ export class XDocument extends XContainer {
     return this._declaration;
   }
 
+  public set declaration(value: XDeclaration | null) {
+    this._declaration = value;
+  }
+
+  public get root(): XElement | null {
+    return this.firstNode instanceof XElement ? this.firstNode : null;
+  }
+
   /** @internal */
   override cloneNode(): XNode {
-    const clone = new XDocument(this._declaration);
+    const clone = new XDocument();
+
+    clone.declaration =
+      this._declaration !== null
+        ? new XDeclaration(
+            this._declaration.version,
+            this._declaration.encoding,
+            this._declaration.standalone
+          )
+        : null;
+
     clone.copyNodes(this);
     return clone;
   }
