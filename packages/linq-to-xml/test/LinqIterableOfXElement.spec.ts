@@ -124,7 +124,14 @@ describe('descendantNodesAndSelf(): ILinqIterableOfXNode', () => {
 
 describe('descendants(name?: XName | null): ILinqIterableOfXElement', () => {
   const wordPackage: XElement = createWordDocumentPackage();
-  const getIterableOfXElement = () => wordPackage.descendants(W.p);
+  const getIterableOfXElement = () => {
+    // For code coverage reasons, ensure that all string content is converted
+    // to XText instances. Otherwise, certain branches are not hit.
+    wordPackage.descendants(W.t).nodes().toArray();
+
+    // Return the actual IterableOfXElement.
+    return wordPackage.descendants(W.p);
+  };
 
   it('returns all descendants, if no name is passed', () => {
     const sequence = getIterableOfXElement().descendants();

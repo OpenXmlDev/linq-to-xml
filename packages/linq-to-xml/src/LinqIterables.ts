@@ -204,7 +204,7 @@ export class LinqIterableOfXAttribute
   remove(): void {
     const attributes = [...this.source];
     for (const attribute of attributes) {
-      attribute.remove();
+      if (attribute) attribute.remove();
     }
   }
 
@@ -233,7 +233,7 @@ export class LinqIterableOfXNode
   remove(): void {
     const nodes = [...this.source];
     for (const node of nodes) {
-      node?.remove();
+      if (node) node.remove();
     }
   }
 
@@ -310,7 +310,7 @@ export class LinqIterableOfXElement
   remove(): void {
     const elements = [...this.source];
     for (const element of elements) {
-      element?.remove();
+      if (element) element.remove();
     }
   }
 
@@ -344,38 +344,39 @@ function* getManyDescendantNodes<T extends XContainer>(
   self: boolean
 ) {
   for (const root of source) {
-    if (root === null) continue;
-    if (self) yield root;
+    if (root) {
+      if (self) yield root;
 
-    let node: XNode | null = root;
+      let node: XNode | null = root;
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const firstChildNode: XNode | null =
-        node instanceof XContainer ? node.firstNode : null;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const firstChildNode: XNode | null =
+          node instanceof XContainer ? node.firstNode : null;
 
-      if (firstChildNode !== null) {
-        // Move down.
-        node = firstChildNode;
-      } else {
-        while (
-          node !== null &&
-          node !== root &&
-          node === node._parent!._content
-        ) {
-          // Move back up.
-          node = node._parent;
+        if (firstChildNode !== null) {
+          // Move down.
+          node = firstChildNode;
+        } else {
+          while (
+            node !== null &&
+            node !== root &&
+            node === node._parent!._content
+          ) {
+            // Move back up.
+            node = node._parent;
+          }
+
+          if (node === null || node === root) {
+            break;
+          }
+
+          // Move "right".
+          node = node._next!;
         }
 
-        if (node === null || node === root) {
-          break;
-        }
-
-        // Move "right".
-        node = node._next!;
+        yield node;
       }
-
-      yield node;
     }
   }
 }
@@ -386,44 +387,44 @@ function* getManyDescendants(
   self: boolean
 ) {
   for (const root of source) {
-    if (root === null) continue;
+    if (root) {
+      if (self) {
+        const e = root as XElement;
+        if (name === null || e.name === name) yield e;
+      }
 
-    if (self) {
-      const e = root as XElement;
-      if (name === null || e.name === name) yield e;
-    }
+      let n: XNode | null = root;
+      let c: XContainer | null = root;
 
-    let n: XNode | null = root;
-    let c: XContainer | null = root;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        if (c !== null && c._content instanceof XNode) {
+          n = (c._content as XNode)._next;
+        } else {
+          while (n !== null && n !== root && n === n._parent!._content) {
+            n = n._parent;
+          }
 
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      if (c !== null && c._content instanceof XNode) {
-        n = (c._content as XNode)._next;
-      } else {
-        while (n !== null && n !== root && n === n._parent!._content) {
-          n = n._parent;
+          if (n === null || n === root) break;
+
+          n = n._next;
         }
 
-        if (n === null || n === root) break;
+        const e: XElement | null = n instanceof XElement ? n : null;
 
-        n = n._next;
+        if (e !== null && (name === null || e._name === name)) {
+          yield e;
+        }
+
+        c = e;
       }
-
-      const e: XElement | null = n instanceof XElement ? n : null;
-
-      if (e !== null && (name === null || e._name === name)) {
-        yield e;
-      }
-
-      c = e;
     }
   }
 }
 
 function* getManyElements(source: Iterable<XElement>, name: XName | null) {
   for (const root of source) {
-    if (root !== null && root._content instanceof XNode) {
+    if (root && root._content instanceof XNode) {
       let n: XNode = root._content;
       do {
         n = n._next!;
@@ -437,10 +438,10 @@ function* getManyElements(source: Iterable<XElement>, name: XName | null) {
 
 function* getManyNodes<T extends XContainer>(source: Iterable<T>) {
   for (const root of source) {
-    if (root === null) continue;
-
-    for (const node of getNodes(root)) {
-      yield node;
+    if (root) {
+      for (const node of getNodes(root)) {
+        yield node;
+      }
     }
   }
 }
