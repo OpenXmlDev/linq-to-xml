@@ -5,7 +5,14 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { XAttribute, XElement, XNamespace, XText } from '../src/internal';
+import {
+  XAttribute,
+  XDocument,
+  XElement,
+  XNamespace,
+  XProcessingInstruction,
+  XText,
+} from '../src/internal';
 
 import {
   createWordDocumentPackage,
@@ -377,6 +384,16 @@ describe('static parse(text: string): XElement', () => {
     expect(element.attribute(xmlns_pkg)!.value).toEqual(PKG.pkg.namespaceName);
     expect(document.attribute(xmlns_w)!.value).toEqual(W.w.namespaceName);
   });
+
+  it('throws if the XML string is malformed', () => {
+    expect(() => XElement.parse('<look-no-closing-tag>')).toThrow();
+  });
+
+  it('throws if the XML string does not contain an element', () => {
+    expect(() =>
+      XElement.parse('<?mso-application progid="Word.Document"?>')
+    ).toThrow();
+  });
 });
 
 describe('removeAll(): void', () => {
@@ -395,7 +412,30 @@ describe('removeAll(): void', () => {
 });
 
 describe('removeAttributes(): void', () => {
-  // TODO: Add unit tests.
+  it('removes all attributes', () => {
+    const element = new XElement(
+      W.p,
+      new XAttribute(W14.paraId, '12345678'),
+      new XAttribute(W14.textId, '12345678')
+    );
+    expect(element.attributes().any()).toBe(true);
+
+    element.removeAttributes();
+
+    expect(element.attributes().any()).toBe(false);
+  });
+});
+
+describe('removeAttribute(attr: XAttribute): void', () => {
+  it('throws if the operation was corrupted by external code', () => {
+    const attribute = new XAttribute(W14.paraId, '12345678');
+    const element = new XElement(W.p, attribute);
+
+    // Scenario: External code changes the attribute's parent.
+    attribute._parent = null;
+
+    expect(() => element.removeAttribute(attribute)).toThrow();
+  });
 });
 
 describe('setAttributeValue(name: XName, value: Stringifyable): void', () => {
@@ -459,5 +499,22 @@ describe('toString(): string', () => {
     expect(xml).toContain(
       '<w:p w:rsidR="00000000" w:rsidRDefault="007A3403"/>'
     );
+  });
+});
+
+describe('validateNode(node: XNode, _previous: XNode | null): void', () => {
+  const element = new XElement(W.document);
+
+  it('throws if the node is an XDocument', () => {
+    expect(() => element.validateNode(new XDocument(), null)).toThrow();
+  });
+
+  it('does nothing for any other subclass of XNode', () => {
+    element.validateNode(new XElement(W.body), null);
+    element.validateNode(
+      new XProcessingInstruction('mso-application', 'progid="Word.Document"'),
+      null
+    );
+    element.validateNode(new XText('Text'), null);
   });
 });

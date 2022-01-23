@@ -3,6 +3,8 @@
  * @license MIT
  */
 
+import { ArgumentError } from './internal';
+
 /**
  * Utility class for parsing strings into DOM `XMLDocument` or `Element` instances.
  *
@@ -14,10 +16,22 @@ export class DomParser {
    *
    * @param text The XML string.
    * @returns The parsed `XMLDocument`.
+   * @throws An `ArgumentException` if the XML is malformed or does not contain
+   *         a root element.
    */
   public static parseDocument(text: string): XMLDocument {
-    const parser = new DOMParser();
-    return parser.parseFromString(text, 'application/xml');
+    const document = new DOMParser().parseFromString(text, 'application/xml');
+
+    const parsererror = document.querySelector('parsererror');
+    if (parsererror) {
+      // At this point, the XML is malformed or the document does not contain a
+      // root Element.
+      const message = `Error parsing XML: ${parsererror.textContent}`;
+      throw new ArgumentError(message, 'text');
+    }
+
+    // At this point, the document will be well-formed and contain a root Element.
+    return document;
   }
 
   /**
@@ -25,9 +39,15 @@ export class DomParser {
    *
    * @param text The XML string.
    * @returns The parsed `Element` or `null`, if no root element exists.
+   * @throws An `ArgumentException` if the XML is malformed or does not contain
+   *         a root element.
    */
-  public static parseElement(text: string): Element | null {
+  public static parseElement(text: string): Element {
     const document = DomParser.parseDocument(text);
-    return document.firstElementChild;
+
+    // An XMLDocument created by the DOMParser().parseFromString() method must
+    // have a root Element. If that does not exist, our DomParser.parseDocument()
+    // method will throw an ArgumentError.
+    return document.firstElementChild!;
   }
 }

@@ -73,12 +73,10 @@ export class XElement extends XContainer {
       for (const contentArrayItem of contentArray) {
         this.addContentSkipNotify(contentArrayItem);
       }
-    } else if (nameOrOther instanceof XElement) {
+    } else {
       this._name = nameOrOther._name;
       this.copyNodes(nameOrOther);
       this.copyAttributes(nameOrOther);
-    } else {
-      throw new ArgumentError('Invalid argument', 'nameOrOther');
     }
   }
 
@@ -283,11 +281,11 @@ export class XElement extends XContainer {
    *
    * @param text The XML string.
    * @returns A new `XElement` instance.
+   * @throws An `ArgumentException` if the XML is malformed or does not contain
+   *         a root element.
    */
   public static parse(text: string): XElement {
     const element = DomParser.parseElement(text);
-    if (!element) throw new ArgumentError('Invalid XML string.', 'text');
-
     return XElement.load(element);
   }
 
@@ -333,18 +331,18 @@ export class XElement extends XContainer {
 
   /** @internal */
   private removeAttributesSkipNotify(): void {
-    if (this._lastAttr === null) return;
+    if (this._lastAttr !== null) {
+      let attr: XAttribute = this._lastAttr;
 
-    let attr: XAttribute = this._lastAttr;
+      do {
+        const next: XAttribute = attr._next!;
+        attr._parent = null;
+        attr._next = null;
+        attr = next;
+      } while (attr !== this._lastAttr);
 
-    do {
-      const next: XAttribute = attr._next!;
-      attr._parent = null;
-      attr._next = null;
-      attr = next;
-    } while (attr !== this._lastAttr);
-
-    this._lastAttr = null;
+      this._lastAttr = null;
+    }
   }
 
   public setAttributeValue(name: XName, value: Stringifyable | null): void {
