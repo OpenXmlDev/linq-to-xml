@@ -5,7 +5,6 @@
 
 import {
   ArgumentError,
-  InvalidOperationError,
   XAttribute,
   XContainer,
   XNode,
@@ -77,6 +76,7 @@ export class Inserter {
   private addNode(node: XNode): void {
     this._parent.validateNode(node, this._previous);
 
+    // Create a deep clone of the node if necessary.
     if (node._parent !== null) {
       node = node.cloneNode();
     } else {
@@ -85,8 +85,12 @@ export class Inserter {
       if (node === parent) node = node.cloneNode();
     }
 
+    // Ensure the future parent's string content, if any, is turned into an
+    // XText node so that we can add further XNode siblings.
     this._parent.convertTextToNode();
 
+    // Before adding the node, "consume" any text content we assembled so far,
+    // inserting an XText node with such text content.
     if (this._text !== null && this._text.length > 0) {
       if (this._previous instanceof XText) {
         this._previous.value += this._text;
@@ -97,6 +101,7 @@ export class Inserter {
       this._text = null;
     }
 
+    // Finally, insert the node, which does not have a parent at this point.
     this.insertNode(node);
   }
 
@@ -107,12 +112,6 @@ export class Inserter {
 
   // Prepends if previous == null, otherwise inserts after previous
   private insertNode(node: XNode): void {
-    if (node._parent !== null) {
-      throw new InvalidOperationError(
-        'This operation was corrupted by external code.'
-      );
-    }
-
     node._parent = this._parent;
 
     if (

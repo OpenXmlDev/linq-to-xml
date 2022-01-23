@@ -26,7 +26,7 @@ describe('add(content: any): void', () => {
     expect(parent._content).toBe(text);
   });
 
-  it('adds XNode content associated with parent, cloning such XNode content', () => {
+  it('adds XNode content associated with a parent, cloning such XNode content', () => {
     const text = new XText('Text');
     const existingParent = new XElement(W.t, text);
     expect(text.parent).toBe(existingParent);
@@ -39,6 +39,23 @@ describe('add(content: any): void', () => {
     expect(parent._content).not.toBe(text);
     expect(parent._content).toBeInstanceOf(XText);
     expect(parent.value).toEqual(text.value);
+  });
+
+  it('adds the root element, cloning such root element', () => {
+    const parent = new XElement(W.tc);
+    const root = new XElement(W.tbl, new XElement(W.tr, parent));
+    const inserter = new Inserter(parent, null);
+
+    inserter.add(root);
+
+    expect(parent._content).not.toBe(root);
+    expect(parent._content).toBeInstanceOf(XElement);
+    expect(
+      (parent as XElement)
+        .descendants()
+        .select((e) => e.name)
+        .toArray()
+    ).toEqual([W.tbl, W.tr, W.tc]);
   });
 
   it('adds string content to empty element', () => {
@@ -58,13 +75,23 @@ describe('add(content: any): void', () => {
     expect(parent.nodes().count()).toBe(2);
   });
 
-  it('adds iterable string content', () => {
+  it('adds iterable string content with anchor === null', () => {
     const parent = new XElement(W.t);
     const inserter = new Inserter(parent, null);
 
     inserter.add(['a', 'b', 'c']);
 
     expect(parent._content).toEqual('abc');
+  });
+
+  it('adds iterable string content with anchor !== null', () => {
+    const text = new XText('anchor_');
+    const parent = new XElement(W.t, text);
+    const inserter = new Inserter(parent, text);
+
+    inserter.add(['a', new XText('b')]);
+
+    expect(parent.value).toEqual('anchor_ab');
   });
 
   it('adds iterable content: XText, string, string', () => {
