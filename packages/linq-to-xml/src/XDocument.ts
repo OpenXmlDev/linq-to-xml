@@ -76,7 +76,8 @@ export class XDocument extends XContainer {
   }
 
   public get root(): XElement | null {
-    return this.firstNode instanceof XElement ? this.firstNode : null;
+    const rootNode = this.nodes().firstOrDefault((n) => n instanceof XElement);
+    return rootNode ? (rootNode as XElement) : null;
   }
 
   /** @internal */

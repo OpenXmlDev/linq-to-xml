@@ -8,6 +8,7 @@
 import {
   XAttribute,
   XContainer,
+  XDocument,
   XElement,
   XNode,
   XText,
@@ -19,7 +20,38 @@ describe('get firstNode(): XNode | null', () => {
 });
 
 describe('get lastNode(): XNode | null', () => {
-  //
+  it('returns the last XNode', () => {
+    const bookmarkEnd = new XElement(W.bookmarkEnd);
+    const container = new XElement(
+      W.p,
+      new XElement(W.bookmarkStart),
+      bookmarkEnd
+    );
+
+    expect(container.lastNode).toBe(bookmarkEnd);
+  });
+
+  it('returns null if the container has no content', () => {
+    const container = new XElement(W.p);
+    expect(container.lastNode).toBeNull();
+  });
+
+  it('returns null if the content is an empty string', () => {
+    const container = new XElement(W.p);
+    container._content = '';
+
+    expect(container.lastNode).toBeNull();
+  });
+
+  it('converts non-empty string content to an XText', () => {
+    const container = new XElement(W.p, 'Text');
+    expect(container._content).toEqual('Text');
+
+    const lastNode = container.lastNode;
+
+    expect(lastNode).toBeInstanceOf(XText);
+    expect((lastNode as XText).value).toEqual('Text');
+  });
 });
 
 describe('add(content: any): void', () => {
@@ -142,6 +174,19 @@ describe('add(content: any): void', () => {
     expect(newAttribute).not.toBeNull();
     expect(newAttribute).not.toBe(existingAttribute);
     expect(newAttribute!.value).toEqual('12345678');
+  });
+});
+
+describe('addAttributeSkipNotify(_a: XAttribute): void', () => {
+  it('does nothing (virtual base method)', () => {
+    const container = new XDocument();
+
+    // For code coverage purposes only.
+    container.addAttributeSkipNotify(new XAttribute(W.val, 'Test Only!'));
+
+    expect(container._content).toBeNull();
+    expect(container._next).toBeNull();
+    expect(container._parent).toBeNull();
   });
 });
 
@@ -269,8 +314,27 @@ describe('nodes(): IterableOfXNode', () => {
   // TODO: Add unit tests (covered by other unit tests).
 });
 
+describe('removeNode(node: XNode): void', () => {
+  it('throws if the container is not the parent of the node', () => {
+    const node = new XText('Text');
+    const container = new XElement(W.t, node);
+
+    // Scenario: external code changes the _parent field.
+    node._parent = null;
+
+    expect(() => container.removeNode(node)).toThrow();
+  });
+});
+
 describe('removeNodes(): void', () => {
-  // TODO: Add unit tests (covered by other unit tests).
+  it('removes all nodes', () => {
+    const container = new XElement(W.p, new XElement(W.r), new XElement(W.r));
+    expect(container.nodes().any()).toBe(true);
+
+    container.removeNodes();
+
+    expect(container.nodes().any()).toBe(false);
+  });
 });
 
 describe('replaceNodes(...content: any[]): void', () => {
