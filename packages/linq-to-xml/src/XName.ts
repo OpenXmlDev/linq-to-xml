@@ -45,7 +45,12 @@ export class XName {
     namespaceName?: string,
     prefix?: string | null
   ): XName {
-    if (namespaceName === undefined && prefix === undefined) {
+    if (namespaceName !== undefined && prefix !== undefined) {
+      // get(localName: string, namespaceName: string, prefix: string | null): XName
+      const localName = expandedOrLocalName;
+
+      return XNamespace.get(namespaceName).getName(prefix, localName);
+    } else {
       // get(expandedName: string): XName
       const expandedName = expandedOrLocalName;
 
@@ -74,14 +79,7 @@ export class XName {
       const localName = expandedName.substring(lastIndex + 1);
 
       return XNamespace.get(namespaceName).getName(localName);
-    } else if (namespaceName !== undefined && prefix !== undefined) {
-      // get(localName: string, namespaceName: string, prefix: string | null): XName
-      const localName = expandedOrLocalName;
-
-      return XNamespace.get(namespaceName).getName(prefix, localName);
     }
-
-    throw new Error('Unexpected method call.');
   }
 
   /**

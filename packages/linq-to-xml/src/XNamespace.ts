@@ -104,16 +104,14 @@ export class XNamespace {
     let prefix: string | null;
     let localName: string;
 
-    if (first !== null && second === undefined) {
+    if (second === undefined) {
       // getName(localName: string): XName
       prefix = this.prefix;
-      localName = first;
-    } else if (second !== undefined) {
+      localName = first as string;
+    } else {
       // getName(prefix: string | null, localName: string): XName
       prefix = first;
       localName = second;
-    } else {
-      throw new Error('Unexpected method call.');
     }
 
     // We'll include the prefix (e.g., "w", "w14"), if any, in the key.
