@@ -102,7 +102,7 @@ export class Inserter {
 
   private addString(s: string): void {
     this._parent.validateString(s);
-    this._text += s;
+    this._text = this._text === null ? s : this._text + s;
   }
 
   // Prepends if previous == null, otherwise inserts after previous

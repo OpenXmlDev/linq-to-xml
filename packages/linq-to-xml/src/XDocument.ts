@@ -41,8 +41,30 @@ export class XDocument extends XContainer {
   }
 
   public static parse(text: string): XDocument {
-    const xmlDocument = DomParser.parseDocument(text);
-    return XDocument.load(xmlDocument);
+    const [preprocessedText, declaration] = this.preprocess(text);
+
+    const xmlDocument = DomParser.parseDocument(preprocessedText);
+    const xDocument = XDocument.load(xmlDocument);
+    xDocument.declaration = declaration;
+
+    return xDocument;
+  }
+
+  private static preprocess(text: string): [string, XDeclaration | null] {
+    const regex =
+      /^\s*<\?xml\s+version="(?<version>[0-9.]+)"(\s+encoding="(?<encoding>[a-zA-Z0-9-]+)")?(\s+standalone="(?<standalone>yes|no)")?\s*\?>/;
+
+    const match = text.match(regex);
+    if (!match || !match.groups) return [text, null];
+
+    const preprocessedText = text.slice(match[0].length);
+    const declaration = new XDeclaration(
+      match.groups['version'],
+      match.groups['encoding'],
+      match.groups['standalone']
+    );
+
+    return [preprocessedText, declaration];
   }
 
   public get declaration(): XDeclaration | null {
@@ -75,12 +97,8 @@ export class XDocument extends XContainer {
   }
 
   public toString(): string {
-    const serializedString = new XMLSerializer().serializeToString(
+    return new XMLSerializer().serializeToString(
       DomFactory.createDocument(this)
     );
-
-    return this._declaration
-      ? this._declaration.toString() + serializedString
-      : serializedString;
   }
 }

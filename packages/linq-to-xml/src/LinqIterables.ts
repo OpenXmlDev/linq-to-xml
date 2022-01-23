@@ -100,7 +100,7 @@ export interface ILinqIterableOfXElement extends ILinqIterable<XElement> {
   descendantNodes(): ILinqIterableOfXNode;
   descendantNodesAndSelf(): ILinqIterableOfXNode;
   descendants(name?: XName | null): ILinqIterableOfXElement;
-  descendantsAndSelf(name?: XName): ILinqIterableOfXElement;
+  descendantsAndSelf(name?: XName | null): ILinqIterableOfXElement;
   elements(name?: XName | null): ILinqIterableOfXElement;
   nodes(): ILinqIterableOfXNode;
   remove(): void;
@@ -287,7 +287,7 @@ export class LinqIterableOfXElement
     );
   }
 
-  descendantsAndSelf(name?: XName): ILinqIterableOfXElement {
+  descendantsAndSelf(name?: XName | null): ILinqIterableOfXElement {
     return new LinqIterableOfXElement(
       name !== null
         ? getManyDescendants(this.source, name ?? null, true)

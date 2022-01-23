@@ -82,7 +82,7 @@ mc:Ignorable="w14"
   .replace(/[\r\n]+/g, ' ');
 
 export const PKG_PACKAGE_TEXT = `
-<?xml version="1.0" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <?mso-application progid="Word.Document"?>
 <pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">
   <pkg:part ${PKG_NAME} ${PKG_CONTENT_TYPE}>
