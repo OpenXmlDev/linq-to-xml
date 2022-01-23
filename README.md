@@ -1,5 +1,7 @@
 # Open XML PowerTools for TypeScript
 
+[![codecov](https://codecov.io/gh/OpenXmlDev/ts-oxpt/branch/main/graph/badge.svg?token=43I75GLRHM)](https://codecov.io/gh/OpenXmlDev/ts-oxpt)
+
 This repository contains NPM packages written in TypeScript that provide functionality
 similar to the Open XML PowerTools written in C#.
 
