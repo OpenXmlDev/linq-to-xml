@@ -3,7 +3,14 @@
  * @license MIT
  */
 
-import { DomParser, XDeclaration, XDocument, XElement } from '../src/internal';
+import {
+  DomParser,
+  XDeclaration,
+  XDocument,
+  XElement,
+  XProcessingInstruction,
+} from '../src/internal';
+
 import { PKG_PACKAGE_TEXT, WML_NAMESPACE_DECLARATIONS, W } from './TestHelpers';
 
 describe('static load(xmlDocument: XMLDocument): XDocument', () => {
@@ -49,15 +56,28 @@ describe('get root(): XElement | null', () => {
 });
 
 describe('cloneNode(): XNode', () => {
-  it('creates a copy with the same content', () => {
+  it('creates a copy with the same declaration and nodes', () => {
     const original = new XDocument(
       new XDeclaration(),
-      new XElement(W.document)
+      new XElement(W.document, new XElement(W.body, new XElement(W.p)))
     );
 
     const copy = original.cloneNode() as XDocument;
 
     expect(copy.declaration).not.toBe(original.declaration);
+    expect(copy.root).not.toBe(original.root);
+    expect(copy.toString()).toEqual(original.toString());
+  });
+
+  it('creates a copy with the same nodes', () => {
+    const original = new XDocument(
+      new XProcessingInstruction('mso-application', 'progid="Word.Document"'),
+      new XElement(W.document, new XElement(W.body, new XElement(W.p)))
+    );
+
+    const copy = original.cloneNode() as XDocument;
+
+    expect(copy.declaration).toBeNull();
     expect(copy.root).not.toBe(original.root);
     expect(copy.toString()).toEqual(original.toString());
   });

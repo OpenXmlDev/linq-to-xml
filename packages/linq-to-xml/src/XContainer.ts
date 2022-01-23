@@ -55,6 +55,7 @@ export abstract class XContainer extends XNode {
    */
   public get lastNode(): XNode | null {
     if (!this._content) {
+      // _content is falsy, i.e., it is null or the empty string.
       return null;
     }
 
@@ -62,13 +63,8 @@ export abstract class XContainer extends XNode {
       return this._content;
     }
 
-    const stringContent: string = this._content;
-
-    if (stringContent.length === 0) {
-      return null;
-    }
-
-    const textNodeContent = new XText(stringContent);
+    // At this point, _content is a non-empty string.
+    const textNodeContent = new XText(this._content);
     textNodeContent._parent = this;
     textNodeContent._next = textNodeContent;
     this._content = textNodeContent;
