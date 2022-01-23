@@ -187,4 +187,18 @@ describe('replaceWith(...content: any[]): void', () => {
     const node = new XElement(W.p);
     expect(() => node.replaceWith(new XElement(W.p))).toThrow();
   });
+
+  it('throws if external code has corrupted the operation', () => {
+    const previousNode = new XElement(
+      W.p,
+      new XAttribute(W14.paraId, '00000001')
+    );
+    const node = new XElement(W.p, new XAttribute(W14.paraId, '00000002'));
+    const parent = new XElement(W.body, previousNode, node);
+
+    // Scenario: External code corrupts the operation.
+    previousNode._parent = null;
+
+    expect(() => node.replaceWith(new XElement(W.sdt))).toThrow();
+  });
 });
