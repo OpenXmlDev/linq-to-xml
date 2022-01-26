@@ -6,7 +6,6 @@
 import {
   Inserter,
   InvalidOperationError,
-  ILinqIterableOfXElement,
   LinqIterableOfXElement,
   StringBuilder,
   XContainer,
@@ -66,7 +65,7 @@ export abstract class XNode extends XObject {
    * @param name The optional name of the ancestor elements to find.
    * @returns The ancestor elements of this node.
    */
-  public ancestors(name?: XName | null): ILinqIterableOfXElement {
+  public ancestors(name?: XName | null): LinqIterableOfXElement {
     return name === null
       ? new LinqIterableOfXElement(XElement.emptySequence)
       : new LinqIterableOfXElement(getAncestors(this, name ?? null, false));
@@ -128,6 +127,7 @@ export abstract class XNode extends XObject {
   }
 }
 
+/** @internal */
 export function* getAncestors(node: XNode, name: XName | null, self: boolean) {
   let e = (self ? node : node._parent) as XElement | null;
   while (e !== null) {

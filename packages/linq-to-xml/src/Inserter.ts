@@ -13,6 +13,8 @@ import {
 
 /**
  * Provides tools for inserting content into `XContainer`s.
+ *
+ * @internal
  */
 export class Inserter {
   private readonly _parent: XContainer;

@@ -195,6 +195,7 @@ describe('replaceWith(...content: any[]): void', () => {
     );
     const node = new XElement(W.p, new XAttribute(W14.paraId, '00000002'));
     const parent = new XElement(W.body, previousNode, node);
+    expect(node._parent).toBe(parent);
 
     // Scenario: External code corrupts the operation.
     previousNode._parent = null;

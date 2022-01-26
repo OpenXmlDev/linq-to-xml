@@ -3,7 +3,14 @@
  * @license MIT
  */
 
-import { XAttribute, XElement } from '../src/internal';
+import { where } from '@tsdotnet/linq/dist/filters';
+
+import {
+  linqAttributes,
+  LinqIterableOfXAttribute,
+  XAttribute,
+  XElement,
+} from '../src/internal';
 import { W } from './TestHelpers';
 
 function createBody() {
@@ -25,23 +32,46 @@ function createBody() {
 describe('remove(): void', () => {
   it('should remove all attributes', () => {
     const body = createBody();
-    expect(body.elements().attributes().count()).toBe(4);
+    const attributes = () => body.elements().attributes();
+    expect(attributes().any()).toBe(true);
 
-    body.elements().attributes().remove();
+    attributes().remove();
 
-    expect(body.elements().attributes().count()).toBe(0);
+    expect(attributes().any()).toBe(false);
   });
 });
 
-describe('where(predicate: PredicateWithIndex<XAttribute>): ILinqIterableOfXAttribute', () => {
-  it('should return the attributes specified by the predicate', () => {
-    const body = createBody();
+describe('where(predicate: PredicateWithIndex<XAttribute>): LinqIterableOfXAttribute', () => {
+  const body = createBody();
+  const attributes = () => body.elements().attributes();
+  const predicate = (a: XAttribute) => a.name === W.rsidR;
 
-    const attributes = body
-      .elements()
-      .attributes()
-      .where((a) => a.name === W.rsidR);
+  it('returns the result of the wrapped function', () => {
+    const expectedSequence = where(predicate)(attributes());
+    const sequence = attributes().where(predicate);
+    expect([...sequence]).toEqual([...expectedSequence]);
+  });
+});
 
-    expect(attributes.count()).toBe(2);
+describe('function linqAttributes(source: Iterable<XAttribute>): LinqIterableOfXAttribute', () => {
+  it('returns a new LinqIterableOfXAttribute if the source is not an instance of LinqIterableOfXAttribute', () => {
+    const source = [
+      new XAttribute(W.val, 'Heading1'),
+      new XAttribute(W.val, 'BodyText'),
+    ];
+
+    const iterable = linqAttributes(source);
+
+    expect(iterable).toBeInstanceOf(LinqIterableOfXAttribute);
+    expect(iterable.toArray()).toEqual(source);
+  });
+
+  it('returns the source, if it is already a LinqIterableOfXAttribute', () => {
+    const source = new LinqIterableOfXAttribute([
+      new XAttribute(W.val, 'Heading1'),
+      new XAttribute(W.val, 'BodyText'),
+    ]);
+    const iterable = linqAttributes(source);
+    expect(iterable).toBe(source);
   });
 });

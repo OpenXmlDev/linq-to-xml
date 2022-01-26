@@ -3,16 +3,89 @@
  * @license MIT
  */
 
-import { LinqIterable, XAttribute, XElement } from '../src/internal';
+import applyFilters from '@tsdotnet/linq/dist/applyFilters';
+import { skip, take } from '@tsdotnet/linq/dist/filters';
+import { select } from '@tsdotnet/linq/dist/transforms';
+import { all } from '@tsdotnet/linq/dist/resolutions';
+
+import {
+  linqIterable,
+  LinqIterable,
+  XAttribute,
+  XElement,
+  XName,
+} from '../src/internal';
+
 import { createWordDocumentPackage, W } from './TestHelpers';
 
 // Create a pkg:package with a w:document containing three w:p descendants.
 // Use for reading only. Do not mutate.
 const wordPackage: XElement = createWordDocumentPackage();
+const getLinqIterable = () => linqIterable([...wordPackage.descendants(W.p)]);
 
 function hasRsidR(value: string) {
   return (p: XElement) => p.attribute(W.rsidR)?.value === value;
 }
+
+//
+// Generic Filter, Transformation, and Resolution Executors
+//
+
+describe('filter(...filters: IterableFilter<T>[]): LinqIterable<T>', () => {
+  it('returns the result of the wrapped function', () => {
+    const skipOne = skip<XElement>(1);
+    const takeOne = take<XElement>(1);
+    const expectedSequence = applyFilters(getLinqIterable(), [
+      skipOne,
+      takeOne,
+    ]);
+
+    const sequence = getLinqIterable().filter(skipOne, takeOne);
+
+    expect([...sequence]).toEqual([...expectedSequence]);
+  });
+
+  it('returns the instance if no filters are passed', () => {
+    const instance = getLinqIterable();
+    const sequence = instance.filter();
+    expect(sequence).toBe(instance);
+  });
+});
+
+describe('filters(filters: Iterable<IterableFilter<T>>): LinqIterable<T>', () => {
+  it('returns the result of the wrapped function', () => {
+    const filters = [skip<XElement>(1), take<XElement>(1)];
+    const expectedSequence = applyFilters(getLinqIterable(), filters);
+
+    const sequence = getLinqIterable().filters(filters);
+
+    expect([...sequence]).toEqual([...expectedSequence]);
+  });
+});
+
+describe('transform<TResult>(transform: IterableValueTransform<T, TResult>): LinqIterable<TResult>', () => {
+  it('executes the transformation', () => {
+    // The source is a sequence of three elements named w:p.
+    // The transformation turns the sequence of elements into a sequence of names.
+    const source: LinqIterable<XElement> = getLinqIterable();
+    const transformation = select<XElement, XName>((e) => e.name);
+
+    const sequence = source.transform(transformation);
+
+    expect(sequence.toArray()).toEqual([W.p, W.p, W.p]);
+  });
+});
+
+describe('resolve<TResolution>(resolution: IterableTransform<T, TResolution>): TResolution', () => {
+  it('executes the resolution', () => {
+    const source: LinqIterable<XElement> = getLinqIterable();
+    const resolution = all<XElement>((e) => e.name === W.p);
+
+    const result = source.resolve(resolution);
+
+    expect(result).toBe(true);
+  });
+});
 
 //
 // Resolutions
@@ -20,14 +93,14 @@ function hasRsidR(value: string) {
 
 describe('all(predicate: PredicateWithIndex<T>): boolean', () => {
   it('returns true for empty sequences regardless of the predicate', () => {
-    const empty = new LinqIterable<XElement>([]);
+    const empty = linqIterable<XElement>([]);
 
     expect(empty.all(() => false)).toBe(true);
     expect(empty.all(() => true)).toBe(true);
   });
 
   it('returns true if the predicate is true for all sequence items', () => {
-    const elements = new LinqIterable<XElement>([
+    const elements = linqIterable([
       new XElement(W.p),
       new XElement(W.p),
       new XElement(W.p),
@@ -37,7 +110,7 @@ describe('all(predicate: PredicateWithIndex<T>): boolean', () => {
   });
 
   it('returns false if the predicate is false for any sequence items', () => {
-    const elements = new LinqIterable<XElement>([
+    const elements = linqIterable([
       new XElement(W.p),
       new XElement(W.tbl),
       new XElement(W.p),
@@ -50,24 +123,24 @@ describe('all(predicate: PredicateWithIndex<T>): boolean', () => {
 describe('any(predicate?: PredicateWithIndex<T>): boolean', () => {
   it('returns true for non-empty sequences and undefined predicates', () => {
     expect(wordPackage.descendants().any()).toBe(true);
-    expect(new LinqIterable([1]).any()).toBe(true);
+    expect(linqIterable([1]).any()).toBe(true);
   });
 
   it('returns true if the defined predicate is true for any sequence item', () => {
     // We have three w:p elements in the pkg:package.
     expect(wordPackage.descendants().any((e) => e.name === W.p)).toBe(true);
-    expect(new LinqIterable([0, 1]).any((n) => n > 0)).toBe(true);
+    expect(linqIterable([0, 1]).any((n) => n > 0)).toBe(true);
   });
 
   it('returns false for empty sequences and undefined predicates', () => {
     expect(wordPackage.descendants(W.tbl).any()).toBe(false);
-    expect(new LinqIterable<number>([]).any()).toBe(false);
+    expect(linqIterable<number>([]).any()).toBe(false);
   });
 
   it('returns false if the defined predicate is false for all sequence items', () => {
     // We have no w:tbl elements in the pkg:package.
     expect(wordPackage.descendants().any((e) => e.name === W.tbl)).toBe(false);
-    expect(new LinqIterable([0, 1]).any((n) => n < 0)).toBe(false);
+    expect(linqIterable([0, 1]).any((n) => n < 0)).toBe(false);
   });
 });
 
@@ -103,7 +176,7 @@ describe('first(predicate?: PredicateWithIndex<T>): T', () => {
   it('throws for empty sequences', () => {
     // We have no w:tbl elements.
     expect(() => wordPackage.descendants(W.tbl).first()).toThrow();
-    expect(() => new LinqIterable<any>([]).first()).toThrow();
+    expect(() => linqIterable<any>([]).first()).toThrow();
   });
 
   it('returns the first item of a non-empty sequence for which the predicate is true', () => {
@@ -130,7 +203,7 @@ describe('firstOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
   it('returns null for empty sequences', () => {
     // We have no w:tbl elements.
     expect(wordPackage.descendants(W.tbl).firstOrDefault()).toBeNull();
-    expect(new LinqIterable<any>([]).firstOrDefault()).toBeNull();
+    expect(linqIterable<any>([]).firstOrDefault()).toBeNull();
   });
 
   it('returns the first item of a non-empty sequence for which the predicate is true', () => {
@@ -273,7 +346,7 @@ describe('toArray(): T[]', () => {
   });
 
   it('returns an empty array for an empty sequence', () => {
-    const emptySequence = new LinqIterable<any>([]);
+    const emptySequence = linqIterable<any>([]);
     expect(emptySequence.toArray()).toEqual([]);
   });
 });
@@ -282,8 +355,8 @@ describe('toArray(): T[]', () => {
 // Transformations
 //
 
-describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): ILinqIterable<GroupingResult<TKey, T>>', () => {
-  const source = new LinqIterable([
+describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): LinqIterable<GroupingResult<TKey, T>>', () => {
+  const source = linqIterable([
     new XElement(
       W.r,
       new XElement(W.rPr, new XElement(W.b)),
@@ -335,9 +408,9 @@ describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): ILinqIterable<
   });
 });
 
-describe('select<TSelect>(selector: SelectorWithIndex<T, TSelect>): ILinqIterable<TSelect>', () => {
+describe('select<TSelect>(selector: SelectorWithIndex<T, TSelect>): LinqIterable<TSelect>', () => {
   // The source could be the result of selecting the descendants of the w:body element.
-  const source = new LinqIterable([
+  const source = linqIterable([
     new XElement(
       W.p,
       new XAttribute(W.rsidR, '1'),
@@ -368,15 +441,15 @@ describe('select<TSelect>(selector: SelectorWithIndex<T, TSelect>): ILinqIterabl
   });
 
   it('returns an empty sequence if the source is an empty sequence', () => {
-    const source = new LinqIterable<number>([]);
+    const source = linqIterable<number>([]);
     const sequence = source.select((n) => n + 1);
     expect(sequence.count()).toBe(0);
   });
 });
 
-describe('selectMany<TSelect>(selector: SelectorWithIndex<T, Iterable<TSelect>>): ILinqIterable<TSelect>', () => {
+describe('selectMany<TSelect>(selector: SelectorWithIndex<T, Iterable<TSelect>>): LinqIterable<TSelect>', () => {
   // The source could be the result of selecting the descendants of the w:body element.
-  const source = new LinqIterable<XElement>([
+  const source = linqIterable<XElement>([
     new XElement(
       W.p,
       new XAttribute(W.rsidR, '1'),
@@ -405,5 +478,22 @@ describe('selectMany<TSelect>(selector: SelectorWithIndex<T, Iterable<TSelect>>)
     // The elements contained in the source sequence do not have any child elements.
     const sequence = source.selectMany((e) => e.elements());
     expect(sequence.count()).toBe(0);
+  });
+});
+
+describe('function linqIterable<T>(source: Iterable<T>): LinqIterable<T>', () => {
+  it('returns a new LinqIterable<T> if the source is not an instance of LinqIterable<T>', () => {
+    const source = [1, 2, 3];
+
+    const iterable = linqIterable(source);
+
+    expect(iterable).toBeInstanceOf(LinqIterable);
+    expect(iterable.toArray()).toEqual(source);
+  });
+
+  it('returns the source, if it is already a LinqIterable<T>', () => {
+    const source = new LinqIterable([1, 2, 3]);
+    const iterable = linqIterable(source);
+    expect(iterable).toBe(source);
   });
 });

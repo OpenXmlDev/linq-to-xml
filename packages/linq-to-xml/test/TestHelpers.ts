@@ -1,4 +1,10 @@
-import { XElement, XName, XNamespace } from '../src/internal';
+import {
+  linqIterable,
+  XElement,
+  XName,
+  XNamespace,
+  XNode,
+} from '../src/internal';
 
 export class PKG {
   public static pkg: XNamespace = XNamespace.get(
@@ -117,4 +123,18 @@ export const PKG_PACKAGE_TEXT = `
 
 export function createWordDocumentPackage(): XElement {
   return XElement.parse(PKG_PACKAGE_TEXT);
+}
+
+export function getNodeSignature(node: XNode): XName | string {
+  if (node instanceof XElement) {
+    return node.name;
+  } else {
+    return node.toString();
+  }
+}
+
+export function getSignature<T extends XNode>(
+  sequence: Iterable<T>
+): (string | XName)[] {
+  return linqIterable(sequence).select(getNodeSignature).toArray();
 }

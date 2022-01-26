@@ -149,7 +149,6 @@ describe('get hasElements(): boolean', () => {
       new XElement(W.r),
       new XText('\n')
     );
-    console.log(element.toString());
     expect(element.hasElements).toBe(true);
   });
 

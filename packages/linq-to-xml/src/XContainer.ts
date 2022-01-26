@@ -5,8 +5,6 @@
 
 import {
   InvalidOperationError,
-  ILinqIterableOfXElement,
-  ILinqIterableOfXNode,
   LinqIterableOfXElement,
   LinqIterableOfXNode,
   StringBuilder,
@@ -213,7 +211,7 @@ export abstract class XContainer extends XNode {
    * @param name The optional name of the descendants to return.
    * @returns The descendant `XElement`s of this `XContainer`.
    */
-  public descendants(name?: XName | null): ILinqIterableOfXElement {
+  public descendants(name?: XName | null): LinqIterableOfXElement {
     return name === null
       ? new LinqIterableOfXElement(XElement.emptySequence)
       : new LinqIterableOfXElement(getDescendants(this, name ?? null, false));
@@ -241,7 +239,7 @@ export abstract class XContainer extends XNode {
    * @param name The optional name of the elements to return.
    * @returns The child `XElement`s of this `XContainer`.
    */
-  public elements(name?: XName | null): ILinqIterableOfXElement {
+  public elements(name?: XName | null): LinqIterableOfXElement {
     return name === null
       ? new LinqIterableOfXElement(XElement.emptySequence)
       : new LinqIterableOfXElement(getElements(this, name ?? null));
@@ -269,7 +267,7 @@ export abstract class XContainer extends XNode {
    *
    * @returns The content of this `XContainer` as an `IterableOfXNode`.
    */
-  public nodes(): ILinqIterableOfXNode {
+  public nodes(): LinqIterableOfXNode {
     return new LinqIterableOfXNode(getNodes(this));
   }
 

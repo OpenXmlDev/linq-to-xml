@@ -11,8 +11,6 @@ import {
   getAncestors,
   getDescendants,
   InvalidOperationError,
-  ILinqIterableOfXAttribute,
-  ILinqIterableOfXElement,
   LinqIterableOfXAttribute,
   LinqIterableOfXElement,
   StringBuilder,
@@ -167,7 +165,7 @@ export class XElement extends XContainer {
    * @returns An iterable containing this `XElement` and its ancestors (with
    *          a matching `XName` if `name` was provided).
    */
-  public ancestorsAndSelf(name?: XName | null): ILinqIterableOfXElement {
+  public ancestorsAndSelf(name?: XName | null): LinqIterableOfXElement {
     return name === null
       ? new LinqIterableOfXElement(XElement.emptySequence)
       : new LinqIterableOfXElement(getAncestors(this, name ?? null, true));
@@ -229,7 +227,7 @@ export class XElement extends XContainer {
    * @returns All attributes associated with this element or the attribute
    *          having the given name.
    */
-  public attributes(name?: XName | null): ILinqIterableOfXAttribute {
+  public attributes(name?: XName | null): LinqIterableOfXAttribute {
     return name === null
       ? new LinqIterableOfXAttribute(XAttribute.emptySequence)
       : new LinqIterableOfXAttribute(getAttributes(this, name ?? null));
@@ -260,7 +258,7 @@ export class XElement extends XContainer {
    * @param name The optional name of the descendants to return.
    * @returns This `XElement` and the descendant `XElement`s of this `XElement`.
    */
-  public descendantsAndSelf(name?: XName | null): ILinqIterableOfXElement {
+  public descendantsAndSelf(name?: XName | null): LinqIterableOfXElement {
     return name === null
       ? new LinqIterableOfXElement(XElement.emptySequence)
       : new LinqIterableOfXElement(getDescendants(this, name ?? null, true));
@@ -373,6 +371,7 @@ export class XElement extends XContainer {
   }
 }
 
+/** @internal */
 export function* getAttributes(element: XElement, name: XName | null) {
   if (element._lastAttr === null) return;
 

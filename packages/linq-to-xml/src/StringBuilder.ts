@@ -5,6 +5,8 @@
 
 /**
  * A super-simple and preliminary implementation of a `StringBuilder`.
+ *
+ * @internal
  */
 export class StringBuilder {
   private array: string[] = [];

@@ -3,72 +3,71 @@
  * @license MIT
  */
 
-import { XElement, XText } from '../src/internal';
-import { createWordDocumentPackage, PKG, W } from './TestHelpers';
+import { PredicateWithIndex } from '@tsdotnet/common-interfaces';
+import { where } from '@tsdotnet/linq/dist/filters';
 
-describe('ancestors(name?: XName): ILinqIterableOfXElement', () => {
-  const wordPackage: XElement = createWordDocumentPackage();
+import {
+  LinqIterableOfXNode,
+  linqNodes,
+  XElement,
+  XNode,
+  XText,
+} from '../src/internal';
 
-  it('should return all ancestors if no name is given', () => {
-    // We have two w:t elements with text nodes. Therefore, we expect to get
-    // two lines of ancestors, one for each text node.
-    const nodes = wordPackage.descendants(W.t).nodes();
-    const ancestors = nodes.ancestors();
-    expect(ancestors.select((e) => e.name).toArray()).toEqual([
-      // Ancestors of first text node
-      W.t,
-      W.r,
-      W.p,
-      W.body,
-      W.document,
-      PKG.xmlData,
-      PKG.part,
-      PKG.package,
+import { ancestors } from '../src/transformations';
 
-      // Ancestors of second text node
-      W.t,
-      W.r,
-      W.p,
-      W.body,
-      W.document,
-      PKG.xmlData,
-      PKG.part,
-      PKG.package,
-    ]);
-  });
+import { createWordDocumentPackage, W } from './TestHelpers';
 
-  it('should return the named ancestors if a name is given.', () => {
-    // We have two w:t elements with text nodes. Therefore, we expect two w:p
-    // ancestor elements.
-    const nodes = wordPackage.descendants(W.t).nodes();
-    const ancestors = nodes.ancestors(W.p);
-    expect(ancestors.select((e) => e.name).toArray()).toEqual([W.p, W.p]);
+const testPackage: XElement = createWordDocumentPackage();
+const getLinqIterableOfXNode = () => testPackage.descendants(W.t).nodes();
+
+describe('ancestors(name?: XName): LinqIterableOfXElement', () => {
+  it('returns the result of the wrapped function', () => {
+    const expectedSequence = ancestors()(getLinqIterableOfXNode());
+    const sequence = getLinqIterableOfXNode().ancestors();
+    expect([...sequence]).toEqual([...expectedSequence]);
   });
 });
 
 describe('remove(): void', () => {
-  it('should remove all nodes.', () => {
-    const wordPackage: XElement = createWordDocumentPackage();
-    expect(wordPackage.descendants(W.t).nodes().any()).toBe(true);
-    expect(
-      wordPackage
-        .descendants(W.t)
-        .nodes()
-        .all((n) => n instanceof XText)
-    ).toBe(true);
+  it('removes all nodes', () => {
+    const wordPackage = createWordDocumentPackage();
+    const nodes = () => wordPackage.descendants(W.t).nodes();
+    expect(nodes().any()).toBe(true);
 
-    wordPackage.descendants(W.t).nodes().remove();
+    nodes().remove();
 
-    expect(wordPackage.descendants(W.t).nodes().any()).toBe(false);
+    expect(nodes().any()).toBe(false);
   });
 });
 
-describe('where(predicate: PredicateWithIndex<XNode>): ILinqIterableOfXNode', () => {
-  const wordPackage: XElement = createWordDocumentPackage();
+describe('where(predicate: PredicateWithIndex<XNode>): LinqIterableOfXNode', () => {
+  const predicate: PredicateWithIndex<XNode> = (n: XNode) => n instanceof XText;
 
-  it('should filter nodes as specified', () => {
-    const nodes = wordPackage.descendants(W.t).nodes();
-    const filteredNodes = nodes.where((n) => n.toString().startsWith('Head'));
-    expect(filteredNodes.count()).toBe(1);
+  it('returns the result of the wrapped function', () => {
+    const expectedSequence = where<XNode>(predicate)(getLinqIterableOfXNode());
+    const sequence = getLinqIterableOfXNode().where(predicate);
+    expect([...sequence]).toEqual([...expectedSequence]);
+  });
+});
+
+describe('function linqNodes(source: Iterable<XNode>): LinqIterableOfXNode', () => {
+  it('returns a new LinqIterableOfXNode if the source is not an instance of LinqIterableOfXNode', () => {
+    const source = [new XElement(W.p), new XElement(W.r), new XElement(W.t)];
+
+    const iterable = linqNodes(source);
+
+    expect(iterable).toBeInstanceOf(LinqIterableOfXNode);
+    expect(iterable.toArray()).toEqual(source);
+  });
+
+  it('returns the source, if it is already a LinqIterableOfXNode', () => {
+    const source = new LinqIterableOfXNode([
+      new XElement(W.p),
+      new XElement(W.r),
+      new XElement(W.t),
+    ]);
+    const iterable = linqNodes(source);
+    expect(iterable).toBe(source);
   });
 });
