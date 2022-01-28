@@ -4,11 +4,13 @@
  */
 
 // Note: The order of the export statements seems to be important!
+export * from '@tsdotnet/exceptions';
+
 export * from './DomFactory';
 export * from './DomParser';
 export * from './DomReader';
-export * from './Errors';
 export * from './Inserter';
+
 export * from './LinqIterable';
 export * from './LinqIterableOfXAttribute';
 export * from './LinqIterableOfXElement';

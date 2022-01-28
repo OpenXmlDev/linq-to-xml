@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { ArgumentError, XNamespace } from './internal';
+import { ArgumentException, XNamespace } from './internal';
 
 /**
  * Represents XML names.
@@ -65,7 +65,7 @@ export class XName {
       const expandedName = expandedOrLocalName;
 
       if (expandedName === '') {
-        throw new ArgumentError('Expanded name is empty.', 'expandedName');
+        throw new ArgumentException('expandedName', 'Expanded name is empty.');
       }
 
       if (expandedName[0] !== '{') {
@@ -77,12 +77,15 @@ export class XName {
 
       if (lastIndex <= 1) {
         // Expanded name does not contain closing braces or starts with "{}".
-        throw new ArgumentError('Namespace name is malformed.', 'expandedName');
+        throw new ArgumentException(
+          'expandedName',
+          'Namespace name is malformed.'
+        );
       }
 
       if (lastIndex === expandedName.length - 1) {
         // Expanded name is "{namespaceName}".
-        throw new ArgumentError('Local name is empty.', 'expandedName');
+        throw new ArgumentException('expandedName', 'Local name is empty.');
       }
 
       namespaceName = expandedName.substring(1, lastIndex);

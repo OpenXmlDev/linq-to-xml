@@ -25,7 +25,9 @@
       "outputs": ["coverage/packages/linq-to-xml"],
       "options": {
         "jestConfig": "packages/linq-to-xml/jest.config.js",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "codeCoverage": true,
+        "coverageReporters": ["json", "text", "lcov", "clover"]
       }
     }
   },

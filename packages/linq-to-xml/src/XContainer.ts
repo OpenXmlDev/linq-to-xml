@@ -4,7 +4,7 @@
  */
 
 import {
-  InvalidOperationError,
+  InvalidOperationException,
   LinqIterableOfXElement,
   LinqIterableOfXNode,
   StringBuilder,
@@ -264,7 +264,7 @@ export abstract class XContainer extends XNode {
   /** @internal */
   removeNode(node: XNode): void {
     if (node._parent !== this) {
-      throw new InvalidOperationError(
+      throw new InvalidOperationException(
         'This operation was corrupted by external code.'
       );
     }

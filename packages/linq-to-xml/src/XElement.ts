@@ -4,13 +4,13 @@
  */
 
 import {
-  ArgumentError,
+  ArgumentException,
   DomFactory,
   DomParser,
   DomReader,
   getAncestors,
   getDescendants,
-  InvalidOperationError,
+  InvalidOperationException,
   LinqIterableOfXAttribute,
   LinqIterableOfXElement,
   StringBuilder,
@@ -306,7 +306,7 @@ export class XElement extends XContainer {
   /** @internal */
   removeAttribute(attr: XAttribute): void {
     if (attr._parent !== this) {
-      throw new InvalidOperationError(
+      throw new InvalidOperationException(
         'This operation was corrupted by external code.'
       );
     }
@@ -367,7 +367,7 @@ export class XElement extends XContainer {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   override validateNode(node: XNode, _previous: XNode | null): void {
     if (node instanceof XDocument) {
-      throw new ArgumentError('Invalid node type: XDocument', 'node');
+      throw new ArgumentException('node', 'Invalid node type: XDocument');
     }
   }
 }

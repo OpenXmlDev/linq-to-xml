@@ -4,7 +4,7 @@
  */
 
 import {
-  ArgumentError,
+  ArgumentException,
   XAttribute,
   XDeclaration,
   XDocument,
@@ -128,7 +128,7 @@ export class DomFactory {
         xnode.data
       );
     } else {
-      throw new ArgumentError('Unexpected kind of XNode', 'xnode');
+      throw new ArgumentException('xnode', 'Unexpected kind of XNode');
     }
   }
 

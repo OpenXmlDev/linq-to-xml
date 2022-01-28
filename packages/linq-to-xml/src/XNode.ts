@@ -5,7 +5,7 @@
 
 import {
   Inserter,
-  InvalidOperationError,
+  InvalidOperationException,
   LinqIterableOfXElement,
   StringBuilder,
   XContainer,
@@ -105,7 +105,7 @@ export abstract class XNode extends XObject {
     parent.removeNode(this);
 
     if (previousNode !== null && previousNode._parent !== parent) {
-      throw new InvalidOperationError(
+      throw new InvalidOperationException(
         'This operation was corrupted by external code.'
       );
     }
@@ -120,7 +120,7 @@ export abstract class XNode extends XObject {
 
   private getParentXContainerOrThrow(): XContainer {
     if (this._parent === null) {
-      throw new InvalidOperationError('The parent is missing.');
+      throw new InvalidOperationException('The parent is missing.');
     }
 
     return this._parent;

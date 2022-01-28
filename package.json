@@ -1,13 +1,16 @@
 {
   "name": "openxmldev",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "build": "nx run linq-to-xml:build",
-    "test": "nx run linq-to-xml:test"
+    "test": "nx run linq-to-xml:test",
+    "document": "typedoc --out ./docs/packages/linq-to-xml --tsconfig ./packages/linq-to-xml/tsconfig.lib.json ./packages/linq-to-xml/src"
   },
   "private": true,
   "dependencies": {
+    "@tsdotnet/common-interfaces": "^1.0.4",
+    "@tsdotnet/exceptions": "^1.0.17",
     "@tsdotnet/linq": "^1.0.15",
     "tslib": "^2.0.0"
   },
@@ -28,6 +31,7 @@
     "jest": "27.2.3",
     "prettier": "^2.3.1",
     "ts-jest": "27.0.5",
+    "typedoc": "^0.22.11",
     "typescript": "~4.4.3"
   }
 }

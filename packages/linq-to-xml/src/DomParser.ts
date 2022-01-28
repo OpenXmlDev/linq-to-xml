@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { ArgumentError } from './internal';
+import { ArgumentException } from './internal';
 
 /**
  * Utility class for parsing strings into DOM `XMLDocument` or `Element` instances.
@@ -27,7 +27,7 @@ export class DomParser {
       // At this point, the XML is malformed or the document does not contain a
       // root Element.
       const message = `Error parsing XML: ${parsererror.textContent}`;
-      throw new ArgumentError(message, 'text');
+      throw new ArgumentException('text', message);
     }
 
     // At this point, the document will be well-formed and contain a root Element.

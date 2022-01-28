@@ -4,7 +4,7 @@
  */
 
 import {
-  ArgumentError,
+  ArgumentException,
   XAttribute,
   XContainer,
   XNode,
@@ -69,7 +69,10 @@ export class Inserter {
         this.addContent(item);
       }
     } else if (content instanceof XAttribute) {
-      throw new ArgumentError('An attribute cannot be added to content.');
+      throw new ArgumentException(
+        'content',
+        'Attribute cannot be added to content.'
+      );
     } else {
       this.addString(XContainer.getStringValue(content));
     }

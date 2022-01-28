@@ -3,7 +3,6 @@
  * @license MIT
  */
 
-export { ArgumentError, InvalidOperationError } from './Errors';
 export { Stringifyable, StringifyableObject } from './Stringifyable';
 
 export { XAttribute } from './XAttribute';
@@ -19,7 +18,11 @@ export { XText } from './XText';
 
 export * from './transformations';
 
-export { LinqIterable, linqIterable } from './LinqIterable';
+export {
+  LinqIterable,
+  LinqIterableGrouping,
+  linqIterable,
+} from './LinqIterable';
 export {
   LinqIterableOfXAttribute,
   linqAttributes,

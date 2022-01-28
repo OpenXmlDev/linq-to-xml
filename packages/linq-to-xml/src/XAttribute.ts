@@ -4,7 +4,7 @@
  */
 
 import {
-  InvalidOperationError,
+  InvalidOperationException,
   Stringifyable,
   XObject,
   XContainer,
@@ -93,7 +93,7 @@ export class XAttribute extends XObject {
    */
   public remove(): void {
     if (this._parent === null) {
-      throw new InvalidOperationError('The parent is missing.');
+      throw new InvalidOperationException('The parent is missing.');
     }
 
     (this._parent as XElement).removeAttribute(this);
