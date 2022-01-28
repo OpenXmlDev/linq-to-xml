@@ -8,23 +8,13 @@ import {
   LinqIterableOfXElement,
   LinqIterableOfXNode,
   StringBuilder,
+  Stringifyable,
   XAttribute,
   XElement,
   XName,
   XNode,
   XText,
 } from './internal';
-
-export type StringifyableObject = {
-  toString: () => string;
-};
-
-export type Stringifyable =
-  | string
-  | number
-  | boolean
-  | Date
-  | StringifyableObject;
 
 /**
  * Represents a node that can contain other nodes.

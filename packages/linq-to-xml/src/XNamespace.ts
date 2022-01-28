@@ -5,6 +5,9 @@
 
 import { XName } from './internal';
 
+/**
+ * Represents XML namespaces.
+ */
 export class XNamespace {
   private static readonly xmlPrefixNamespaceName =
     'http://www.w3.org/XML/1998/namespace';
@@ -45,21 +48,21 @@ export class XNamespace {
   }
 
   /**
-   * Gets the namespace for the xml prefix.
+   * Gets the namespace for the `xml` prefix.
    */
   public static get xml() {
     return XNamespace._xml;
   }
 
   /**
-   * Gets the namespace for the xmlns prefix.
+   * Gets the namespace for the `xmlns` prefix.
    */
   public static get xmlns() {
     return XNamespace._xmlns;
   }
 
   /**
-   * Gets the XNamespace for the given namespace name.
+   * Gets the `XNamespace` for the given namespace name.
    *
    * Notes:
    * - The ability to provide a namespace prefix (e.g., 'w', 'w14') deviates from
@@ -71,7 +74,7 @@ export class XNamespace {
    *
    * @param namespaceName The namespace name, e.g., 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'.
    * @param prefix The (default) prefix, e.g., 'w'.
-   * @returns The XNamespace.
+   * @returns The `XNamespace`.
    */
   public static get(namespaceName: string, prefix?: string | null): XNamespace {
     let namespace = XNamespace.namespaces.get(namespaceName);
@@ -127,9 +130,9 @@ export class XNamespace {
   }
 
   /**
-   * Gets the string representation of this XNamespace.
+   * Gets the string representation of this `XNamespace`.
    *
-   * @returns The string representation of this XNamespace.
+   * @returns The string representation of this `XNamespace`.
    */
   public toString(): string {
     return this.namespaceName;

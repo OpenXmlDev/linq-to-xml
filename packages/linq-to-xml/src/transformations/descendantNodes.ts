@@ -5,12 +5,30 @@
 
 import { XContainer, XNode } from '../internal';
 
+/**
+ * For the elements contained in the source sequence, returns the concatenated
+ * sequences of descendant nodes of such elements in document order.
+ *
+ * @typeParam T The type of the elements of the source sequence.
+ * @param source The source sequence of elements.
+ * @returns The concatenated, flat sequence of descendant nodes in document order.
+ */
 export function descendantNodes<T extends XContainer>(
   source: Iterable<T>
 ): Iterable<XNode> {
   return getManyDescendantNodes(source, false);
 }
 
+/**
+ * For the elements contained in the source sequence, returns the concatenated
+ * sequences of descendant nodes of such elements, including the elements
+ * themselves, in document order.
+ *
+ * @typeParam T The type of the elements of the source sequence.
+ * @param source The source sequence of elements.
+ * @returns The concatenated, flat sequence of descendant nodes, including
+ * the source elements, in document order
+ */
 export function descendantNodesAndSelf<T extends XContainer>(
   source: Iterable<T>
 ): Iterable<XNode> {

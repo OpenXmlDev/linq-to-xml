@@ -40,15 +40,22 @@ import {
 
 /**
  * A LINQ to XML iterable.
+ *
+ * @typeParam T The type of the elements of the sequence.
  */
 export class LinqIterable<T> implements Iterable<T> {
   /**
-   * Initializes a new instance.
+   * Initializes a new instance with the given sequence.
    *
    * @param source The source sequence.
    */
   constructor(protected readonly source: Iterable<T>) {}
 
+  /**
+   * Returns the sequence of elements represented by this `LinqIterable<T>`.
+   *
+   * @returns The sequence of elements represented by this `LinqIterable<T>`.
+   */
   [Symbol.iterator](): Iterator<T> {
     return this.source[Symbol.iterator]();
   }
@@ -57,7 +64,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * Filters this sequence, using zero or more filters.
    *
    * @param filters The filters to use.
-   * @return A filtered sequence.
+   * @returns A filtered sequence.
    */
   filter(...filters: IterableFilter<T>[]): LinqIterable<T> {
     return filters.length ? this.filters(filters) : this;
@@ -67,7 +74,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * Filters this sequence, using the given filters.
    *
    * @param filters The filters to use.
-   * @return A filtered sequence.
+   * @returns A filtered sequence.
    */
   filters(filters: Iterable<IterableFilter<T>>): LinqIterable<T> {
     return new LinqIterable<T>(applyFilters(this.source, filters));
@@ -76,8 +83,9 @@ export class LinqIterable<T> implements Iterable<T> {
   /**
    * Transforms this sequence, using the given transformation.
    *
+   * @transform TResult The type of the elements of the transformed sequence.
    * @param transformation The transformation to use.
-   * @return A transformed sequence.
+   * @returns A transformed sequence.
    */
   transform<TResult>(
     transformation: IterableValueTransform<T, TResult>
@@ -88,8 +96,9 @@ export class LinqIterable<T> implements Iterable<T> {
   /**
    * Applies the given resolution to this sequence.
    *
+   * @typeParam TResult The type of the result of the resolution.
    * @param resolution The resolution to use.
-   * @return The resolved value.
+   * @returns The resolved value.
    */
   resolve<TResult>(resolution: IterableTransform<T, TResult>): TResult {
     return resolution(this.source);
@@ -125,7 +134,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The number of elements in the sequence.
+   * @returns The number of elements in the sequence.
    */
   count(predicate?: PredicateWithIndex<T>): number {
     return predicate
@@ -138,7 +147,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The first element.
+   * @returns The first element.
    * @throws If the (optionally filtered) sequence is empty.
    */
   first(predicate?: PredicateWithIndex<T>): T {
@@ -150,7 +159,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The first element or `null`.
+   * @returns The first element or `null`.
    */
   firstOrDefault(predicate?: PredicateWithIndex<T>): T | null {
     return firstOrDefault<T>()(this.filterSequence(predicate)) ?? null;
@@ -161,7 +170,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The last element.
+   * @returns The last element.
    * @throws If the (optionally filtered) sequence is empty.
    */
   last(predicate?: PredicateWithIndex<T>): T {
@@ -173,7 +182,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The last element or `null`.
+   * @returns The last element or `null`.
    */
   lastOrDefault(predicate?: PredicateWithIndex<T>): T | null {
     return lastOrDefault<T>()(this.filterSequence(predicate)) ?? null;
@@ -184,7 +193,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The single element.
+   * @returns The single element.
    * @throws If the (optionally filtered) sequence does not contain exactly one element.
    */
   single(predicate?: PredicateWithIndex<T>): T {
@@ -196,7 +205,7 @@ export class LinqIterable<T> implements Iterable<T> {
    * If a predicate is provided, filters the sequence based on the predicate.
    *
    * @param predicate The optional predicate.
-   * @return The single element or `null`.
+   * @returns The single element or `null`.
    * @throws If the (optionally filtered) sequence contains more than one element.
    */
   singleOrDefault(predicate?: PredicateWithIndex<T>): T | null {
@@ -221,8 +230,9 @@ export class LinqIterable<T> implements Iterable<T> {
   /**
    * Groups elements by selected key.
    *
+   * @typeParam TKey The type of the grouping keys.
    * @param keySelector Selects the grouping keys.
-   * @return The grouped elements.
+   * @returns The grouped elements.
    */
   groupBy<TKey>(
     keySelector: SelectorWithIndex<T, TKey>
@@ -237,8 +247,9 @@ export class LinqIterable<T> implements Iterable<T> {
   /**
    * Projects, or maps, each element of a sequence into a new form.
    *
+   * @typeParam TResult The type of the elements of the projected, or mapped, sequence.
    * @param selector The selector used to project, or map, the elements.
-   * @return The projected, or mapped, sequence.
+   * @returns The projected, or mapped, sequence.
    */
   select<TResult>(
     selector: SelectorWithIndex<T, TResult>
@@ -249,8 +260,9 @@ export class LinqIterable<T> implements Iterable<T> {
   /**
    * Merges the selected sequences into one flat sequence.
    *
+   * @typeParam TResult The type of the elements of the flat sequence.
    * @param selector The selector.
-   * @return The merged, flat sequence.
+   * @returns The merged, flat sequence.
    */
   selectMany<TResult>(
     selector: SelectorWithIndex<T, Iterable<TResult>>
@@ -261,6 +273,9 @@ export class LinqIterable<T> implements Iterable<T> {
 
 /**
  * Represents a grouping of sequence elements.
+ *
+ * @typeParam TKey The type of the grouping keys.
+ * @typeParam T The type of the grouped elements.
  */
 export class LinqIterableGrouping<TKey, T>
   extends LinqIterable<T>
@@ -277,6 +292,7 @@ export class LinqIterableGrouping<TKey, T>
 /**
  * Converts any `Iterable<T>` into a LINQ-style iterable.
  *
+ * @typeParam T The type of the elements of the `LinqIterable<T>`.
  * @param source The source `Iterable<T>`.
  * @returns A `LinqIterable<T>` instance.
  */

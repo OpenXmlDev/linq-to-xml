@@ -58,7 +58,7 @@ export class LinqIterableOfXElement extends LinqIterable<XElement> {
    * Returns a filtered sequence.
    *
    * @param filters The filters to use.
-   * @return A filtered sequence.
+   * @returns A filtered sequence.
    */
   override filter(
     ...filters: IterableFilter<XElement>[]
@@ -70,7 +70,7 @@ export class LinqIterableOfXElement extends LinqIterable<XElement> {
    * Returns a filtered sequence.
    *
    * @param filters The filters to use.
-   * @return A filtered sequence.
+   * @returns A filtered sequence.
    */
   override filters(
     filters: Iterable<IterableFilter<XElement>>
@@ -82,44 +82,123 @@ export class LinqIterableOfXElement extends LinqIterable<XElement> {
   // LINQ to XML Transformations
   //
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of ancestors of such elements in reverse document order.
+   * If a name is provided, the resulting sequence contains only those ancestors
+   * having a matching name.
+   *
+   * @param name The optional name used to filter the sequence of ancestors.
+   * @returns A flat sequence of ancestors in reverse document order.
+   */
   ancestors(name?: XName | null): LinqIterableOfXElement {
     return new LinqIterableOfXElement(ancestors(name)(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of ancestors of such elements, including the elements themselves,
+   * in reverse document order.
+   * If a name is provided, the resulting sequence contains only those ancestors
+   * having a matching name.
+   *
+   * @param name The optional name used to filter the sequence of ancestors.
+   * @returns A flat sequence of ancestors, including the elements, in reverse
+   * document order.
+   */
   ancestorsAndSelf(name?: XName | null): LinqIterableOfXElement {
     return new LinqIterableOfXElement(ancestorsAndSelf(name)(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated sequences
+   * of attributes of such elements. If a name is provided, the resulting sequence
+   * contains only those attributes having a matching name.
+   *
+   * @param name The optional name used to filter the sequence of attributes.
+   * @returns A function that will return a flat sequence of attributes.
+   */
   attributes(name?: XName | null): LinqIterableOfXAttribute {
     return new LinqIterableOfXAttribute(attributes(name)(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of descendant nodes of such elements in document order.
+   *
+   * @returns The concatenated, flat sequence of descendant nodes in document
+   * order.
+   */
   descendantNodes(): LinqIterableOfXNode {
     return new LinqIterableOfXNode(descendantNodes(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of descendant nodes of such elements, including the elements
+   * themselves, in document order.
+   *
+   * @returns The concatenated, flat sequence of descendant nodes, including
+   * the source elements, in document order.
+   */
   descendantNodesAndSelf(): LinqIterableOfXNode {
     return new LinqIterableOfXNode(descendantNodesAndSelf(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of descendants of such elements in document order.
+   * If a name is provided, the resulting sequence contains only those
+   * descendants having a matching name.
+   *
+   * @returns The concatenated, flat sequence of descendant nodes in document
+   * order.
+   */
   descendants(name?: XName | null): LinqIterableOfXElement {
     return new LinqIterableOfXElement(descendants(name)(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of descendants of such elements, including the elements
+   * themselves, in document order.
+   * If a name is provided, the resulting sequence contains only those
+   * elements and descendants having a matching name.
+   *
+   * @returns The concatenated, flat sequence of descendants, including
+   * the source elements, in document order.
+   */
   descendantsAndSelf(name?: XName | null): LinqIterableOfXElement {
     return new LinqIterableOfXElement(descendantsAndSelf(name)(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of child elements of such elements in document order.
+   *
+   * If a name is provided, the resulting sequence contains only those
+   * child elements having a matching name.
+   *
+   * @returns The concatenated, flat sequence of child elements in document
+   * order.
+   */
   elements(name?: XName | null): LinqIterableOfXElement {
     return new LinqIterableOfXElement(elements(name)(this.source));
   }
 
+  /**
+   * For the elements contained in this sequence, returns the concatenated
+   * sequences of child nodes of such elements in document order.
+   *
+   * @returns The concatenated, flat sequence of child nodes in document
+   * order.
+   */
   nodes(): LinqIterableOfXNode {
     return new LinqIterableOfXNode(nodes(this.source));
   }
 
   /**
-   * Removes each `XElement` represented in this sequence from its parent
+   * Removes each element contained in this sequence from its parent
    * `XContainer`.
    */
   remove(): void {

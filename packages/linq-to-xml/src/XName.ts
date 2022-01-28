@@ -5,7 +5,17 @@
 
 import { ArgumentError, XNamespace } from './internal';
 
+/**
+ * Represents XML names.
+ */
 export class XName {
+  /**
+   * Initializes a new `XName` with the given namespace, local name, and prefix.
+   *
+   * @param namespace The `XNamespace`.
+   * @param localName The local name.
+   * @param prefix The prefix.
+   */
   constructor(
     public readonly namespace: XNamespace,
     public readonly localName: string,
@@ -83,7 +93,7 @@ export class XName {
   }
 
   /**
-   * Gets the string representation of this {XName}, i.e., either:
+   * Gets the string representation of this `XName`, i.e., either:
    * - `localName`, if the namespace name is the empty string, or
    * - {`namespaceName`}`localName`, if the namespace name is not empty.
    *

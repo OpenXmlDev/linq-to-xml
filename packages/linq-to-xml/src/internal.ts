@@ -14,6 +14,7 @@ export * from './LinqIterableOfXAttribute';
 export * from './LinqIterableOfXElement';
 export * from './LinqIterableOfXNode';
 export * from './StringBuilder';
+export * from './Stringifyable';
 export * from './XDeclaration';
 export * from './XNamespace';
 export * from './XName';

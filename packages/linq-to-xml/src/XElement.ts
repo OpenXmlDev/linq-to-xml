@@ -42,7 +42,7 @@ export class XElement extends XContainer {
   _lastAttr: XAttribute | null;
 
   /**
-   * Initializes a new instance of the `XElement` class with the specified name.
+   * Initializes a new `XElement` instance with the specified name.
    *
    * @param name The name of the element.
    * @param contentArray Zero or more content items.
@@ -159,7 +159,7 @@ export class XElement extends XContainer {
 
   /**
    * Returns this `XElement` and all of it's ancestors up to the root node.
-   * Optionally an `XName` can be passed in to target a specific ancestor(s).
+   * Optionally, an `XName` can be passed in to target specific ancestors.
    *
    * @param name The optional `XName` of the target ancestor.
    * @returns An iterable containing this `XElement` and its ancestors (with
@@ -199,7 +199,8 @@ export class XElement extends XContainer {
   }
 
   /**
-   * Returns the `XAttribute` associated with this `XElement` that has this `XName`.
+   * Returns the `XAttribute` associated with this `XElement` that has the
+   * given name.
    *
    * @param name The `XName` of the `XAttribute` to get.
    * @returns The `XAttribute` having the given `XName` or `null`.
@@ -265,7 +266,7 @@ export class XElement extends XContainer {
   }
 
   /**
-   * Loads an `XElement` from the given DOM `Element`.
+   * Creates a new `XElement` instance from the given DOM `Element`.
    *
    * @param element The DOM `Element`.
    * @returns A new `XElement` instance.
@@ -275,7 +276,7 @@ export class XElement extends XContainer {
   }
 
   /**
-   * Creates a mew `XElement` instance from the given XML string.
+   * Creates a new `XElement` instance from the given XML string.
    *
    * @param text The XML string.
    * @returns A new `XElement` instance.
@@ -288,7 +289,7 @@ export class XElement extends XContainer {
   }
 
   /**
-   * Removes content and attributes from this `XElement`.
+   * Removes all nodes and attributes from this `XElement`.
    */
   public removeAll(): void {
     this.removeAttributes();
@@ -296,7 +297,7 @@ export class XElement extends XContainer {
   }
 
   /**
-   * Removes that attributes of this `XElement`.
+   * Removes all attributes from this `XElement`.
    */
   public removeAttributes(): void {
     this.removeAttributesSkipNotify();
