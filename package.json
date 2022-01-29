@@ -5,7 +5,7 @@
   "scripts": {
     "build": "nx run linq-to-xml:build",
     "test": "nx run linq-to-xml:test",
-    "document": "typedoc --out ./docs/packages/linq-to-xml --tsconfig ./packages/linq-to-xml/tsconfig.lib.json ./packages/linq-to-xml/src"
+    "document": "typedoc --out ./docs --tsconfig ./packages/linq-to-xml/tsconfig.lib.json ./packages/linq-to-xml/src"
   },
   "private": true,
   "dependencies": {

@@ -1,13 +1,28 @@
-# Open XML PowerTools for TypeScript
+# LINQ to XML for TypeScript
 
 [![codecov](https://codecov.io/gh/OpenXmlDev/ts-oxpt/branch/main/graph/badge.svg?token=43I75GLRHM)](https://codecov.io/gh/OpenXmlDev/ts-oxpt)
 
-This repository contains NPM packages written in TypeScript that provide functionality
-similar to the Open XML PowerTools written in C#.
+In .NET, [LINQ to XML](https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-overview) provides
+an in-memory XML programming interface that leverages the .NET Language-Integrated Query (LINQ) Framework.
+This package provides a corresponding implementation of LINQ to XML in TypeScript that leverages the
+[@tsdotnet/linq](https://github.com/tsdotnet/linq) package, which provides features similar to LINQ.
 
-An important use case for the Open XML PowerTools for TypeScript are Office Add-ins
-(see https://docs.microsoft.com/en-us/office/dev/add-ins/) written in TypeScript.
+## Status
 
-For starters, the first package, `@openxmldev/linq-to-xml`, provides key features of
-Linq to XML for TypeScript. It is currently under development and, therefore, not yet
-published as an NPM package.
+This package is currently under development and will soon be published as an NPM package.
+
+## Installing
+
+Once the NPM package is published, run `npm install @openxmldev/linq-to-xml` to install the library.
+
+## Documentation
+
+- [API documentation](https://openxmldev.github.io/linq-to-xml)
+
+## Building
+
+Run `nx build linq-to-xml` to build the library.
+
+## Running Unit Tests
+
+Run `nx test linq-to-xml` to execute the unit tests via [Jest](https://jestjs.io).
