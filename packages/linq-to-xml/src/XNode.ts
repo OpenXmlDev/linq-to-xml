@@ -6,7 +6,7 @@
 import {
   Inserter,
   InvalidOperationException,
-  LinqIterableOfXElement,
+  LinqElements,
   StringBuilder,
   XContainer,
   XElement,
@@ -65,10 +65,10 @@ export abstract class XNode extends XObject {
    * @param name The optional name of the ancestor elements to find.
    * @returns The ancestor elements of this node.
    */
-  public ancestors(name?: XName | null): LinqIterableOfXElement {
+  public ancestors(name?: XName | null): LinqElements {
     return name === null
-      ? new LinqIterableOfXElement(XElement.emptySequence)
-      : new LinqIterableOfXElement(getAncestors(this, name ?? null, false));
+      ? new LinqElements(XElement.emptySequence)
+      : new LinqElements(getAncestors(this, name ?? null, false));
   }
 
   /** @internal */

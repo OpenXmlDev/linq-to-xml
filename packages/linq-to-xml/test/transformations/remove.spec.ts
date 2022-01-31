@@ -3,8 +3,8 @@
  * @license MIT
  */
 
+import { XAttribute, XElement } from '../../src';
 import { remove } from '../../src/transformations';
-import { XAttribute, XElement } from '../../src/internal';
 
 import { W, W14 } from '../TestHelpers';
 

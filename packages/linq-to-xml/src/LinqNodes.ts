@@ -5,15 +5,12 @@
 
 import { XName, XNode } from './internal';
 import { ancestors, remove } from './transformations';
-import { LinqIterableBase, LinqIterableOfXElement } from './internal';
+import { LinqIterableBase, LinqElements } from './internal';
 
 /**
  * Provides additional methods specific to a `LinqIterable<XNode>`.
  */
-export class LinqIterableOfXNode extends LinqIterableBase<
-  XNode,
-  LinqIterableOfXNode
-> {
+export class LinqNodes extends LinqIterableBase<XNode, LinqNodes> {
   /**
    * Initializes a new instance with the given source sequence.
    *
@@ -23,8 +20,8 @@ export class LinqIterableOfXNode extends LinqIterableBase<
     super(source, linqNodes);
   }
 
-  ancestors(name?: XName | null): LinqIterableOfXElement {
-    return new LinqIterableOfXElement(ancestors(name)(this.source));
+  ancestors(name?: XName | null): LinqElements {
+    return new LinqElements(ancestors(name)(this.source));
   }
 
   /**
@@ -40,10 +37,8 @@ export class LinqIterableOfXNode extends LinqIterableBase<
  * Converts an `Iterable<XNode>` into a LINQ-style iterable.
  *
  * @param source The source `Iterable<XNode>`.
- * @returns A `LinqIterableOfXNode` instance.
+ * @returns A `LinqNodes` instance.
  */
-export function linqNodes(source: Iterable<XNode>): LinqIterableOfXNode {
-  return source instanceof LinqIterableOfXNode
-    ? source
-    : new LinqIterableOfXNode(source);
+export function linqNodes(source: Iterable<XNode>): LinqNodes {
+  return source instanceof LinqNodes ? source : new LinqNodes(source);
 }

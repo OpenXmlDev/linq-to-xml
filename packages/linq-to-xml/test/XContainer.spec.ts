@@ -3,8 +3,6 @@
  * @license MIT
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import {
   XAttribute,
   XContainer,
@@ -12,7 +10,8 @@ import {
   XElement,
   XNode,
   XText,
-} from '../src/internal';
+} from '../src';
+
 import { W } from './TestHelpers';
 
 describe('get firstNode(): XNode | null', () => {

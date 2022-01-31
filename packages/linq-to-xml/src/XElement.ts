@@ -11,8 +11,8 @@ import {
   getAncestors,
   getDescendants,
   InvalidOperationException,
-  LinqIterableOfXAttribute,
-  LinqIterableOfXElement,
+  LinqAttributes,
+  LinqElements,
   StringBuilder,
   Stringifyable,
   XAttribute,
@@ -165,10 +165,10 @@ export class XElement extends XContainer {
    * @returns An iterable containing this `XElement` and its ancestors (with
    *          a matching `XName` if `name` was provided).
    */
-  public ancestorsAndSelf(name?: XName | null): LinqIterableOfXElement {
+  public ancestorsAndSelf(name?: XName | null): LinqElements {
     return name === null
-      ? new LinqIterableOfXElement(XElement.emptySequence)
-      : new LinqIterableOfXElement(getAncestors(this, name ?? null, true));
+      ? new LinqElements(XElement.emptySequence)
+      : new LinqElements(getAncestors(this, name ?? null, true));
   }
 
   /** @internal */
@@ -228,10 +228,10 @@ export class XElement extends XContainer {
    * @returns All attributes associated with this element or the attribute
    *          having the given name.
    */
-  public attributes(name?: XName | null): LinqIterableOfXAttribute {
+  public attributes(name?: XName | null): LinqAttributes {
     return name === null
-      ? new LinqIterableOfXAttribute(XAttribute.emptySequence)
-      : new LinqIterableOfXAttribute(getAttributes(this, name ?? null));
+      ? new LinqAttributes(XAttribute.emptySequence)
+      : new LinqAttributes(getAttributes(this, name ?? null));
   }
 
   /** @internal */
@@ -259,10 +259,10 @@ export class XElement extends XContainer {
    * @param name The optional name of the descendants to return.
    * @returns This `XElement` and the descendant `XElement`s of this `XElement`.
    */
-  public descendantsAndSelf(name?: XName | null): LinqIterableOfXElement {
+  public descendantsAndSelf(name?: XName | null): LinqElements {
     return name === null
-      ? new LinqIterableOfXElement(XElement.emptySequence)
-      : new LinqIterableOfXElement(getDescendants(this, name ?? null, true));
+      ? new LinqElements(XElement.emptySequence)
+      : new LinqElements(getDescendants(this, name ?? null, true));
   }
 
   /**

@@ -3,7 +3,16 @@
  * @license MIT
  */
 
-import { XDocument, XElement, XText } from '../src/internal';
+import {
+  XAttribute,
+  XDeclaration,
+  XDocument,
+  XElement,
+  XObject,
+  XProcessingInstruction,
+  XText,
+} from '../src';
+
 import { W } from './TestHelpers';
 
 const node = new XText('Text');
@@ -13,6 +22,22 @@ const p = new XElement(W.p, r);
 const body = new XElement(W.body, p);
 const document = new XElement(W.document, body);
 const xDocument = new XDocument(document);
+
+describe('The XObject class', () => {
+  it('is the (root) base class of most other classes', () => {
+    expect(new XAttribute(W.val, 'value')).toBeInstanceOf(XObject);
+    expect(new XElement(W.p)).toBeInstanceOf(XObject);
+    expect(new XDocument()).toBeInstanceOf(XObject);
+    expect(new XProcessingInstruction('target', 'key="value"')).toBeInstanceOf(
+      XObject
+    );
+    expect(new XText('Text')).toBeInstanceOf(XObject);
+  });
+
+  it('is not the base class of XDeclaration', () => {
+    expect(new XDeclaration()).not.toBeInstanceOf(XObject);
+  });
+});
 
 describe('get document(): XDocument | null', () => {
   it('returns the XDocument if the object is contained in an XDocument', () => {

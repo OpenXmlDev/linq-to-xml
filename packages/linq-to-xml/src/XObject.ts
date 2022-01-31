@@ -13,7 +13,7 @@ export abstract class XObject {
   _parent: XContainer | null = null;
 
   /**
-   * Gets the {XDocument} object for this {XObject}.
+   * Gets the `XDocument` object for this `XObject`.
    */
   public get document(): XDocument | null {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -24,7 +24,7 @@ export abstract class XObject {
   }
 
   /**
-   * Gets the parent {XElement} of this {XObject}.
+   * Gets the parent `XElement` of this `XObject`.
    */
   public get parent(): XElement | null {
     return this._parent instanceof XElement ? (this._parent as XElement) : null;

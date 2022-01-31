@@ -3,7 +3,9 @@
  * @license MIT
  */
 
-import { DomFactory, XDocument, XElement, XNode } from '../src/internal';
+import { XDocument, XElement, XNode } from '../src';
+
+import { DomFactory } from '../src/internal';
 import { PKG_PACKAGE_TEXT } from './TestHelpers';
 
 class UnexpectedXNode extends XNode {

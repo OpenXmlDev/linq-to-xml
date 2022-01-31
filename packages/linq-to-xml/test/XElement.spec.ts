@@ -12,7 +12,7 @@ import {
   XNamespace,
   XProcessingInstruction,
   XText,
-} from '../src/internal';
+} from '../src';
 
 import {
   createWordDocumentPackage,

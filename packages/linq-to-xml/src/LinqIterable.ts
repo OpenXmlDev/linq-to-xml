@@ -48,7 +48,15 @@ import {
 } from '@tsdotnet/linq/dist/transforms/groupBy';
 
 /**
- * Base class for LINQ iterables.
+ * Abstract base class for LINQ iterables.
+ *
+ * @remarks
+ * This abstract class serves as the generic base class for all LINQ iterables
+ * provided by this library. The {@linkcode LinqIterable<T>} class just derives
+ * from this class and adds no further features. Other classes such as
+ * {@linkcode LinqElements} inherit from this class and provide further methods.
+ * The generics-based pattern used in this case means that all filter methods,
+ * returning a `TLinq`, for example, will return instances of the subclasses.
  *
  * @typeParam T The type of the elements of the sequence.
  * @typeParam TLinq The type of the LINQ iterable returned by filters.

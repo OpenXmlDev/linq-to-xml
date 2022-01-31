@@ -3,7 +3,8 @@
  * @license MIT
  */
 
-import { StringBuilder, XProcessingInstruction } from '../src/internal';
+import { XProcessingInstruction } from '../src';
+import { StringBuilder } from '../src/internal';
 
 const pi = new XProcessingInstruction(
   'mso-application',

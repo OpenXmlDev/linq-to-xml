@@ -3,9 +3,6 @@
  * @license MIT
  */
 
-import { IterableFilter } from '@tsdotnet/linq/dist/IterableTransform';
-import applyFilters from '@tsdotnet/linq/dist/applyFilters';
-
 import {
   ancestors,
   ancestorsAndSelf,
@@ -23,51 +20,34 @@ import {
   linqAttributes,
   linqNodes,
   LinqIterableBase,
-  LinqIterableOfXAttribute,
-  LinqIterableOfXNode,
+  LinqAttributes,
+  LinqNodes,
   XElement,
   XName,
 } from './internal';
 
 /**
- * Provides additional methods specific to a `LinqIterable<XElement>` such as
- * `ancestors`, `descendants`, `elements`, and `attributes`.
+ * Abstract base class that provides additional methods specific to a `LinqIterable<XElement>`
+ * such as `ancestors`, `attributes`, `descendants`, `elements`, and `remove`.
+ *
+ * @remarks
+ * Implementations desiring to extend the `LinqIterable<XElement>`-related functionality
+ * should inherit from this class rather than `LinqElements`. However, implementations
+ * should follow the same pattern as used for `LinqElements` for concrete subclasses.
  */
-export class LinqIterableOfXElement extends LinqIterableBase<
-  XElement,
-  LinqIterableOfXElement
-> {
+export abstract class LinqElementsBase<
+  TLinq extends LinqElementsBase<TLinq>
+> extends LinqIterableBase<XElement, TLinq> {
   /**
    * Initializes a new instance with the given source sequence.
    *
    * @param source The source sequence.
    */
-  constructor(source: Iterable<XElement>) {
-    super(source, linqElements);
-  }
-
-  /**
-   * Returns a filtered sequence.
-   *
-   * @param filters The filters to use.
-   * @returns A filtered sequence.
-   */
-  override filter(
-    ...filters: IterableFilter<XElement>[]
-  ): LinqIterableOfXElement {
-    return filters.length ? this.applyFilters(filters) : this;
-  }
-
-  /**
-   * Returns a filtered sequence.
-   *
-   * @param filters The filters to use.
-   * @returns A filtered sequence.
-   */
-  override applyFilters(
-    filters: Iterable<IterableFilter<XElement>>
-  ): LinqIterableOfXElement {
-    return linqElements(applyFilters(this.source, filters));
+  constructor(
+    source: Iterable<XElement>,
+    create: (source: Iterable<XElement>) => TLinq
+  ) {
+    super(source, create);
   }
 
   //
@@ -83,8 +63,8 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @param name The optional name used to filter the sequence of ancestors.
    * @returns A flat sequence of ancestors in reverse document order.
    */
-  ancestors(name?: XName | null): LinqIterableOfXElement {
-    return linqElements(ancestors(name)(this.source));
+  ancestors(name?: XName | null): TLinq {
+    return this.create(ancestors(name)(this.source));
   }
 
   /**
@@ -98,8 +78,8 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns A flat sequence of ancestors, including the elements, in reverse
    * document order.
    */
-  ancestorsAndSelf(name?: XName | null): LinqIterableOfXElement {
-    return linqElements(ancestorsAndSelf(name)(this.source));
+  ancestorsAndSelf(name?: XName | null): TLinq {
+    return this.create(ancestorsAndSelf(name)(this.source));
   }
 
   /**
@@ -110,7 +90,7 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @param name The optional name used to filter the sequence of attributes.
    * @returns A function that will return a flat sequence of attributes.
    */
-  attributes(name?: XName | null): LinqIterableOfXAttribute {
+  attributes(name?: XName | null): LinqAttributes {
     return linqAttributes(attributes(name)(this.source));
   }
 
@@ -121,7 +101,7 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns The concatenated, flat sequence of descendant nodes in document
    * order.
    */
-  descendantNodes(): LinqIterableOfXNode {
+  descendantNodes(): LinqNodes {
     return linqNodes(descendantNodes(this.source));
   }
 
@@ -133,7 +113,7 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns The concatenated, flat sequence of descendant nodes, including
    * the source elements, in document order.
    */
-  descendantNodesAndSelf(): LinqIterableOfXNode {
+  descendantNodesAndSelf(): LinqNodes {
     return linqNodes(descendantNodesAndSelf(this.source));
   }
 
@@ -146,8 +126,8 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns The concatenated, flat sequence of descendant nodes in document
    * order.
    */
-  descendants(name?: XName | null): LinqIterableOfXElement {
-    return linqElements(descendants(name)(this.source));
+  descendants(name?: XName | null): TLinq {
+    return this.create(descendants(name)(this.source));
   }
 
   /**
@@ -160,8 +140,8 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns The concatenated, flat sequence of descendants, including
    * the source elements, in document order.
    */
-  descendantsAndSelf(name?: XName | null): LinqIterableOfXElement {
-    return linqElements(descendantsAndSelf(name)(this.source));
+  descendantsAndSelf(name?: XName | null): TLinq {
+    return this.create(descendantsAndSelf(name)(this.source));
   }
 
   /**
@@ -174,8 +154,8 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns The concatenated, flat sequence of child elements in document
    * order.
    */
-  elements(name?: XName | null): LinqIterableOfXElement {
-    return linqElements(elements(name)(this.source));
+  elements(name?: XName | null): TLinq {
+    return this.create(elements(name)(this.source));
   }
 
   /**
@@ -185,7 +165,7 @@ export class LinqIterableOfXElement extends LinqIterableBase<
    * @returns The concatenated, flat sequence of child nodes in document
    * order.
    */
-  nodes(): LinqIterableOfXNode {
+  nodes(): LinqNodes {
     return linqNodes(nodes(this.source));
   }
 
@@ -199,15 +179,21 @@ export class LinqIterableOfXElement extends LinqIterableBase<
 }
 
 /**
+ * Provides additional methods specific to a `LinqIterable<XElement>` such as
+ * `ancestors`, `attributes`, `descendants`, `elements`, and `remove`.
+ */
+export class LinqElements extends LinqElementsBase<LinqElements> {
+  constructor(source: Iterable<XElement>) {
+    super(source, linqElements);
+  }
+}
+
+/**
  * Converts an `Iterable<XElement>` into a LINQ-style iterable.
  *
  * @param source The source `Iterable<XElement>`.
- * @returns A `LinqIterableOfXElement` instance.
+ * @returns A `LinqElements` instance.
  */
-export function linqElements(
-  source: Iterable<XElement>
-): LinqIterableOfXElement {
-  return source instanceof LinqIterableOfXElement
-    ? source
-    : new LinqIterableOfXElement(source);
+export function linqElements(source: Iterable<XElement>): LinqElements {
+  return source instanceof LinqElements ? source : new LinqElements(source);
 }

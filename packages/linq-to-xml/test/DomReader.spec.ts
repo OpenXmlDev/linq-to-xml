@@ -4,13 +4,13 @@
  */
 
 import {
-  DomParser,
-  DomReader,
   XDocument,
   XElement,
   XNamespace,
   XProcessingInstruction,
-} from '../src/internal';
+} from '../src';
+
+import { DomParser, DomReader } from '../src/internal';
 
 const textWithElementAndTextNode = '<p>Text</p>';
 

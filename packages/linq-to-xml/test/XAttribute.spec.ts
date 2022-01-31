@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XAttribute, XElement, XName } from '../src/internal';
+import { XAttribute, XElement, XName } from '../src';
 import { W, W14 } from './TestHelpers';
 
 describe('get name(): XName', () => {

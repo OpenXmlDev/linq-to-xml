@@ -14,18 +14,18 @@ export { XName } from './XName';
 export { XNamespace } from './XNamespace';
 export { XNode } from './XNode';
 export { XObject } from './XObject';
+export { XProcessingInstruction } from './XProcessingInstruction';
 export { XText } from './XText';
 
 export * from './transformations';
 
 export {
+  LinqIterableBase,
   LinqIterable,
   LinqIterableGrouping,
   linqIterable,
 } from './LinqIterable';
-export {
-  LinqIterableOfXAttribute,
-  linqAttributes,
-} from './LinqIterableOfXAttribute';
-export { LinqIterableOfXElement, linqElements } from './LinqIterableOfXElement';
-export { LinqIterableOfXNode, linqNodes } from './LinqIterableOfXNode';
+
+export { LinqAttributes, linqAttributes } from './LinqAttributes';
+export { LinqElementsBase, LinqElements, linqElements } from './LinqElements';
+export { LinqNodes, linqNodes } from './LinqNodes';

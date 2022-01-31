@@ -4,13 +4,13 @@
  */
 
 import {
-  DomParser,
   XDeclaration,
   XDocument,
   XElement,
   XProcessingInstruction,
-} from '../src/internal';
+} from '../src';
 
+import { DomParser } from '../src/internal';
 import { PKG_PACKAGE_TEXT, WML_NAMESPACE_DECLARATIONS, W } from './TestHelpers';
 
 describe('static load(xmlDocument: XMLDocument): XDocument', () => {

@@ -5,12 +5,8 @@
 
 import { where } from '@tsdotnet/linq/dist/filters';
 
-import {
-  linqAttributes,
-  LinqIterableOfXAttribute,
-  XAttribute,
-  XElement,
-} from '../src/internal';
+import { linqAttributes, LinqAttributes, XAttribute, XElement } from '../src';
+
 import { W } from './TestHelpers';
 
 function createBody() {
@@ -41,7 +37,7 @@ describe('remove(): void', () => {
   });
 });
 
-describe('where(predicate: PredicateWithIndex<XAttribute>): LinqIterableOfXAttribute', () => {
+describe('where(predicate: PredicateWithIndex<XAttribute>): LinqAttributes', () => {
   const body = createBody();
   const attributes = () => body.elements().attributes();
   const predicate = (a: XAttribute) => a.name === W.rsidR;
@@ -53,8 +49,8 @@ describe('where(predicate: PredicateWithIndex<XAttribute>): LinqIterableOfXAttri
   });
 });
 
-describe('function linqAttributes(source: Iterable<XAttribute>): LinqIterableOfXAttribute', () => {
-  it('returns a new LinqIterableOfXAttribute if the source is not an instance of LinqIterableOfXAttribute', () => {
+describe('function linqAttributes(source: Iterable<XAttribute>): LinqAttributes', () => {
+  it('returns a new LinqAttributes if the source is not an instance of LinqAttributes', () => {
     const source = [
       new XAttribute(W.val, 'Heading1'),
       new XAttribute(W.val, 'BodyText'),
@@ -62,12 +58,12 @@ describe('function linqAttributes(source: Iterable<XAttribute>): LinqIterableOfX
 
     const iterable = linqAttributes(source);
 
-    expect(iterable).toBeInstanceOf(LinqIterableOfXAttribute);
+    expect(iterable).toBeInstanceOf(LinqAttributes);
     expect(iterable.toArray()).toEqual(source);
   });
 
-  it('returns the source, if it is already a LinqIterableOfXAttribute', () => {
-    const source = new LinqIterableOfXAttribute([
+  it('returns the source, if it is already a LinqAttributes', () => {
+    const source = linqAttributes([
       new XAttribute(W.val, 'Heading1'),
       new XAttribute(W.val, 'BodyText'),
     ]);

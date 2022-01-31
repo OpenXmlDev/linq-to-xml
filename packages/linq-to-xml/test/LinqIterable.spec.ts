@@ -11,10 +11,11 @@ import { all } from '@tsdotnet/linq/dist/resolutions';
 import {
   linqIterable,
   LinqIterable,
+  LinqIterableGrouping,
   XAttribute,
   XElement,
   XName,
-} from '../src/internal';
+} from '../src';
 
 import { createWordDocumentPackage, W } from './TestHelpers';
 
@@ -408,7 +409,9 @@ describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): LinqIterable<G
     const boldRunGrouping = runGroupings.single(
       (g) => g.key.indexOf('<w:b/>') >= 0
     );
-    expect([...boldRunGrouping].map((e) => e.value)).toEqual([
+
+    expect(boldRunGrouping).toBeInstanceOf(LinqIterableGrouping);
+    expect(boldRunGrouping.select((e: XElement) => e.value).toArray()).toEqual([
       'Bold 1',
       'Bold 2',
     ]);
@@ -416,7 +419,11 @@ describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): LinqIterable<G
     const italicRunGrouping = runGroupings.single(
       (g) => g.key.indexOf('<w:i/>') >= 0
     );
-    expect([...italicRunGrouping].map((e) => e.value)).toEqual(['Italic']);
+
+    expect(boldRunGrouping).toBeInstanceOf(LinqIterableGrouping);
+    expect(
+      italicRunGrouping.select((e: XElement) => e.value).toArray()
+    ).toEqual(['Italic']);
   });
 
   it('returns a single grouping of elements for constant key selectors', () => {
@@ -425,7 +432,9 @@ describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): LinqIterable<G
     for (const key of keys) {
       const runGroupings = source.groupBy(() => key);
       const runGrouping = runGroupings.single();
-      expect([...runGrouping].map((r) => r.value)).toEqual([
+
+      expect(runGrouping).toBeInstanceOf(LinqIterableGrouping);
+      expect(runGrouping.select((r: XElement) => r.value).toArray()).toEqual([
         'Bold 1',
         'Italic',
         'Bold 2',

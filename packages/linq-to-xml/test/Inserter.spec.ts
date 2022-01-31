@@ -3,7 +3,9 @@
  * @license MIT
  */
 
-import { Inserter, XAttribute, XElement, XText } from '../src/internal';
+import { XAttribute, XElement, XText } from '../src';
+
+import { Inserter } from '../src/internal';
 import { W } from './TestHelpers';
 
 describe('add(content: any): void', () => {

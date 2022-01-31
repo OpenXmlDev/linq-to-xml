@@ -3,8 +3,8 @@
  * @license MIT
  */
 
+import { linqIterable, XElement } from '../../src';
 import { elements } from '../../src/transformations';
-import { linqIterable, XElement } from '../../src/internal';
 
 import { createWordDocumentPackage, W } from '../TestHelpers';
 

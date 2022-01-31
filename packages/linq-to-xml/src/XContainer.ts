@@ -5,8 +5,8 @@
 
 import {
   InvalidOperationException,
-  LinqIterableOfXElement,
-  LinqIterableOfXNode,
+  LinqElements,
+  LinqNodes,
   StringBuilder,
   Stringifyable,
   XAttribute,
@@ -201,10 +201,10 @@ export abstract class XContainer extends XNode {
    * @param name The optional name of the descendants to return.
    * @returns The descendant `XElement`s of this `XContainer`.
    */
-  public descendants(name?: XName | null): LinqIterableOfXElement {
+  public descendants(name?: XName | null): LinqElements {
     return name === null
-      ? new LinqIterableOfXElement(XElement.emptySequence)
-      : new LinqIterableOfXElement(getDescendants(this, name ?? null, false));
+      ? new LinqElements(XElement.emptySequence)
+      : new LinqElements(getDescendants(this, name ?? null, false));
   }
 
   public element(name: XName): XElement | null {
@@ -229,10 +229,10 @@ export abstract class XContainer extends XNode {
    * @param name The optional name of the elements to return.
    * @returns The child `XElement`s of this `XContainer`.
    */
-  public elements(name?: XName | null): LinqIterableOfXElement {
+  public elements(name?: XName | null): LinqElements {
     return name === null
-      ? new LinqIterableOfXElement(XElement.emptySequence)
-      : new LinqIterableOfXElement(getElements(this, name ?? null));
+      ? new LinqElements(XElement.emptySequence)
+      : new LinqElements(getElements(this, name ?? null));
   }
 
   /** @internal */
@@ -257,8 +257,8 @@ export abstract class XContainer extends XNode {
    *
    * @returns The content of this `XContainer` as an `IterableOfXNode`.
    */
-  public nodes(): LinqIterableOfXNode {
-    return new LinqIterableOfXNode(getNodes(this));
+  public nodes(): LinqNodes {
+    return new LinqNodes(getNodes(this));
   }
 
   /** @internal */

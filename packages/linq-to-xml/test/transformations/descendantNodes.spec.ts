@@ -3,12 +3,12 @@
  * @license MIT
  */
 
+import { XElement } from '../../src';
+
 import {
   descendantNodes,
   descendantNodesAndSelf,
 } from '../../src/transformations';
-
-import { XElement } from '../../src/internal';
 
 import { createWordDocumentPackage, getSignature, W } from '../TestHelpers';
 

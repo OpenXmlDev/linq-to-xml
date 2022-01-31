@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XName, XNamespace } from '../src/internal';
+import { XName, XNamespace } from '../src';
 import { W } from './TestHelpers';
 
 const localName = W.document.localName;

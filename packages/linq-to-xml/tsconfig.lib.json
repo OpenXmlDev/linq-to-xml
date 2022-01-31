@@ -6,6 +6,6 @@
     "stripInternal": true,
     "types": ["node"]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["**/*.spec.ts", "TestHelpers.ts", "node_modules", "tmp"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["**/*.spec.ts", "node_modules", "tmp"]
 }

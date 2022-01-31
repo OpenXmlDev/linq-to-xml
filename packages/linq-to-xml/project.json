@@ -22,11 +22,12 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/linq-to-xml"],
+      "outputs": ["coverage"],
       "options": {
         "jestConfig": "packages/linq-to-xml/jest.config.js",
         "passWithNoTests": true,
         "codeCoverage": true,
+        "coverageDirectory": "coverage",
         "coverageReporters": ["json", "text", "lcov", "clover"]
       }
     }

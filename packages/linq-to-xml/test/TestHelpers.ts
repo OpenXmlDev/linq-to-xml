@@ -1,10 +1,4 @@
-import {
-  linqIterable,
-  XElement,
-  XName,
-  XNamespace,
-  XNode,
-} from '../src/internal';
+import { linqIterable, XElement, XName, XNamespace, XNode } from '../src';
 
 export class PKG {
   public static pkg: XNamespace = XNamespace.get(

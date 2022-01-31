@@ -9,9 +9,9 @@ import { LinqIterableBase } from './LinqIterable';
 /**
  * Provides additional methods specific to a `LinqIterable<XAttribute>`.
  */
-export class LinqIterableOfXAttribute extends LinqIterableBase<
+export class LinqAttributes extends LinqIterableBase<
   XAttribute,
-  LinqIterableOfXAttribute
+  LinqAttributes
 > {
   /**
    * Initializes a new instance with the given source sequence.
@@ -38,12 +38,8 @@ export class LinqIterableOfXAttribute extends LinqIterableBase<
  * Converts an `Iterable<XAttribute>` into a LINQ-style iterable.
  *
  * @param source The source `Iterable<XAttribute>`.
- * @returns A `LinqIterableOfXAttribute` instance.
+ * @returns A `LinqAttributes` instance.
  */
-export function linqAttributes(
-  source: Iterable<XAttribute>
-): LinqIterableOfXAttribute {
-  return source instanceof LinqIterableOfXAttribute
-    ? source
-    : new LinqIterableOfXAttribute(source);
+export function linqAttributes(source: Iterable<XAttribute>): LinqAttributes {
+  return source instanceof LinqAttributes ? source : new LinqAttributes(source);
 }

@@ -3,15 +3,15 @@
  * @license MIT
  */
 
+import { linqIterable, XElement } from '../../src';
 import { attributes } from '../../src/transformations';
-import { linqIterable, XElement } from '../../src/internal';
 
 import { createWordDocumentPackage, W } from '../TestHelpers';
 
 const wordPackage: XElement = createWordDocumentPackage();
 const getIterableOfXElement = () => wordPackage.descendants(W.p);
 
-describe('attributes(name?: XName): LinqIterableOfXAttribute', () => {
+describe('attributes(name?: XName): LinqAttributes', () => {
   it('returns all attributes, if no name is passed', () => {
     const sequence = getIterableOfXElement();
     const transformedSequence = attributes()(sequence);

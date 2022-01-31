@@ -3,7 +3,8 @@
  * @license MIT
  */
 
-import { StringBuilder, XText } from '../src/internal';
+import { XText } from '../src';
+import { StringBuilder } from '../src/internal';
 
 describe('get value(): string', () => {
   it('returns the value', () => {

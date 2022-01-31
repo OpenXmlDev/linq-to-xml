@@ -3,20 +3,20 @@
  * @license MIT
  */
 
-// Note: The order of the export statements seems to be important!
+// External Libraries
 export * from '@tsdotnet/exceptions';
 
+// Internal Classes
 export * from './DomFactory';
 export * from './DomParser';
 export * from './DomReader';
 export * from './Inserter';
-
-export * from './LinqIterable';
-export * from './LinqIterableOfXAttribute';
-export * from './LinqIterableOfXElement';
-export * from './LinqIterableOfXNode';
 export * from './StringBuilder';
+
+// Types
 export * from './Stringifyable';
+
+// LINQ to XML Classes
 export * from './XDeclaration';
 export * from './XNamespace';
 export * from './XName';
@@ -28,3 +28,9 @@ export * from './XDocument';
 export * from './XElement';
 export * from './XText';
 export * from './XAttribute';
+
+// Iterables/Enumerables/Collections
+export * from './LinqIterable';
+export * from './LinqAttributes';
+export * from './LinqElements';
+export * from './LinqNodes';

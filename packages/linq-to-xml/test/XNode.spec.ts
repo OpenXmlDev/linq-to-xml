@@ -3,9 +3,7 @@
  * @license MIT
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-import { XAttribute, XElement } from '../src/internal';
+import { XAttribute, XElement } from '../src';
 import { createWordDocumentPackage, PKG, W, W14 } from './TestHelpers';
 
 describe('get nextNode(): XNode | null', () => {
