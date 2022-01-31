@@ -3,16 +3,25 @@
  * @license MIT
  */
 
-import { PredicateWithIndex } from '@tsdotnet/common-interfaces';
-import { where } from '@tsdotnet/linq/dist/filters';
-
 import { XAttribute } from './internal';
-import { LinqIterable } from './LinqIterable';
+import { LinqIterableBase } from './LinqIterable';
 
 /**
  * Provides additional methods specific to a `LinqIterable<XAttribute>`.
  */
-export class LinqIterableOfXAttribute extends LinqIterable<XAttribute> {
+export class LinqIterableOfXAttribute extends LinqIterableBase<
+  XAttribute,
+  LinqIterableOfXAttribute
+> {
+  /**
+   * Initializes a new instance with the given source sequence.
+   *
+   * @param source The source sequence.
+   */
+  constructor(source: Iterable<XAttribute>) {
+    super(source, linqAttributes);
+  }
+
   /**
    * Removes each `XAttribute` represented in this sequence from its parent
    * `XElement`.
@@ -22,16 +31,6 @@ export class LinqIterableOfXAttribute extends LinqIterable<XAttribute> {
     for (const attribute of attributes) {
       if (attribute) attribute.remove();
     }
-  }
-
-  /**
-   * Filters the sequence using the given predicate.
-   *
-   * @param predicate The predicate.
-   * @returns The filtered sequence.
-   */
-  where(predicate: PredicateWithIndex<XAttribute>): LinqIterableOfXAttribute {
-    return new LinqIterableOfXAttribute(where(predicate)(this.source));
   }
 }
 

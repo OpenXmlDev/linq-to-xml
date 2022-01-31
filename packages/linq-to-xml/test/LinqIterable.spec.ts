@@ -57,7 +57,7 @@ describe('filters(filters: Iterable<IterableFilter<T>>): LinqIterable<T>', () =>
     const filters = [skip<XElement>(1), take<XElement>(1)];
     const expectedSequence = applyFilters(getLinqIterable(), filters);
 
-    const sequence = getLinqIterable().filters(filters);
+    const sequence = getLinqIterable().applyFilters(filters);
 
     expect([...sequence]).toEqual([...expectedSequence]);
   });
@@ -84,6 +84,32 @@ describe('resolve<TResolution>(resolution: IterableTransform<T, TResolution>): T
     const result = source.resolve(resolution);
 
     expect(result).toBe(true);
+  });
+});
+
+//
+// Filters
+//
+
+describe('defaultIfEmpty(defaultValue: T): TLinq', () => {
+  it('sets the default number value to be returned if the sequence is empty', () => {
+    const emptySequence = linqIterable<number>([]);
+    const defaultValue = 0;
+
+    const sequence = emptySequence.defaultIfEmpty(defaultValue);
+
+    const resolution = sequence.firstOrDefault();
+    expect(resolution).toBe(defaultValue);
+  });
+
+  it('sets the default string value to be returned if the sequence is empty', () => {
+    const emptySequence = linqIterable<string>([]);
+    const defaultValue = 'Hello World!';
+
+    const sequence = emptySequence.defaultIfEmpty(defaultValue);
+
+    const resolution = sequence.firstOrDefault();
+    expect(resolution).toBe(defaultValue);
   });
 });
 

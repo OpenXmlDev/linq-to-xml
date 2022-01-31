@@ -14,9 +14,18 @@ import {
   IterableValueTransform,
 } from '@tsdotnet/linq/dist/IterableTransform';
 
-import { where } from '@tsdotnet/linq/dist/filters';
-
 import applyFilters from '@tsdotnet/linq/dist/applyFilters';
+
+import {
+  defaultIfEmpty,
+  skip,
+  skipLast,
+  skipWhile,
+  take,
+  takeLast,
+  takeWhile,
+  where,
+} from '@tsdotnet/linq/dist/filters';
 
 import {
   all,
@@ -39,17 +48,25 @@ import {
 } from '@tsdotnet/linq/dist/transforms/groupBy';
 
 /**
- * A LINQ to XML iterable.
+ * Base class for LINQ iterables.
  *
  * @typeParam T The type of the elements of the sequence.
+ * @typeParam TLinq The type of the LINQ iterable returned by filters.
  */
-export class LinqIterable<T> implements Iterable<T> {
+export abstract class LinqIterableBase<
+  T,
+  TLinq extends LinqIterableBase<T, TLinq>
+> implements Iterable<T>
+{
   /**
    * Initializes a new instance with the given sequence.
    *
    * @param source The source sequence.
    */
-  constructor(protected readonly source: Iterable<T>) {}
+  constructor(
+    protected readonly source: Iterable<T>,
+    protected readonly create: (source: Iterable<T>) => TLinq
+  ) {}
 
   /**
    * Returns the sequence of elements represented by this `LinqIterable<T>`.
@@ -66,8 +83,10 @@ export class LinqIterable<T> implements Iterable<T> {
    * @param filters The filters to use.
    * @returns A filtered sequence.
    */
-  filter(...filters: IterableFilter<T>[]): LinqIterable<T> {
-    return filters.length ? this.filters(filters) : this;
+  filter(...filters: IterableFilter<T>[]): TLinq {
+    return filters.length
+      ? this.applyFilters(filters)
+      : (this as unknown as TLinq);
   }
 
   /**
@@ -76,8 +95,8 @@ export class LinqIterable<T> implements Iterable<T> {
    * @param filters The filters to use.
    * @returns A filtered sequence.
    */
-  filters(filters: Iterable<IterableFilter<T>>): LinqIterable<T> {
-    return new LinqIterable<T>(applyFilters(this.source, filters));
+  applyFilters(filters: Iterable<IterableFilter<T>>): TLinq {
+    return this.create(applyFilters(this.source, filters));
   }
 
   /**
@@ -90,7 +109,7 @@ export class LinqIterable<T> implements Iterable<T> {
   transform<TResult>(
     transformation: IterableValueTransform<T, TResult>
   ): LinqIterable<TResult> {
-    return new LinqIterable(transformation(this.source));
+    return linqIterable(transformation(this.source));
   }
 
   /**
@@ -102,6 +121,102 @@ export class LinqIterable<T> implements Iterable<T> {
    */
   resolve<TResult>(resolution: IterableTransform<T, TResult>): TResult {
     return resolution(this.source);
+  }
+
+  //
+  // Filters
+  //
+
+  /**
+   * Returns the elements of the specified sequence or the default value if the
+   * sequence is empty.
+   *
+   * @param defaultValue The default value to be returned if this sequence is empty.
+   * @returns The elements of the specified sequence or the default value if the sequence is empty.
+   */
+  defaultIfEmpty(defaultValue: T): TLinq {
+    return this.create(defaultIfEmpty(defaultValue)(this.source));
+  }
+
+  /**
+   * Returns a new sequence that contains the elements from this sequence with
+   * the first `count` elements omitted.
+   *
+   * @param count The number of elements to be omitted.
+   * @returns A new sequence that contains the elements from this sequence with
+   * the first `count` elements omitted.
+   */
+  skip(count: number): TLinq {
+    return this.create(skip<T>(count)(this.source));
+  }
+
+  /**
+   * Returns a new sequence that contains the elements from this sequence with
+   * the last `count` elements omitted.
+   *
+   * @param count The number of elements to be omitted.
+   * @returns A new sequence that contains the elements from this sequence with
+   * the first `count` elements omitted.
+   */
+  skipLast(count: number): TLinq {
+    return this.create(skipLast<T>(count)(this.source));
+  }
+
+  /**
+   * Bypasses elements in a sequence as long as a specified condition is true
+   * and then returns the remaining elements.
+   *
+   * @param predicate The specified condition.
+   * @returns A new sequence with the remaining elements.
+   */
+  skipWhile(predicate: PredicateWithIndex<T>): TLinq {
+    return this.create(skipWhile<T>(predicate)(this.source));
+  }
+
+  /**
+   * Returns a new sequence that contains the specified number of contiguous
+   * elements from the start of this sequence.
+   *
+   * @param count The number of elements to take.
+   * @returns a new sequence that contains the specified number of contiguous
+   * elements from the start of this sequence.
+   */
+  take(count: number): TLinq {
+    return this.create(take<T>(count)(this.source));
+  }
+
+  /**
+   * Returns a new sequence that contains the specified number of contiguous
+   * elements from the end of this sequence.
+   *
+   * @param count The number of elements to take.
+   * @returns A new sequence that contains the specified number of contiguous
+   * elements from the end of this sequence.
+   */
+  takeLast(count: number): TLinq {
+    return this.create(takeLast<T>(count)(this.source));
+  }
+
+  /**
+   * Returns a new sequence that contains elements from this sequence that occur
+   * before the element at which the specified condition is false.
+   *
+   * @param predicate The specified condition.
+   * @returns A new sequence that contains elements from this sequence that occur
+   * before the element at which the specified condition is false.
+   */
+  takeWhile(predicate: PredicateWithIndex<T>): TLinq {
+    return this.create(takeWhile<T>(predicate)(this.source));
+  }
+
+  /**
+   * Filters the sequence using the given predicate.
+   *
+   * @param predicate The predicate.
+   * @returns The filtered sequence.
+   */
+  where(predicate: PredicateWithIndex<T>): TLinq {
+    return this.create(where(predicate)(this.source));
   }
 
   //
@@ -219,6 +334,7 @@ export class LinqIterable<T> implements Iterable<T> {
     return toArray(this.source);
   }
 
+  /** @internal */
   private filterSequence(predicate?: PredicateWithIndex<T>): Iterable<T> {
     return predicate ? where(predicate)(this.source) : this.source;
   }
@@ -237,10 +353,8 @@ export class LinqIterable<T> implements Iterable<T> {
   groupBy<TKey>(
     keySelector: SelectorWithIndex<T, TKey>
   ): LinqIterable<LinqIterableGrouping<TKey, T>> {
-    return new LinqIterable(
-      this.transform(groupBy(keySelector)).select(
-        (g: GroupingResult<TKey, T>) => new LinqIterableGrouping<TKey, T>(g)
-      )
+    return this.transform(groupBy(keySelector)).select(
+      (g: GroupingResult<TKey, T>) => new LinqIterableGrouping<TKey, T>(g)
     );
   }
 
@@ -254,7 +368,7 @@ export class LinqIterable<T> implements Iterable<T> {
   select<TResult>(
     selector: SelectorWithIndex<T, TResult>
   ): LinqIterable<TResult> {
-    return new LinqIterable<TResult>(select(selector)(this.source));
+    return linqIterable<TResult>(select(selector)(this.source));
   }
 
   /**
@@ -267,7 +381,18 @@ export class LinqIterable<T> implements Iterable<T> {
   selectMany<TResult>(
     selector: SelectorWithIndex<T, Iterable<TResult>>
   ): LinqIterable<TResult> {
-    return new LinqIterable<TResult>(selectMany(selector)(this.source));
+    return linqIterable<TResult>(selectMany(selector)(this.source));
+  }
+}
+
+/**
+ * A LINQ iterable.
+ *
+ * @typeParam T The type of the elements of the sequence.
+ */
+export class LinqIterable<T> extends LinqIterableBase<T, LinqIterable<T>> {
+  constructor(source: Iterable<T>) {
+    super(source, linqIterable);
   }
 }
 

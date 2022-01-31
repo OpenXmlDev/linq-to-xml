@@ -8,11 +8,9 @@ import applyFilters from '@tsdotnet/linq/dist/applyFilters';
 import {
   skip,
   skipLast,
-  skipUntil,
   skipWhile,
   take,
   takeLast,
-  takeUntil,
   takeWhile,
   where,
 } from '@tsdotnet/linq/dist/filters';
@@ -66,7 +64,7 @@ describe('filters(filters: Iterable<IterableFilter<XElement>>): LinqIterableOfXE
     const filters = [skip<XElement>(1), take<XElement>(1)];
     const expectedSequence = applyFilters(getLinqIterableOfXElement(), filters);
 
-    const sequence = getLinqIterableOfXElement().filters(filters);
+    const sequence = getLinqIterableOfXElement().applyFilters(filters);
 
     expect([...sequence]).toEqual([...expectedSequence]);
   });
@@ -178,19 +176,6 @@ describe('skipLast(count: number): LinqIterableOfXElement', () => {
   });
 });
 
-describe('skipUntil(predicate: PredicateWithIndex<XElement>): LinqIterableOfXElement', () => {
-  it('returns the result of the wrapped function', () => {
-    const value = 'Body Text.';
-    const expectedSequence = skipUntil<XElement>((e) => e.value === value)(
-      getLinqIterableOfXElement()
-    );
-    const sequence = getLinqIterableOfXElement().skipUntil(
-      (e) => e.value === value
-    );
-    expect([...sequence]).toEqual([...expectedSequence]);
-  });
-});
-
 describe('skipWhile(predicate: PredicateWithIndex<XElement>): LinqIterableOfXElement', () => {
   it('returns the result of the wrapped function', () => {
     const value = 'Heading';
@@ -216,19 +201,6 @@ describe('takeLast(count: number): LinqIterableOfXElement', () => {
   it('returns the result of the wrapped function', () => {
     const expectedSequence = takeLast<XElement>(2)(getLinqIterableOfXElement());
     const sequence = getLinqIterableOfXElement().takeLast(2);
-    expect([...sequence]).toEqual([...expectedSequence]);
-  });
-});
-
-describe('takeUntil(predicate: PredicateWithIndex<XElement>): LinqIterableOfXElement', () => {
-  it('returns the result of the wrapped function', () => {
-    const value = 'Body Text.';
-    const expectedSequence = takeUntil<XElement>((e) => e.value === value)(
-      getLinqIterableOfXElement()
-    );
-    const sequence = getLinqIterableOfXElement().takeUntil(
-      (e) => e.value === value
-    );
     expect([...sequence]).toEqual([...expectedSequence]);
   });
 });
