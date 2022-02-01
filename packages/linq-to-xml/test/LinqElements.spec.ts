@@ -15,7 +15,7 @@ import {
   where,
 } from '@tsdotnet/linq/dist/filters';
 
-import { linqElements, LinqElements, XElement } from '../src';
+import { linqElements, LinqElements, LinqElementsBase, XElement } from '../src';
 
 import {
   ancestors,
@@ -223,6 +223,7 @@ describe('function linqElements(source: Iterable<XElement>): LinqElements', () =
     const source = [new XElement(W.p), new XElement(W.r), new XElement(W.t)];
     const iterable = linqElements(source);
     expect(iterable).toBeInstanceOf(LinqElements);
+    expect(iterable).toBeInstanceOf(LinqElementsBase);
     expect(iterable.toArray()).toEqual(source);
   });
 

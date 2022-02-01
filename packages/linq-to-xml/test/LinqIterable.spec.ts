@@ -11,6 +11,7 @@ import { all } from '@tsdotnet/linq/dist/resolutions';
 import {
   linqIterable,
   LinqIterable,
+  LinqIterableBase,
   LinqIterableGrouping,
   XAttribute,
   XElement,
@@ -523,6 +524,7 @@ describe('function linqIterable<T>(source: Iterable<T>): LinqIterable<T>', () =>
     const iterable = linqIterable(source);
 
     expect(iterable).toBeInstanceOf(LinqIterable);
+    expect(iterable).toBeInstanceOf(LinqIterableBase);
     expect(iterable.toArray()).toEqual(source);
   });
 
