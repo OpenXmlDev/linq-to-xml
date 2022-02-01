@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   displayName: 'linq-to-xml',
   preset: '../../jest.preset.js',
   globals: {
@@ -10,5 +10,5 @@ module.exports = {
     '^.+\\.[tj]s$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../../coverage/packages/linq-to-xml',
+  coverageDirectory: '../../coverage',
 };

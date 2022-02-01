@@ -1,5 +1,24 @@
 {
   "name": "@openxmldev/linq-to-xml",
-  "version": "0.1.0",
-  "type": "commonjs"
+  "version": "0.8.0",
+  "description": "LINQ to XML for TypeScript",
+  "author": "Thomas Barnekow",
+  "keywords": [
+    "LINQ",
+    "XML",
+    "LINQ to XML",
+    "XAttribute",
+    "XContainer",
+    "XDocument",
+    "XElement",
+    "XNode",
+    "XObject",
+    "XText",
+    "XName",
+    "XNamespace",
+    "Iterable",
+    "IEnumerable",
+    "Enumerable"
+  ],
+  "type": "module"
 }
