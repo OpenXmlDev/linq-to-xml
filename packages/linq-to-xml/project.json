@@ -28,7 +28,7 @@
         "passWithNoTests": true,
         "codeCoverage": true,
         "coverageDirectory": "coverage",
-        "coverageReporters": ["json", "text", "lcov", "clover"]
+        "coverageReporters": ["text", "lcov", "clover", "cobertura"]
       }
     }
   },
