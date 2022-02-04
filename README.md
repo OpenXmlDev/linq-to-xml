@@ -1,7 +1,5 @@
 # LINQ to XML for TypeScript
 
-[![codecov](https://codecov.io/gh/OpenXmlDev/linq-to-xml/branch/main/graph/badge.svg?token=43I75GLRHM)](https://codecov.io/gh/OpenXmlDev/linq-to-xml)
-
 In .NET, [LINQ to XML](https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-overview) provides
 an in-memory XML programming interface that leverages the .NET Language-Integrated Query (LINQ) Framework.
 This package provides a corresponding implementation of LINQ to XML in TypeScript that leverages the
