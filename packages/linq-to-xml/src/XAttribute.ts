@@ -3,6 +3,8 @@
  * @license MIT
  */
 
+import { ArgumentException } from '@tsdotnet/exceptions';
+
 import {
   InvalidOperationException,
   Stringifyable,
@@ -53,9 +55,55 @@ export class XAttribute extends XObject {
     },
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private static validateAttribute(_name: XName, _value: string): void {
-    // TODO: Implement.
+  private static validateAttribute(name: XName, value: string): void {
+    // The following constraints apply for namespace declarations.
+    const namespaceName = name.namespaceName;
+    if (namespaceName === XNamespace.xmlnsPrefixNamespaceName) {
+      if (value.length === 0) {
+        throw new Error(
+          'The empty namespace name can only be declared by the default namespace declaration.'
+        );
+      } else if (value === XNamespace.xmlPrefixNamespaceName) {
+        if (name.localName !== 'xml') {
+          throw new ArgumentException(
+            'name',
+            '"http://www.w3.org/XML/1998/namespace" can only be declared by the "xml" prefix'
+          );
+        }
+      } else if (value === XNamespace.xmlnsPrefixNamespaceName) {
+        throw new ArgumentException(
+          'value',
+          '"http://www.w3.org/2000/xmlns/" must not be declared by any namespace declaration.'
+        );
+      } else {
+        const localName = name.localName;
+        if (localName === 'xml') {
+          // At this point, the attribute name is xmlns:xml but the value is not equal
+          // to the XML prefix namespace name.
+          throw new ArgumentException(
+            'name',
+            'No other namespace name can be declared by the "xml" prefix namespace declaration.'
+          );
+        } else if (localName === 'xmlns') {
+          throw new ArgumentException(
+            'name',
+            'The "xmlns" prefix must not be declared.'
+          );
+        }
+      }
+    } else if (namespaceName.length === 0 && name.localName === 'xmlns') {
+      if (value === XNamespace.xmlPrefixNamespaceName) {
+        throw new ArgumentException(
+          'name',
+          '"http://www.w3.org/XML/1998/namespace" can only be declared by the "xml" prefix namespace declaration.'
+        );
+      } else if (value === XNamespace.xmlnsPrefixNamespaceName) {
+        throw new ArgumentException(
+          'name',
+          '"http://www.w3.org/2000/xmlns/" must not be declared by any namespace declaration.'
+        );
+      }
+    }
   }
 
   /**

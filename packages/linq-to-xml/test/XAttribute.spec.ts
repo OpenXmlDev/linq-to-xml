@@ -6,6 +6,61 @@
 import { XAttribute, XElement, XNamespace } from '../src';
 import { createWordDocumentPackage, W, W14 } from './TestHelpers';
 
+describe('constructor(name: XName | string, value: Stringifyable)', () => {
+  it('throws for xmlns:<any>=""', () => {
+    expect(() => new XAttribute(XNamespace.xmlns.getName('any'), '')).toThrow();
+  });
+
+  it('throws for xmlns:<not-equal-to-xml>="http://www.w3.org/XML/1998/namespace"', () => {
+    expect(
+      () =>
+        new XAttribute(
+          XNamespace.xmlns.getName('any'),
+          XNamespace.xmlPrefixNamespaceName
+        )
+    ).toThrow();
+  });
+
+  it('throws for xmlns:<any>="http://www.w3.org/XML/1998/namespace"', () => {
+    expect(
+      () =>
+        new XAttribute(
+          XNamespace.xmlns.getName('xml'),
+          XNamespace.xmlnsPrefixNamespaceName
+        )
+    ).toThrow();
+  });
+
+  it('throws for xmlns:xml="<not-the-xml-namespace>"', () => {
+    expect(
+      () =>
+        new XAttribute(
+          XNamespace.xmlns.getName('xml'),
+          'urn:not-the-xml-namespace'
+        )
+    ).toThrow();
+  });
+
+  it('throws for xmlns:xmlns="<any-namespace>"', () => {
+    expect(
+      () =>
+        new XAttribute(XNamespace.xmlns.getName('xmlns'), 'urn:any-namespace')
+    ).toThrow();
+  });
+
+  it('throws for xmlns="http://www.w3.org/XML/1998/namespace"', () => {
+    expect(
+      () => new XAttribute('xmlns', XNamespace.xmlPrefixNamespaceName)
+    ).toThrow();
+  });
+
+  it('throws for xmlns="http://www.w3.org/2000/xmlns/"', () => {
+    expect(
+      () => new XAttribute('xmlns', XNamespace.xmlnsPrefixNamespaceName)
+    ).toThrow();
+  });
+});
+
 describe('get name(): XName', () => {
   it('gets the attribute name', () => {
     const attr = new XAttribute(W.val, '100');
