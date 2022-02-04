@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { XAttribute, XElement, XName } from '../src';
-import { W, W14 } from './TestHelpers';
+import { XAttribute, XElement, XNamespace } from '../src';
+import { createWordDocumentPackage, W, W14 } from './TestHelpers';
 
 describe('get name(): XName', () => {
   it('gets the attribute name', () => {
@@ -61,18 +61,50 @@ describe('remove(): void', () => {
     expect(attr.parent).toBeNull();
   });
 
-  it('throws if the attribute has no parent', () => {
+  it('throws if the attribute does not have a parent', () => {
     const attr = new XAttribute(W.val, 'Heading1');
-    expect(() => attr.remove()).toThrow('The parent is missing.');
+    expect(() => attr.remove()).toThrow();
   });
 });
 
 describe('toString(): string', () => {
-  it('returns the string representation', () => {
-    expect(new XAttribute(W.val, 'Heading1').toString()).toEqual(
-      'w:val="Heading1"'
-    );
+  it('returns the string representation for names with prefixes', () => {
+    const root = createWordDocumentPackage();
+    const attribute = root.descendants().attributes(W.rsidR).first();
+    expect(attribute.toString()).toEqual('w:rsidR="007A3403"');
+  });
 
-    expect(new XAttribute(XName.get('id'), '1').toString()).toEqual('id="1"');
+  it('returns the string representation when namespace declaration is missing', () => {
+    const attribute = new XAttribute(W.rsidR, '007A3403');
+    const attributeString = attribute.toString();
+    expect(attributeString).toEqual(`rsidR="007A3403"`);
+  });
+
+  it('returns the string representation for names without prefixes', () => {
+    expect(new XAttribute('id', '1').toString()).toEqual('id="1"');
+  });
+
+  it('returns the string representation for the xmlns namespace', () => {
+    const attribute = new XAttribute(
+      XNamespace.xmlns.getName('w'),
+      W.w.namespaceName
+    );
+    const attributeString = attribute.toString();
+    expect(attributeString).toEqual(`xmlns:w="${W.w.namespaceName}"`);
+  });
+
+  it('returns the string representation for the xml namespace', () => {
+    const attribute = new XAttribute(
+      XNamespace.xml.getName('space'),
+      'preserve'
+    );
+    const attributeString = attribute.toString();
+    expect(attributeString).toEqual(`xml:space="preserve"`);
+  });
+
+  it('correctly renders XML entities', () => {
+    const attribute = new XAttribute('name', '"<&>"');
+    const xml = attribute.toString();
+    expect(xml).toEqual('name="&quot;&lt;&amp;&gt;&quot;"');
   });
 });

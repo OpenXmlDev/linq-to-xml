@@ -14,12 +14,10 @@ export class XName {
    *
    * @param namespace The `XNamespace`.
    * @param localName The local name.
-   * @param prefix The prefix.
    */
   constructor(
     public readonly namespace: XNamespace,
-    public readonly localName: string,
-    public readonly prefix: string | null
+    public readonly localName: string
   ) {}
 
   /**
@@ -43,23 +41,17 @@ export class XName {
    * @param localName
    * @param namespaceName
    */
-  public static get(
-    localName: string,
-    namespaceName: string,
-    prefix: string | null
-  ): XName;
+  public static get(localName: string, namespaceName: string): XName;
 
   // Implementation
-  static get(
+  public static get(
     expandedOrLocalName: string,
-    namespaceName?: string,
-    prefix?: string | null
+    namespaceName?: string
   ): XName {
-    if (namespaceName !== undefined && prefix !== undefined) {
-      // get(localName: string, namespaceName: string, prefix: string | null): XName
+    if (namespaceName !== undefined) {
+      // get(localName: string, namespaceName: string): XName
       const localName = expandedOrLocalName;
-
-      return XNamespace.get(namespaceName).getName(prefix, localName);
+      return XNamespace.get(namespaceName).getName(localName);
     } else {
       // get(expandedName: string): XName
       const expandedName = expandedOrLocalName;

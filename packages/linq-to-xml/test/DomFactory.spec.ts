@@ -49,10 +49,51 @@ describe('static createElement(xelement: XElement): Element', () => {
     expect(elementString).toEqual(text);
   });
 
-  it('creates a DOM Element from an XElement with namespace and without prefix', () => {
+  it('creates a DOM Element from an XElement with a default namespace', () => {
     const text =
-      '<p xmlns="http://www.w3.org/1999/xhtml" class="MyClass">Text</p>';
+      '<div xmlns="http://www.w3.org/1999/xhtml" class="a"><p class="b"><span class="c">Text</span></p></div>';
 
+    const xelement = XElement.parse(text);
+
+    const element = DomFactory.createElement(xelement);
+
+    const serializer = new XMLSerializer();
+    const elementString = serializer.serializeToString(element);
+    expect(elementString).toEqual(text);
+  });
+
+  it('creates a DOM Element from a child XElement with a default namespace', () => {
+    const text =
+      '<div xmlns="http://www.w3.org/1999/xhtml" xmlns:x="x:y:z"><p class="b"><span>Text</span></p></div>';
+
+    const div = XElement.parse(text);
+    const xelement = div.elements().single();
+
+    const element = DomFactory.createElement(xelement);
+
+    const serializer = new XMLSerializer();
+    const elementString = serializer.serializeToString(element);
+    expect(elementString).toEqual(
+      '<p xmlns="http://www.w3.org/1999/xhtml" class="b"><span>Text</span></p>'
+    );
+  });
+
+  it('creates a DOM Element from an XElement with an empty namespace', () => {
+    const text = '<p class="MyClass"><span>Text</span></p>';
+    const p = XElement.parse(text);
+
+    const element = DomFactory.createElement(p);
+
+    const serializer = new XMLSerializer();
+    const elementString = serializer.serializeToString(element);
+    expect(elementString).toEqual(text);
+  });
+
+  it('deals with xml prefix', () => {
+    const text = `
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body><w:p><w:r><w:t xml:space="preserve">Text</w:t></w:r></w:p></w:body>
+</w:document>`.trim();
     const xElement = XElement.parse(text);
 
     const element = DomFactory.createElement(xElement);
@@ -62,18 +103,7 @@ describe('static createElement(xelement: XElement): Element', () => {
     expect(elementString).toEqual(text);
   });
 
-  it('creates a DOM Element from an XElement without namespace and prefix', () => {
-    const text = '<p class="MyClass">Text</p>';
-    const xElement = XElement.parse(text);
-
-    const element = DomFactory.createElement(xElement);
-
-    const serializer = new XMLSerializer();
-    const elementString = serializer.serializeToString(element);
-    expect(elementString).toEqual(text);
-  });
-
-  it('throws', () => {
+  it('throws if it encounters an unexpected node', () => {
     const xelement = new XElement('test', new UnexpectedXNode());
     expect(() => DomFactory.createElement(xelement)).toThrow();
   });

@@ -9,22 +9,21 @@ import { XName } from './internal';
  * Represents XML namespaces.
  */
 export class XNamespace {
-  private static readonly xmlPrefixNamespaceName =
+  /** @internal */
+  static readonly xmlPrefixNamespaceName =
     'http://www.w3.org/XML/1998/namespace';
 
-  private static readonly xmlnsPrefixNamespaceName =
-    'http://www.w3.org/2000/xmlns/';
+  /** @internal */
+  static readonly xmlnsPrefixNamespaceName = 'http://www.w3.org/2000/xmlns/';
 
-  private static readonly _none = new XNamespace('', null);
+  private static readonly _none = new XNamespace('');
 
   private static readonly _xml = new XNamespace(
-    XNamespace.xmlPrefixNamespaceName,
-    'xml'
+    XNamespace.xmlPrefixNamespaceName
   );
 
   private static readonly _xmlns = new XNamespace(
-    XNamespace.xmlnsPrefixNamespaceName,
-    'xmlns'
+    XNamespace.xmlnsPrefixNamespaceName
   );
 
   private static readonly namespaces = new Map<string, XNamespace>([
@@ -35,10 +34,7 @@ export class XNamespace {
 
   private readonly names = new Map<string, XName>();
 
-  private constructor(
-    public readonly namespaceName: string,
-    public readonly prefix: string | null
-  ) {}
+  private constructor(public readonly namespaceName: string) {}
 
   /**
    * Gets the empty namespace.
@@ -76,11 +72,11 @@ export class XNamespace {
    * @param prefix The (default) prefix, e.g., 'w'.
    * @returns The `XNamespace`.
    */
-  public static get(namespaceName: string, prefix?: string | null): XNamespace {
+  public static get(namespaceName: string): XNamespace {
     let namespace = XNamespace.namespaces.get(namespaceName);
 
     if (!namespace) {
-      namespace = new XNamespace(namespaceName, prefix ?? null);
+      namespace = new XNamespace(namespaceName);
       XNamespace.namespaces.set(namespaceName, namespace);
     }
 
@@ -92,38 +88,12 @@ export class XNamespace {
    *
    * @param localName The local name, e.g., `body`.
    */
-  public getName(localName: string): XName;
-
-  /**
-   * Gets the `XName` for the given prefix and local name, e.g., `w:body`, `r:id`.
-   *
-   * @param prefix The prefix, e.g., `w`, `r`.
-   * @param localName The local name, e.g., `body`, `id`.
-   */
-  public getName(prefix: string | null, localName: string): XName;
-
-  // Implementation
-  getName(first: string | null, second?: string): XName {
-    let prefix: string | null;
-    let localName: string;
-
-    if (second === undefined) {
-      // getName(localName: string): XName
-      prefix = this.prefix;
-      localName = first as string;
-    } else {
-      // getName(prefix: string | null, localName: string): XName
-      prefix = first;
-      localName = second;
-    }
-
-    // We'll include the prefix (e.g., "w", "w14"), if any, in the key.
-    const key = prefix ? `${prefix}:${localName}` : localName;
-    let name = this.names.get(key);
+  public getName(localName: string): XName {
+    let name = this.names.get(localName);
 
     if (!name) {
-      name = new XName(this, localName, prefix ?? null);
-      this.names.set(key, name);
+      name = new XName(this, localName);
+      this.names.set(localName, name);
     }
 
     return name;

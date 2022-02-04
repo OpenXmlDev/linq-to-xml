@@ -10,6 +10,7 @@ import {
   XContainer,
   XElement,
   XName,
+  XNamespace,
 } from './internal';
 
 /**
@@ -31,13 +32,14 @@ export class XAttribute extends XObject {
    * @param name The name of the attribute.
    * @param value The value of the attribute.
    */
-  public constructor(name: XName, value: Stringifyable) {
+  public constructor(name: XName | string, value: Stringifyable) {
     super();
 
+    const xname = name instanceof XName ? name : XName.get(name);
     const stringValue = XContainer.getStringValue(value);
-    XAttribute.validateAttribute(name, stringValue);
 
-    this._name = name;
+    XAttribute.validateAttribute(xname, stringValue);
+    this._name = xname;
     this._value = stringValue;
     this._next = null;
   }
@@ -54,6 +56,21 @@ export class XAttribute extends XObject {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private static validateAttribute(_name: XName, _value: string): void {
     // TODO: Implement.
+  }
+
+  /**
+   * Gets a value indicating if this attribute is a namespace declaration.
+   */
+  public get isNamespaceDeclaration(): boolean {
+    const namespaceName = this._name.namespaceName;
+
+    // Deal with xmlns="namespaceName".
+    if (namespaceName.length === 0) {
+      return this._name.localName === 'xmlns';
+    }
+
+    // Deal with xmlns:prefix="namespaceName".
+    return namespaceName === XNamespace.xmlnsPrefixNamespaceName;
   }
 
   /**
@@ -88,6 +105,19 @@ export class XAttribute extends XObject {
     this._value = value;
   }
 
+  /** @internal */
+  getPrefixOfNamespace(ns: XNamespace): string | null {
+    const namespaceName = ns.namespaceName;
+    if (namespaceName.length == 0) return '';
+    if (this._parent !== null) {
+      return (this._parent as XElement).getPrefixOfNamespace(ns);
+    }
+
+    if (namespaceName === XNamespace.xmlPrefixNamespaceName) return 'xml';
+    if (namespaceName === XNamespace.xmlnsPrefixNamespaceName) return 'xmlns';
+    return null;
+  }
+
   /**
    * Removes this attribute from its parent.
    */
@@ -105,11 +135,35 @@ export class XAttribute extends XObject {
    * @returns The XML text representation of an attribute and its value.
    */
   public toString(): string {
-    const name =
-      this._name.prefix !== null
-        ? `${this._name.prefix}:${this._name.localName}`
-        : this._name.localName;
+    const name = this._name;
+    const prefix = this.getPrefixOfNamespace(name.namespace);
+    const qualifiedName = prefix
+      ? `${prefix}:${name.localName}`
+      : name.localName;
 
-    return `${name}="${this._value}"`;
+    const value = this.transformXmlEntities(this._value);
+    return `${qualifiedName}="${value}"`;
+  }
+
+  /** @internal */
+  private transformXmlEntities(value: string): string {
+    let transformedValue = '';
+
+    for (let index = 0; index < value.length; index++) {
+      const code = value.charCodeAt(index);
+      if (code === 34) {
+        transformedValue += '&quot;';
+      } else if (code === 38) {
+        transformedValue += '&amp;';
+      } else if (code === 60) {
+        transformedValue += '&lt;';
+      } else if (code === 62) {
+        transformedValue += '&gt;';
+      } else {
+        transformedValue += value.charAt(index);
+      }
+    }
+
+    return transformedValue;
   }
 }

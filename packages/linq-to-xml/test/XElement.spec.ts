@@ -9,6 +9,7 @@ import {
   XAttribute,
   XDocument,
   XElement,
+  XName,
   XNamespace,
   XProcessingInstruction,
   XText,
@@ -353,8 +354,88 @@ describe('descendantsAndSelf(name?: XName | null): IterableOfXElement', () => {
   });
 });
 
+describe('getDefaultNamespace(): XNamespace', () => {
+  it('returns the non-empty default namespace', () => {
+    const namespace = XNamespace.get('urn:schemas:foo');
+    const element = new XElement(
+      namespace.getName('bar'),
+      new XAttribute('xmlns', namespace.namespaceName)
+    );
+
+    const defaultNamespace = element.getDefaultNamespace();
+
+    expect(defaultNamespace).toBe(namespace);
+  });
+
+  it('returns the empty default namespace', () => {
+    const element = new XElement('bar');
+    const defaultNamespace = element.getDefaultNamespace();
+    expect(defaultNamespace).toBe(XNamespace.none);
+  });
+});
+
+describe('getNamespaceOfPrefix(prefix: string): XNamespace | null', () => {
+  it('returns the namespace of the given prefix, if it is defined', () => {
+    const element = new XElement(W.document, W.namespaceDeclaration);
+    const namespace = element.getNamespaceOfPrefix('w');
+    expect(namespace).toBe(W.w);
+  });
+
+  it('returns the xmlns namespace for the "xnlns" prefix', () => {
+    const element = new XElement(W.p);
+    const namespace = element.getNamespaceOfPrefix('xmlns');
+    expect(namespace).toBe(XNamespace.xmlns);
+  });
+
+  it('returns the xml namespace for the "xml" prefix', () => {
+    const element = new XElement(W.t);
+    const namespace = element.getNamespaceOfPrefix('xml');
+    expect(namespace).toBe(XNamespace.xml);
+  });
+
+  it('returns null if there is no namespace declaration with the given prefix', () => {
+    const element = new XElement(W.t);
+    const namespace = element.getNamespaceOfPrefix('w');
+    expect(namespace).toBeNull();
+  });
+
+  it('throws if the prefix is the empty string', () => {
+    const element = new XElement(W.t);
+    expect(() => element.getNamespaceOfPrefix('')).toThrow();
+  });
+});
+
+describe('getPrefixOfNamespace(ns: XNamespace): string | null', () => {
+  const element = new XElement(
+    W.document,
+    W.namespaceDeclaration,
+    new XElement(W.body, new XElement(W.p))
+  );
+  const descendant = element.descendants(W.p).first();
+
+  it('returns the prefix of the given namespace, if it is defined', () => {
+    expect(element.getPrefixOfNamespace(W.w)).toEqual('w');
+    expect(descendant.getPrefixOfNamespace(W.w)).toEqual('w');
+  });
+
+  it('returns null, if the namespace is not defined', () => {
+    expect(element.getPrefixOfNamespace(W14.w14)).toBeNull();
+    expect(descendant.getPrefixOfNamespace(W14.w14)).toBeNull();
+  });
+
+  it('returns "xml", if the namespace is the xml prefix namespace', () => {
+    expect(element.getPrefixOfNamespace(XNamespace.xml)).toEqual('xml');
+    expect(descendant.getPrefixOfNamespace(XNamespace.xml)).toEqual('xml');
+  });
+
+  it('returns "xmlns", if the namespace is the xmlns prefix namespace', () => {
+    expect(element.getPrefixOfNamespace(XNamespace.xmlns)).toEqual('xmlns');
+    expect(descendant.getPrefixOfNamespace(XNamespace.xmlns)).toEqual('xmlns');
+  });
+});
+
 describe('static load(element: Element): XElement', () => {
-  // TODO: Add unit tests.
+  // TODO: Add unit tests (covered by other unit tests).
 });
 
 describe('static parse(text: string): XElement', () => {
@@ -482,7 +563,7 @@ describe('toString(): string', () => {
   const element = createWordDocumentPackage();
   const part = element.element(PKG.part)!;
 
-  it('should produce the expected string representation', () => {
+  it('produces the expected string representation', () => {
     const xml = part.toString();
 
     expect(xml).toContain('<pkg:part');
@@ -497,6 +578,20 @@ describe('toString(): string', () => {
     expect(xml).toContain('<w:r><w:t>Heading</w:t></w:r>');
     expect(xml).toContain(
       '<w:p w:rsidR="00000000" w:rsidRDefault="007A3403"/>'
+    );
+  });
+
+  it('correctly renders XML entities', () => {
+    const value = '"<&>"';
+    const element = new XElement(
+      W.t,
+      W.namespaceDeclaration,
+      new XAttribute(W.val, value),
+      value
+    );
+    const xml = element.toString();
+    expect(xml).toEqual(
+      '<w:t xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" w:val="&quot;&lt;&amp;&gt;&quot;">"&lt;&amp;&gt;"</w:t>'
     );
   });
 });

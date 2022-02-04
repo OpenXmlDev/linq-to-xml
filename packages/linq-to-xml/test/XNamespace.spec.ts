@@ -18,8 +18,8 @@ const w = XNamespace.get(namespaceNameW);
 const w14 = XNamespace.get(namespaceNameW14);
 const w15 = XNamespace.get(namespaceNameW15);
 
-const document = w.getName('w', 'document');
-const body = w.getName('w', 'body');
+const document = w.getName('document');
+const body = w.getName('body');
 
 describe('The XNamespace class', () => {
   it('should have the "none" XNamespace property with "namespaceName": ""', () => {
@@ -55,12 +55,12 @@ describe('The XNamespace.get() method', () => {
 
 describe('The XNamespace.geName() method', () => {
   it('should return the same instance for each name', () => {
-    expect(w.getName('w', document.localName)).toBe(document);
-    expect(w.getName('w', body.localName)).toBe(body);
+    expect(w.getName(document.localName)).toBe(document);
+    expect(w.getName(body.localName)).toBe(body);
   });
 
   it('should create objects with expected namespace and localName values', () => {
-    expect(w.getName('w', 'p')).toMatchObject({
+    expect(w.getName('p')).toMatchObject({
       namespace: w,
       localName: 'p',
     });

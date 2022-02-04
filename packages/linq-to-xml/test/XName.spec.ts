@@ -48,12 +48,7 @@ describe('static get(expandedName: string): XName', () => {
 
 describe('static get(localName: string, namespaceName: string, prefix: string | null): XName', () => {
   it('returns the the XName having the given localName, namespaceName, and prefix', () => {
-    const name = XName.get(
-      W.document.localName,
-      W.document.namespaceName,
-      W.document.prefix
-    );
-
+    const name = XName.get(W.document.localName, W.document.namespaceName);
     expect(name).toBe(W.document);
   });
 });

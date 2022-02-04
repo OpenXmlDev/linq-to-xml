@@ -1,9 +1,15 @@
-import { linqIterable, XElement, XName, XNamespace, XNode } from '../src';
+import {
+  linqIterable,
+  XAttribute,
+  XElement,
+  XName,
+  XNamespace,
+  XNode,
+} from '../src';
 
 export class PKG {
   public static pkg: XNamespace = XNamespace.get(
-    'http://schemas.microsoft.com/office/2006/xmlPackage',
-    'pkg'
+    'http://schemas.microsoft.com/office/2006/xmlPackage'
   );
 
   public static package: XName = PKG.pkg.getName('package');
@@ -16,9 +22,12 @@ export class PKG {
 
 export class W {
   public static readonly w: XNamespace = XNamespace.get(
-    'http://schemas.openxmlformats.org/wordprocessingml/2006/main',
-    'w'
+    'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
   );
+
+  public static get namespaceDeclaration(): XAttribute {
+    return new XAttribute(XNamespace.xmlns.getName('w'), W.w.namespaceName);
+  }
 
   public static readonly alias: XName = W.w.getName('alias');
   public static readonly body: XName = W.w.getName('body');
@@ -58,8 +67,7 @@ export class W {
 
 export class W14 {
   public static readonly w14: XNamespace = XNamespace.get(
-    'http://schemas.microsoft.com/office/word/2010/wordml',
-    'w14'
+    'http://schemas.microsoft.com/office/word/2010/wordml'
   );
 
   public static readonly docId: XName = W14.w14.getName('docId');

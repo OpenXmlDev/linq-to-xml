@@ -20,14 +20,21 @@ import {
 export class DomReader {
   /** @internal */
   static getXName(node: Element | Attr): XName {
-    return this.getXNamespace(node).getName(node.prefix, node.localName);
+    const namespace = this.getXNamespace(node);
+    const localName = node.localName;
+
+    // Deal with default namespace declarations which, in the DOM, will have:
+    // - namespaceName === 'http://www.w3.org/2000/xmlns/' and
+    // - localName === 'xmlns'
+    return namespace === XNamespace.xmlns && localName === 'xmlns'
+      ? XNamespace.none.getName('xmlns')
+      : namespace.getName(localName);
   }
 
   /** @internal */
   static getXNamespace(node: Element | Attr): XNamespace {
-    return node.namespaceURI
-      ? XNamespace.get(node.namespaceURI, node.prefix)
-      : XNamespace.none;
+    const namespaceName = node.namespaceURI;
+    return namespaceName ? XNamespace.get(namespaceName) : XNamespace.none;
   }
 
   /**

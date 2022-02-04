@@ -19,6 +19,7 @@ import {
   XContainer,
   XDocument,
   XName,
+  XNamespace,
   XNode,
 } from './internal';
 
@@ -263,6 +264,108 @@ export class XElement extends XContainer {
     return name === null
       ? new LinqElements(XElement.emptySequence)
       : new LinqElements(getDescendants(this, name ?? null, true));
+  }
+
+  /**
+   * Returns the default `XNamespace` of this `XElement`.
+   *
+   * @returns The default `XNamespace` of this `XElement`.
+   */
+  public getDefaultNamespace(): XNamespace {
+    const namespaceName = this.getNamespaceOfPrefixInScope('xmlns', null);
+    return namespaceName !== null
+      ? XNamespace.get(namespaceName)
+      : XNamespace.none;
+  }
+
+  /**
+   * Get the namespace associated with a particular prefix for this `XElement`
+   * in its document context.
+   *
+   * @param prefix The namespace prefix to look up.
+   * @returns The `XNamespace` for the namespace bound to the prefix.
+   * @throws If the prefix is falsy, e.g., the empty string.
+   */
+  public getNamespaceOfPrefix(prefix: string): XNamespace | null {
+    if (!prefix) {
+      throw new ArgumentException('prefix', 'The prefix is invalid.');
+    }
+
+    if (prefix === 'xmlns') return XNamespace.xmlns;
+
+    const namespaceName = this.getNamespaceOfPrefixInScope(prefix, null);
+
+    if (namespaceName !== null) return XNamespace.get(namespaceName);
+    if (prefix === 'xml') return XNamespace.xml;
+
+    return null;
+  }
+
+  /**
+   * Get the prefix associated with a namespace for an element in its context.
+   *
+   * @param ns The `XNamespace` for which to get the prefix.
+   * @returns The namespace prefix `string`.
+   */
+  public getPrefixOfNamespace(ns: XNamespace): string | null {
+    const namespaceName = ns.namespaceName;
+
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let e: XElement | null = this;
+
+    do {
+      let a = e._lastAttr;
+      if (a !== null) {
+        do {
+          a = a._next!;
+          if (
+            a.isNamespaceDeclaration &&
+            a.name.namespaceName.length !== 0 &&
+            a.value === namespaceName
+          ) {
+            // The current attribute is a namespace declaration in the form
+            // xmlns:prefix="namespaceName".
+            return a.name.localName;
+          }
+        } while (a !== e._lastAttr);
+      }
+
+      e = e._parent as XElement;
+    } while (e !== null);
+
+    if (namespaceName === XNamespace.xmlPrefixNamespaceName) {
+      return 'xml';
+    } else if (namespaceName === XNamespace.xmlnsPrefixNamespaceName) {
+      return 'xmlns';
+    }
+
+    return null;
+  }
+
+  /** @internal */
+  private getNamespaceOfPrefixInScope(
+    prefix: string,
+    outOfScope: XElement | null
+  ): string | null {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    let e: XElement | null = this;
+
+    while (e !== outOfScope) {
+      let a = e._lastAttr;
+      if (a !== null) {
+        do {
+          a = a._next!;
+          if (a.isNamespaceDeclaration && a.name.localName === prefix) {
+            // The current attribute declares the namespace for the given prefix.
+            return a.value;
+          }
+        } while (a !== e._lastAttr);
+      }
+      e = e._parent as XElement;
+    }
+
+    // There is no namespace declaration for the given prefix within the scope.
+    return null;
   }
 
   /**

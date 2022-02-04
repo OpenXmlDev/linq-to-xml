@@ -11,6 +11,7 @@ export * from './DomFactory';
 export * from './DomParser';
 export * from './DomReader';
 export * from './Inserter';
+export * from './NamespaceResolver';
 export * from './StringBuilder';
 
 // Types

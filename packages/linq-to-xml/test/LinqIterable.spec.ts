@@ -16,6 +16,7 @@ import {
   XAttribute,
   XElement,
   XName,
+  XNamespace,
 } from '../src';
 
 import { createWordDocumentPackage, W } from './TestHelpers';
@@ -387,16 +388,19 @@ describe('groupBy<TKey>(keySelector: SelectorWithIndex<T, TKey>): LinqIterable<G
   const source = linqIterable([
     new XElement(
       W.r,
+      new XAttribute(XNamespace.xmlns.getName('w'), W.w.namespaceName),
       new XElement(W.rPr, new XElement(W.b)),
       new XElement(W.t, 'Bold 1')
     ),
     new XElement(
       W.r,
+      new XAttribute(XNamespace.xmlns.getName('w'), W.w.namespaceName),
       new XElement(W.rPr, new XElement(W.i)),
       new XElement(W.t, 'Italic')
     ),
     new XElement(
       W.r,
+      new XAttribute(XNamespace.xmlns.getName('w'), W.w.namespaceName),
       new XElement(W.rPr, new XElement(W.b)),
       new XElement(W.t, 'Bold 2')
     ),
