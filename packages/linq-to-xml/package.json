@@ -1,8 +1,7 @@
 {
   "name": "@openxmldev/linq-to-xml",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "LINQ to XML for TypeScript",
-  "author": "Thomas Barnekow",
   "keywords": [
     "LINQ",
     "XML",
@@ -20,11 +19,21 @@
     "IEnumerable",
     "Enumerable"
   ],
-  "type": "module",
+  "homepage": "https://github.com/OpenXmlDev/linq-to-xml#readme",
+  "bugs": {
+    "url": "https://github.com/OpenXmlDev/linq-to-xml/issues"
+  },
+  "license": "MIT",
+  "author": "Thomas Barnekow",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OpenXmlDev/linq-to-xml"
+  },
   "dependencies": {
     "@tsdotnet/common-interfaces": "^1.0.4",
     "@tsdotnet/exceptions": "^1.0.17",
     "@tsdotnet/linq": "^1.0.15",
     "tslib": "^2.0.0"
-  }
+  },
+  "type": "module"
 }

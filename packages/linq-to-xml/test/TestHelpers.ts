@@ -70,6 +70,13 @@ export class W14 {
     'http://schemas.microsoft.com/office/word/2010/wordml'
   );
 
+  public static get namespaceDeclaration(): XAttribute {
+    return new XAttribute(
+      XNamespace.xmlns.getName('w14'),
+      W14.w14.namespaceName
+    );
+  }
+
   public static readonly docId: XName = W14.w14.getName('docId');
   public static readonly paraId: XName = W14.w14.getName('paraId');
   public static readonly textId: XName = W14.w14.getName('textId');

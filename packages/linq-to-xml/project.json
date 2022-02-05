@@ -10,7 +10,7 @@
         "outputPath": "dist/packages/linq-to-xml",
         "main": "packages/linq-to-xml/src/index.ts",
         "tsConfig": "packages/linq-to-xml/tsconfig.lib.json",
-        "assets": ["packages/linq-to-xml/*.md"]
+        "assets": ["README.md"]
       }
     },
     "lint": {
