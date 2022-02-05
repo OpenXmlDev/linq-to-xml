@@ -30,6 +30,14 @@
         "coverageDirectory": "coverage",
         "coverageReporters": ["text", "lcov", "clover", "cobertura"]
       }
+    },
+    "publish": {
+      "executor": "@nrwl/workspace:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "npm publish --tag latest --access public",
+        "cwd": "dist/packages/linq-to-xml"
+      }
     }
   },
   "tags": []

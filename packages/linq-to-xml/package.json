@@ -20,5 +20,11 @@
     "IEnumerable",
     "Enumerable"
   ],
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@tsdotnet/common-interfaces": "^1.0.4",
+    "@tsdotnet/exceptions": "^1.0.17",
+    "@tsdotnet/linq": "^1.0.15",
+    "tslib": "^2.0.0"
+  }
 }
