@@ -7,10 +7,6 @@ an in-memory XML programming interface that leverages the .NET Language-Integrat
 This package provides a corresponding implementation of LINQ to XML in TypeScript that leverages the
 [@tsdotnet/linq](https://github.com/tsdotnet/linq) package, which provides features similar to LINQ.
 
-## Status
-
-This package is currently under development and will soon be published as an NPM package.
-
 ## Installing
 
 Run `npm install @openxmldev/linq-to-xml` to install the library.
@@ -29,9 +25,9 @@ Run `nx test linq-to-xml` to execute the unit tests via [Jest](https://jestjs.io
 
 ## Examples
 
-In short words, usage is pretty much identical to .NET, just with language-specific differences.
-Have a look at the [API documentation](https://openxmldev.github.io/linq-to-xml) to see what is
-on offer.
+In short words, usage is pretty much identical to .NET, just with some 
+[language-specific differences](#language-specific-differences) described further below. Have a
+look at the [API documentation](https://openxmldev.github.io/linq-to-xml) to see what is on offer.
 
 ### Importing
 
@@ -158,3 +154,73 @@ const paraIds = document
 Have a look at the [LinqElements](https://openxmldev.github.io/linq-to-xml/classes/LinqElements.html)
 class to see which general (e.g., `singleOrDefault()`, `select()`, `toArray()`) and XML-specific
 (e.g., `descendants()`, `elements()`, `attributes()`) LINQ methods are supported by this package.
+
+## Language-specific Differences
+
+### Naming Conventions
+
+In C#, you use pascal case for property and method names. For example, the `XElement` class has the
+`Name` and `FirstAttribute` properties and the `Attributes()` and `DescendantsAndSelf()` methods.
+
+In JavaScript and TypeScript, you use camel case for property and method names. For example, the
+property and method names corresponding to the above would be `name`, `firstAttribute`,`attributes()`,
+and `descendantsAndSelf()`, respectively.
+
+### Default Values
+
+It is important to appreciate the differences between C# vs. JavaScript and TypeScript regarding
+the default values used for different types, e.g., as assigned by using the `default` keyword in
+C# or when not explicitly initializing fields or variables in JavaScript.
+
+In C#, the `default` values are defined as follows:
+- nullable (e.g., `string`) and non-nullable (e.g.,`string?`) reference types: `null`
+- nullable value (e.g., `int?`, `bool?`) types: `null`
+- non-nullable value types (e.g., `int`, `bool`): `0` and `false`, for example
+
+In JavaScript, there is no `default` keyword. However, the default value for uninitialized fields
+or variables is `undefined` in all cases, including `number` or `boolean`, for example.
+
+In TypeScript, you must either explicitly allow `undefined` in the declaration or use the non-null
+assertion operator (`!`) to assign `undefined`. At run-time, however, TypeScript is just JavaScript.
+
+Now, let's look at the signature of the well-known `FirstOrDefault()` extension method in C# (based
+on the .NET 6 documentation, which just uses `TSource` instead of `T`):
+
+```csharp
+public static T? FirstOrDefault<T>(this IEnumerable<T> source);
+```
+
+Based on our understanding of the default values, the most natural signature in TypeScript is the
+following:
+
+```typescript
+firstOrDefault(): T | undefined;
+```
+
+The above is also what is offered by the corresponding method of the
+[LinqIterable<T>](https://openxmldev.github.io/linq-to-xml/classes/LinqIterable.html#firstOrDefault)
+class.
+
+On an _abstract_ level, the C# and TypeScript counterparts behave in the same way. For empty sequences,
+they both return the respective default values. Let that sink in for a moment.
+
+On a _concrete_ level, however, the language-specific difference between the default values for 
+non-nullable value types in C# (e.g., `int`, `bool`) and the corresponding types in TypeScript
+(e.g., `number`, `boolean`) is that:
+- in C#, the default values are `0` and `false`, respectively; and
+- in TypeScript, the default value is `undefined` in all cases.
+
+Should you want to receive a value other than `undefined` in case the sequence is empty, the following
+overload of the [LinqIterable<T>](https://openxmldev.github.io/linq-to-xml/classes/LinqIterable.html#firstOrDefault)
+class will come to the rescue:
+
+```typescript
+firstOrDefault(defaultValue: T): T;
+```
+
+The above overload even corresponds to the following C# overload, which was introduced in .NET 6
+(again using `T` instead of `TSource`):
+
+```csharp
+public static T FirstOrDefault<T>(this IEnumerable<T> source, T defaultValue);
+```

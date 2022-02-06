@@ -376,7 +376,11 @@ describe('getDefaultNamespace(): XNamespace', () => {
 
 describe('getNamespaceOfPrefix(prefix: string): XNamespace | null', () => {
   it('returns the namespace of the given prefix, if it is defined', () => {
-    const element = new XElement(W.document, W.namespaceDeclaration);
+    const element = new XElement(
+      W.document,
+      W.namespaceDeclaration,
+      W14.namespaceDeclaration
+    );
     const namespace = element.getNamespaceOfPrefix('w');
     expect(namespace).toBe(W.w);
   });
@@ -409,7 +413,11 @@ describe('getPrefixOfNamespace(ns: XNamespace): string | null', () => {
   const element = new XElement(
     W.document,
     W.namespaceDeclaration,
-    new XElement(W.body, new XElement(W.p))
+    W14.namespaceDeclaration,
+    new XElement(
+      W.body,
+      new XElement(W.p, new XAttribute(W14.paraId, '12345678'))
+    )
   );
   const descendant = element.descendants(W.p).first();
 
@@ -419,8 +427,8 @@ describe('getPrefixOfNamespace(ns: XNamespace): string | null', () => {
   });
 
   it('returns null, if the namespace is not defined', () => {
-    expect(element.getPrefixOfNamespace(W14.w14)).toBeNull();
-    expect(descendant.getPrefixOfNamespace(W14.w14)).toBeNull();
+    expect(element.getPrefixOfNamespace(PKG.pkg)).toBeNull();
+    expect(descendant.getPrefixOfNamespace(PKG.pkg)).toBeNull();
   });
 
   it('returns "xml", if the namespace is the xml prefix namespace', () => {

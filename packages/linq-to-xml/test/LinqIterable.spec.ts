@@ -222,30 +222,85 @@ describe('first(predicate?: PredicateWithIndex<T>): T', () => {
   });
 });
 
-describe('firstOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
+describe('firstOrDefault(): T | undefined', () => {
   it('returns the first item of a non-empty sequence', () => {
     const paragraphs = wordPackage.descendants(W.p);
     const firstParagraph = paragraphs.firstOrDefault();
     expect(firstParagraph?.value).toEqual('Heading');
   });
 
-  it('returns null for empty sequences', () => {
-    // We have no w:tbl elements.
-    expect(wordPackage.descendants(W.tbl).firstOrDefault()).toBeNull();
-    expect(linqIterable<any>([]).firstOrDefault()).toBeNull();
+  it('returns undefined (API default) for empty sequences', () => {
+    expect(linqIterable<XElement>([]).firstOrDefault()).toBeUndefined();
+    expect(linqIterable<string>([]).firstOrDefault()).toBeUndefined();
+    expect(linqIterable<number>([]).firstOrDefault()).toBeUndefined();
+    expect(linqIterable<boolean>([]).firstOrDefault()).toBeUndefined();
   });
+});
 
+describe('firstOrDefault(predicate: PredicateWithIndex<T>): T | undefined', () => {
   it('returns the first item of a non-empty sequence for which the predicate is true', () => {
     // We have one "special" w:p with w:rsidR="00000000".
-    const iterable = wordPackage.descendants(W.p);
-    const paragraph = iterable.firstOrDefault(hasRsidR('00000000'));
+    const sequence = wordPackage.descendants(W.p);
+    const paragraph = sequence.firstOrDefault(hasRsidR('00000000'));
     expect(paragraph?.isEmpty).toBe(true);
   });
 
-  it('returns null for non-empty sequences if the predicate is false for all items', () => {
-    // We have three w:p elements.
-    const paragraphs = wordPackage.descendants(W.p);
-    expect(paragraphs.firstOrDefault(() => false)).toBeNull();
+  it('returns undefined (API default) for non-empty sequences if the predicate is false for all items', () => {
+    expect(
+      linqIterable([new XElement(W.p)]).firstOrDefault(() => false)
+    ).toBeUndefined();
+    expect(
+      linqIterable(['a', 'b']).firstOrDefault(() => false)
+    ).toBeUndefined();
+    expect(linqIterable([1, 2]).firstOrDefault(() => false)).toBeUndefined();
+    expect(
+      linqIterable([true, false]).firstOrDefault(() => false)
+    ).toBeUndefined();
+  });
+
+  it('returns undefined (API default) for empty sequences', () => {
+    expect(
+      linqIterable<XElement>([]).firstOrDefault(() => true)
+    ).toBeUndefined();
+    expect(linqIterable<string>([]).firstOrDefault(() => true)).toBeUndefined();
+    expect(linqIterable<number>([]).firstOrDefault(() => true)).toBeUndefined();
+    expect(
+      linqIterable<boolean>([]).firstOrDefault(() => true)
+    ).toBeUndefined();
+  });
+});
+
+describe('firstOrDefault(defaultValue: T): T', () => {
+  it('returns the first item of a non-empty sequence', () => {
+    const sequence = linqIterable([1, 2, 3]);
+    const firstElement = sequence.firstOrDefault(0);
+    expect(firstElement).toEqual(1);
+  });
+
+  it('returns the given default value for empty sequences', () => {
+    expect(linqIterable<number>([]).firstOrDefault(0)).toEqual(0);
+    expect(linqIterable<boolean>([]).firstOrDefault(true)).toEqual(true);
+    expect(linqIterable<string>([]).firstOrDefault('foo')).toEqual('foo');
+  });
+});
+
+describe('firstOrDefault(predicate: PredicateWithIndex<T>, defaultValue: T): T', () => {
+  it('returns the first item of a non-empty sequence for which the predicate is true', () => {
+    const sequence = linqIterable([1, 2, 3, 4]);
+    const firstElement = sequence.firstOrDefault((e) => e % 2 === 0, 0);
+    expect(firstElement).toEqual(2);
+  });
+
+  it('returns the given default value for non-empty sequences if the predicate is false for all items', () => {
+    const sequence = linqIterable([1, 3, 5, 7]);
+    const firstElement = sequence.firstOrDefault((e) => e % 2 === 0, 0);
+    expect(firstElement).toEqual(0);
+  });
+
+  it('returns the given default value for empty sequences', () => {
+    const sequence = linqIterable<number>([]);
+    const firstElement = sequence.firstOrDefault((e) => e % 2 === 0, 0);
+    expect(firstElement).toEqual(0);
   });
 });
 
@@ -266,7 +321,7 @@ describe('last(predicate?: PredicateWithIndex<T>): T', () => {
     expect(wordPackage.descendants(W.p).count(hasRsidR('007A3403'))).toBe(2);
     const paragraphs = wordPackage.descendants(W.p);
 
-    const paragraph = paragraphs.lastOrDefault(hasRsidR('007A3403'));
+    const paragraph = paragraphs.last(hasRsidR('007A3403'));
 
     expect(paragraph?.value).toEqual('Body Text.');
   });
@@ -277,30 +332,81 @@ describe('last(predicate?: PredicateWithIndex<T>): T', () => {
   });
 });
 
-describe('lastOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
-  it('returns the last item for non-empty sequences', () => {
+describe('lastOrDefault(): T | undefined', () => {
+  it('returns the last item of a non-empty sequence', () => {
     const paragraphs = wordPackage.descendants(W.p);
-    const paragraph = paragraphs.lastOrDefault();
+    const lastParagraph = paragraphs.lastOrDefault();
+    expect(lastParagraph?.value).toEqual('');
+  });
+
+  it('returns undefined (API default) for empty sequences', () => {
+    expect(linqIterable<XElement>([]).lastOrDefault()).toBeUndefined();
+    expect(linqIterable<string>([]).lastOrDefault()).toBeUndefined();
+    expect(linqIterable<number>([]).lastOrDefault()).toBeUndefined();
+    expect(linqIterable<boolean>([]).lastOrDefault()).toBeUndefined();
+  });
+});
+
+describe('lastOrDefault(predicate: PredicateWithIndex<T>): T | undefined', () => {
+  it('returns the last item of a non-empty sequence for which the predicate is true', () => {
+    // We have one "special" w:p with w:rsidR="00000000".
+    const sequence = wordPackage.descendants(W.p);
+    const paragraph = sequence.lastOrDefault(hasRsidR('00000000'));
     expect(paragraph?.isEmpty).toBe(true);
   });
 
-  it('returns null for empty sequences', () => {
-    const emptySequence = wordPackage.descendants(W.tbl);
-    expect(emptySequence.lastOrDefault()).toBeNull();
+  it('returns undefined (API default) for non-empty sequences if the predicate is false for all items', () => {
+    expect(
+      linqIterable([new XElement(W.p)]).lastOrDefault(() => false)
+    ).toBeUndefined();
+    expect(linqIterable(['a', 'b']).lastOrDefault(() => false)).toBeUndefined();
+    expect(linqIterable([1, 2]).lastOrDefault(() => false)).toBeUndefined();
+    expect(
+      linqIterable([true, false]).lastOrDefault(() => false)
+    ).toBeUndefined();
   });
 
-  it('returns the last item for which the predicate is true for non-empty sequences', () => {
-    expect(wordPackage.descendants(W.p).count(hasRsidR('007A3403'))).toBe(2);
-    const paragraphs = wordPackage.descendants(W.p);
+  it('returns undefined (API default) for empty sequences', () => {
+    expect(
+      linqIterable<XElement>([]).lastOrDefault(() => true)
+    ).toBeUndefined();
+    expect(linqIterable<string>([]).lastOrDefault(() => true)).toBeUndefined();
+    expect(linqIterable<number>([]).lastOrDefault(() => true)).toBeUndefined();
+    expect(linqIterable<boolean>([]).lastOrDefault(() => true)).toBeUndefined();
+  });
+});
 
-    const paragraph = paragraphs.lastOrDefault(hasRsidR('007A3403'));
-
-    expect(paragraph?.value).toEqual('Body Text.');
+describe('lastOrDefault(defaultValue: T): T', () => {
+  it('returns the last item of a non-empty sequence', () => {
+    const sequence = linqIterable([1, 2, 3]);
+    const lastElement = sequence.lastOrDefault(0);
+    expect(lastElement).toEqual(3);
   });
 
-  it('returns null for non-empty sequences if the predicate is false for all items', () => {
-    const paragraphs = wordPackage.descendants(W.p);
-    expect(paragraphs.lastOrDefault(() => false)).toBeNull();
+  it('returns the given default value for empty sequences', () => {
+    expect(linqIterable<number>([]).lastOrDefault(0)).toEqual(0);
+    expect(linqIterable<boolean>([]).lastOrDefault(true)).toEqual(true);
+    expect(linqIterable<string>([]).lastOrDefault('foo')).toEqual('foo');
+  });
+});
+
+describe('lastOrDefault(predicate: PredicateWithIndex<T>, defaultValue: T): T', () => {
+  it('returns the last item of a non-empty sequence for which the predicate is true', () => {
+    const sequence = linqIterable([1, 2, 3, 4]);
+    const lastElement = sequence.lastOrDefault((e) => e % 2 === 0, 0);
+    expect(lastElement).toEqual(4);
+  });
+
+  it('returns the given default value for non-empty sequences if the predicate is false for all items', () => {
+    const sequence = linqIterable([1, 3, 5, 7]);
+    const lastElement = sequence.lastOrDefault((e) => e % 2 === 0, 0);
+    expect(lastElement).toEqual(0);
+  });
+
+  it('returns the given default value for empty sequences', () => {
+    const sequence = linqIterable<number>([]);
+    const lastElement = sequence.lastOrDefault((e) => e % 2 === 0, 0);
+    expect(lastElement).toEqual(0);
   });
 });
 
@@ -338,28 +444,109 @@ describe('single(predicate?: PredicateWithIndex<T>): T', () => {
   });
 });
 
-describe('singleOrDefault(predicate?: PredicateWithIndex<T>): T | null', () => {
-  it('returns the single item of a single-item sequence', () => {
+describe('singleOrDefault(): T | undefined', () => {
+  it('returns the single item of a non-empty sequence', () => {
     const singleItemSequence = wordPackage.descendants(W.document);
     const document = singleItemSequence.singleOrDefault();
     expect(document?.name).toBe(W.document);
   });
 
-  it('returns null for empty sequences', () => {
-    const emptySequence = wordPackage.descendants(W.tbl);
-    expect(emptySequence.singleOrDefault()).toBeNull();
+  it('returns undefined (API default) for empty sequences', () => {
+    expect(linqIterable<XElement>([]).singleOrDefault()).toBeUndefined();
+    expect(linqIterable<string>([]).singleOrDefault()).toBeUndefined();
+    expect(linqIterable<number>([]).singleOrDefault()).toBeUndefined();
+    expect(linqIterable<boolean>([]).singleOrDefault()).toBeUndefined();
   });
 
-  it('returns the single item for which the predicate is true for non-empty sequences', () => {
-    // We have one w:p with w:rsidR="00000000".
-    const paragraphs = wordPackage.descendants(W.p);
-    const paragraph = paragraphs.singleOrDefault(hasRsidR('00000000'));
+  it('throws if the sequence contains more than one element', () => {
+    const sequence = linqIterable([1, 2]);
+    expect(() => sequence.singleOrDefault()).toThrow();
+  });
+});
+
+describe('singleOrDefault(predicate: PredicateWithIndex<T>): T | undefined', () => {
+  it('returns the single item of a non-empty sequence for which the predicate is true', () => {
+    // We have one "special" w:p with w:rsidR="00000000".
+    const sequence = wordPackage.descendants(W.p);
+    const paragraph = sequence.singleOrDefault(hasRsidR('00000000'));
     expect(paragraph?.isEmpty).toBe(true);
   });
 
-  it('returns null for non-empty sequences if the predicate is false for all items', () => {
-    const paragraphs = wordPackage.descendants(W.p);
-    expect(paragraphs.singleOrDefault(() => false)).toBeNull();
+  it('returns undefined (API default) for non-empty sequences if the predicate is false for all items', () => {
+    expect(
+      linqIterable([new XElement(W.p)]).singleOrDefault(() => false)
+    ).toBeUndefined();
+    expect(
+      linqIterable(['a', 'b']).singleOrDefault(() => false)
+    ).toBeUndefined();
+    expect(linqIterable([1, 2]).singleOrDefault(() => false)).toBeUndefined();
+    expect(
+      linqIterable([true, false]).singleOrDefault(() => false)
+    ).toBeUndefined();
+  });
+
+  it('returns undefined (API default) for empty sequences', () => {
+    expect(
+      linqIterable<XElement>([]).singleOrDefault(() => true)
+    ).toBeUndefined();
+    expect(
+      linqIterable<string>([]).singleOrDefault(() => true)
+    ).toBeUndefined();
+    expect(
+      linqIterable<number>([]).singleOrDefault(() => true)
+    ).toBeUndefined();
+    expect(
+      linqIterable<boolean>([]).singleOrDefault(() => true)
+    ).toBeUndefined();
+  });
+
+  it('throws if there is more than one element for which the predicate returns true', () => {
+    const sequence = linqIterable([1, 2, 3, 4, 5]);
+    expect(() => sequence.singleOrDefault((n) => n > 3)).toThrow();
+  });
+});
+
+describe('singleOrDefault(defaultValue: T): T', () => {
+  it('returns the single item of a non-empty sequence', () => {
+    const sequence = linqIterable([1]);
+    const singleElement = sequence.singleOrDefault(0);
+    expect(singleElement).toEqual(1);
+  });
+
+  it('returns the given default value for empty sequences', () => {
+    expect(linqIterable<number>([]).singleOrDefault(0)).toEqual(0);
+    expect(linqIterable<boolean>([]).singleOrDefault(true)).toEqual(true);
+    expect(linqIterable<string>([]).singleOrDefault('foo')).toEqual('foo');
+  });
+
+  it('throws if the sequence contains more than one element', () => {
+    const sequence = linqIterable([1, 2]);
+    expect(() => sequence.singleOrDefault(0)).toThrow();
+  });
+});
+
+describe('singleOrDefault(predicate: PredicateWithIndex<T>, defaultValue: T): T', () => {
+  it('returns the single item of a non-empty sequence for which the predicate is true', () => {
+    const sequence = linqIterable([1, 2, 3]);
+    const singleElement = sequence.singleOrDefault((e) => e % 2 === 0, 0);
+    expect(singleElement).toEqual(2);
+  });
+
+  it('returns the given default value for non-empty sequences if the predicate is false for all items', () => {
+    const sequence = linqIterable([1, 3, 5]);
+    const singleElement = sequence.singleOrDefault((e) => e % 2 === 0, 0);
+    expect(singleElement).toEqual(0);
+  });
+
+  it('returns the given default value for empty sequences', () => {
+    const sequence = linqIterable<number>([]);
+    const singleElement = sequence.singleOrDefault((e) => e % 2 === 0, 0);
+    expect(singleElement).toEqual(0);
+  });
+
+  it('throws if there is more than one element for which the predicate returns true', () => {
+    const sequence = linqIterable([1, 2, 3, 4, 5]);
+    expect(() => sequence.singleOrDefault((n) => n > 3, 0)).toThrow();
   });
 });
 

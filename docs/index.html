@@ -8,11 +8,6 @@ an in-memory XML programming interface that leverages the .NET Language-Integrat
 This package provides a corresponding implementation of LINQ to XML in TypeScript that leverages the
 <a href="https://github.com/tsdotnet/linq">@tsdotnet/linq</a> package, which provides features similar to LINQ.</p>
 
-<a href="#status" id="status" style="color: inherit; text-decoration: none;">
-  <h2>Status</h2>
-</a>
-<p>This package is currently under development and will soon be published as an NPM package.</p>
-
 <a href="#installing" id="installing" style="color: inherit; text-decoration: none;">
   <h2>Installing</h2>
 </a>
@@ -38,9 +33,9 @@ This package provides a corresponding implementation of LINQ to XML in TypeScrip
 <a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
   <h2>Examples</h2>
 </a>
-<p>In short words, usage is pretty much identical to .NET, just with language-specific differences.
-Have a look at the <a href="https://openxmldev.github.io/linq-to-xml">API documentation</a> to see what is
-on offer.</p>
+<p>In short words, usage is pretty much identical to .NET, just with some 
+<a href="#language-specific-differences">language-specific differences</a> described further below. Have a
+look at the <a href="https://openxmldev.github.io/linq-to-xml">API documentation</a> to see what is on offer.</p>
 
 <a href="#importing" id="importing" style="color: inherit; text-decoration: none;">
   <h3>Importing</h3>
@@ -96,4 +91,63 @@ would do:</p>
 <p>Have a look at the <a href="https://openxmldev.github.io/linq-to-xml/classes/LinqElements.html">LinqElements</a>
 class to see which general (e.g., <code>singleOrDefault()</code>, <code>select()</code>, <code>toArray()</code>) and XML-specific
 (e.g., <code>descendants()</code>, <code>elements()</code>, <code>attributes()</code>) LINQ methods are supported by this package.</p>
+
+<a href="#language-specific-differences" id="language-specific-differences" style="color: inherit; text-decoration: none;">
+  <h2>Language-specific Differences</h2>
+</a>
+
+<a href="#naming-conventions" id="naming-conventions" style="color: inherit; text-decoration: none;">
+  <h3>Naming Conventions</h3>
+</a>
+<p>In C#, you use pascal case for property and method names. For example, the <code>XElement</code> class has the
+<code>Name</code> and <code>FirstAttribute</code> properties and the <code>Attributes()</code> and <code>DescendantsAndSelf()</code> methods.</p>
+<p>In JavaScript and TypeScript, you use camel case for property and method names. For example, the
+property and method names corresponding to the above would be <code>name</code>, <code>firstAttribute</code>,<code>attributes()</code>,
+and <code>descendantsAndSelf()</code>, respectively.</p>
+
+<a href="#default-values" id="default-values" style="color: inherit; text-decoration: none;">
+  <h3>Default Values</h3>
+</a>
+<p>It is important to appreciate the differences between C# vs. JavaScript and TypeScript regarding
+the default values used for different types, e.g., as assigned by using the <code>default</code> keyword in
+C# or when not explicitly initializing fields or variables in JavaScript.</p>
+<p>In C#, the <code>default</code> values are defined as follows:</p>
+<ul>
+<li>nullable (e.g., <code>string</code>) and non-nullable (e.g.,<code>string?</code>) reference types: <code>null</code></li>
+<li>nullable value (e.g., <code>int?</code>, <code>bool?</code>) types: <code>null</code></li>
+<li>non-nullable value types (e.g., <code>int</code>, <code>bool</code>): <code>0</code> and <code>false</code>, for example</li>
+</ul>
+<p>In JavaScript, there is no <code>default</code> keyword. However, the default value for uninitialized fields
+or variables is <code>undefined</code> in all cases, including <code>number</code> or <code>boolean</code>, for example.</p>
+<p>In TypeScript, you must either explicitly allow <code>undefined</code> in the declaration or use the non-null
+assertion operator (<code>!</code>) to assign <code>undefined</code>. At run-time, however, TypeScript is just JavaScript.</p>
+<p>Now, let&#39;s look at the signature of the well-known <code>FirstOrDefault()</code> extension method in C# (based
+on the .NET 6 documentation, which just uses <code>TSource</code> instead of <code>T</code>):</p>
+<pre><code class="language-csharp"><span class="hl-4">public</span><span class="hl-1"> </span><span class="hl-4">static</span><span class="hl-1"> </span><span class="hl-5">T</span><span class="hl-1">? </span><span class="hl-6">FirstOrDefault</span><span class="hl-1">&lt;</span><span class="hl-5">T</span><span class="hl-1">&gt;(</span><span class="hl-4">this</span><span class="hl-1"> </span><span class="hl-5">IEnumerable</span><span class="hl-1">&lt;</span><span class="hl-5">T</span><span class="hl-1">&gt; </span><span class="hl-2">source</span><span class="hl-1">);</span>
+</code></pre>
+<p>Based on our understanding of the default values, the most natural signature in TypeScript is the
+following:</p>
+<pre><code class="language-typescript"><span class="hl-6">firstOrDefault</span><span class="hl-1">(): </span><span class="hl-7">T</span><span class="hl-1"> | </span><span class="hl-4">undefined</span><span class="hl-1">;</span>
+</code></pre>
+<p>The above is also what is offered by the corresponding method of the
+<a href="https://openxmldev.github.io/linq-to-xml/classes/LinqIterable.html#firstOrDefault">LinqIterable<T></a>
+class.</p>
+<p>On an <em>abstract</em> level, the C# and TypeScript counterparts behave in the same way. For empty sequences,
+they both return the respective default values. Let that sink in for a moment.</p>
+<p>On a <em>concrete</em> level, however, the language-specific difference between the default values for 
+non-nullable value types in C# (e.g., <code>int</code>, <code>bool</code>) and the corresponding types in TypeScript
+(e.g., <code>number</code>, <code>boolean</code>) is that:</p>
+<ul>
+<li>in C#, the default values are <code>0</code> and <code>false</code>, respectively; and</li>
+<li>in TypeScript, the default value is <code>undefined</code> in all cases.</li>
+</ul>
+<p>Should you want to receive a value other than <code>undefined</code> in case the sequence is empty, the following
+overload of the <a href="https://openxmldev.github.io/linq-to-xml/classes/LinqIterable.html#firstOrDefault">LinqIterable<T></a>
+class will come to the rescue:</p>
+<pre><code class="language-typescript"><span class="hl-6">firstOrDefault</span><span class="hl-1">(</span><span class="hl-2">defaultValue</span><span class="hl-1">: </span><span class="hl-7">T</span><span class="hl-1">): </span><span class="hl-7">T</span><span class="hl-1">;</span>
+</code></pre>
+<p>The above overload even corresponds to the following C# overload, which was introduced in .NET 6
+(again using <code>T</code> instead of <code>TSource</code>):</p>
+<pre><code class="language-csharp"><span class="hl-4">public</span><span class="hl-1"> </span><span class="hl-4">static</span><span class="hl-1"> </span><span class="hl-5">T</span><span class="hl-1"> </span><span class="hl-6">FirstOrDefault</span><span class="hl-1">&lt;</span><span class="hl-5">T</span><span class="hl-1">&gt;(</span><span class="hl-4">this</span><span class="hl-1"> </span><span class="hl-5">IEnumerable</span><span class="hl-1">&lt;</span><span class="hl-5">T</span><span class="hl-1">&gt; </span><span class="hl-2">source</span><span class="hl-1">, </span><span class="hl-5">T</span><span class="hl-1"> </span><span class="hl-2">defaultValue</span><span class="hl-1">);</span>
+</code></pre>
 </div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/LinqAttributes.html" class="tsd-kind-icon">Linq<wbr/>Attributes</a></li><li class="tsd-kind-class"><a href="classes/LinqElements.html" class="tsd-kind-icon">Linq<wbr/>Elements</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/LinqElementsBase.html" class="tsd-kind-icon">Linq<wbr/>Elements<wbr/>Base</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/LinqIterable.html" class="tsd-kind-icon">Linq<wbr/>Iterable</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/LinqIterableBase.html" class="tsd-kind-icon">Linq<wbr/>Iterable<wbr/>Base</a></li><li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/LinqIterableGrouping.html" class="tsd-kind-icon">Linq<wbr/>Iterable<wbr/>Grouping</a></li><li class="tsd-kind-class"><a href="classes/LinqNodes.html" class="tsd-kind-icon">Linq<wbr/>Nodes</a></li><li class="tsd-kind-class"><a href="classes/XAttribute.html" class="tsd-kind-icon">XAttribute</a></li><li class="tsd-kind-class"><a href="classes/XContainer.html" class="tsd-kind-icon">XContainer</a></li><li class="tsd-kind-class"><a href="classes/XDeclaration.html" class="tsd-kind-icon">XDeclaration</a></li><li class="tsd-kind-class"><a href="classes/XDocument.html" class="tsd-kind-icon">XDocument</a></li><li class="tsd-kind-class"><a href="classes/XElement.html" class="tsd-kind-icon">XElement</a></li><li class="tsd-kind-class"><a href="classes/XName.html" class="tsd-kind-icon">XName</a></li><li class="tsd-kind-class"><a href="classes/XNamespace.html" class="tsd-kind-icon">XNamespace</a></li><li class="tsd-kind-class"><a href="classes/XNode.html" class="tsd-kind-icon">XNode</a></li><li class="tsd-kind-class"><a href="classes/XObject.html" class="tsd-kind-icon">XObject</a></li><li class="tsd-kind-class"><a href="classes/XProcessingInstruction.html" class="tsd-kind-icon">XProcessing<wbr/>Instruction</a></li><li class="tsd-kind-class"><a href="classes/XText.html" class="tsd-kind-icon">XText</a></li><li class="tsd-kind-interface"><a href="interfaces/StringifyableObject.html" class="tsd-kind-icon">Stringifyable<wbr/>Object</a></li><li class="tsd-kind-type-alias"><a href="modules.html#Stringifyable" class="tsd-kind-icon">Stringifyable</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#ancestors" class="tsd-kind-icon">ancestors</a></li><li class="tsd-kind-function"><a href="modules.html#ancestorsAndSelf" class="tsd-kind-icon">ancestors<wbr/>And<wbr/>Self</a></li><li class="tsd-kind-function"><a href="modules.html#attributes" class="tsd-kind-icon">attributes</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#descendantNodes" class="tsd-kind-icon">descendant<wbr/>Nodes</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#descendantNodesAndSelf" class="tsd-kind-icon">descendant<wbr/>Nodes<wbr/>And<wbr/>Self</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#descendants" class="tsd-kind-icon">descendants</a></li><li class="tsd-kind-function"><a href="modules.html#descendantsAndSelf" class="tsd-kind-icon">descendants<wbr/>And<wbr/>Self</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#elements" class="tsd-kind-icon">elements</a></li><li class="tsd-kind-function"><a href="modules.html#linqAttributes" class="tsd-kind-icon">linq<wbr/>Attributes</a></li><li class="tsd-kind-function"><a href="modules.html#linqElements" class="tsd-kind-icon">linq<wbr/>Elements</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#linqIterable" class="tsd-kind-icon">linq<wbr/>Iterable</a></li><li class="tsd-kind-function"><a href="modules.html#linqNodes" class="tsd-kind-icon">linq<wbr/>Nodes</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#nodes" class="tsd-kind-icon">nodes</a></li><li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#remove" class="tsd-kind-icon">remove</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li><li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
