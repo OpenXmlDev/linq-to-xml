@@ -355,6 +355,11 @@ export abstract class LinqIterableBase<
    * Returns the first element of this sequence or the given default value, if this
    * sequence is empty.
    *
+   * @remarks
+   * Do not use this overload in case the elements of this sequence are functions.
+   * See the section on [overloads](https://openxmldev.github.io/linq-to-xml/#overloads)
+   * for details.
+   *
    * @example
    * ```typescript
    * const sequence = linqIterable<number>([]);
@@ -504,6 +509,11 @@ export abstract class LinqIterableBase<
    * Returns the last element of this sequence or the given default value, if this
    * sequence is empty.
    *
+   * @remarks
+   * Do not use this overload in case the elements of this sequence are functions.
+   * See the section on [overloads](https://openxmldev.github.io/linq-to-xml/#overloads)
+   * for details.
+   *
    * @example
    * ```typescript
    * const sequence = linqIterable<number>([]);
@@ -648,6 +658,11 @@ export abstract class LinqIterableBase<
   /**
    * Returns the single element of this sequence or the given default value, if this
    * sequence is empty.
+   *
+   * @remarks
+   * Do not use this overload in case the elements of this sequence are functions.
+   * See the section on [overloads](https://openxmldev.github.io/linq-to-xml/#overloads)
+   * for details.
    *
    * @param defaultValue The default value to be returned if this sequence is empty.
    * @returns The single element of this sequence or the given default value, if this

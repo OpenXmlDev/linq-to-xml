@@ -199,7 +199,7 @@ firstOrDefault(): T | undefined;
 
 The above is also what is offered by the corresponding method of the
 [LinqIterable<T>](https://openxmldev.github.io/linq-to-xml/classes/LinqIterable.html#firstOrDefault)
-class.
+class or, more specifically, its abstract base class, which also defines the type parameter `T`.
 
 On an _abstract_ level, the C# and TypeScript counterparts behave in the same way. For empty sequences,
 they both return the respective default values. Let that sink in for a moment.
@@ -224,3 +224,79 @@ The above overload even corresponds to the following C# overload, which was intr
 ```csharp
 public static T FirstOrDefault<T>(this IEnumerable<T> source, T defaultValue);
 ```
+
+### Overloads
+
+Using the `FirstOrDefault()` extension method as an example, here is what you get in .NET 6 (noting
+that .NET calls the type parameter `TSource` while it is called `T` here):
+
+```csharp
+// Available prior to .NET 6
+public static T? FirstOrDefault<T>(this IEnumerable<T> source);
+public static T? FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> predicate);
+
+// Added in .NET 6
+public static T FirstOrDefault<T>(this IEnumerable<T> source, T defaultValue);
+
+public static T FirstOrDefault<T>(this IEnumerable<T> source, Func<T, bool> predicate,
+    T defaultValue);
+```
+
+Next, let's have a look at the JavaScript and TypeScript side of the house. JaveScript does not
+have overloads. TypeScript offers a way to at least define overloads, which, however, are all
+implemented by one and the same method. The signature of that method must subsume the signatures
+of all overloads. Let's look at an example, using the `firstOrDefault()` method:
+
+```typescript
+export abstract class LinqIterableBase<
+  T,
+  TLinq extends LinqIterableBase<T, TLinq>
+> implements Iterable<T>
+{
+  // ...
+
+  // Overloads corresponding to .NET overloads available prior to .NET 6
+  firstOrDefault(): T | undefined;
+  firstOrDefault(predicate: PredicateWithIndex<T>): T | undefined;
+
+  // Overloads corresponding to .NET overloads added in .NET 6
+  firstOrDefault(defaultValue: T): T;
+  firstOrDefault(predicate: PredicateWithIndex<T>, defaultValue: T): T;
+
+  // Implementation of the overloads defined above
+  firstOrDefault(
+    predicateOrDefault?: PredicateWithIndex<T> | T,
+    defaultValue?: T
+  ): T | undefined {
+    // Implementation omitted
+  }
+
+  // ...
+}
+```
+
+The implementation expects zero, one, or two actual parameters. The first parameter, if any, is
+expected to be either a predicate of type `PredicateWithIndex<T>` or a default value of type `T`.
+
+A `PredicateWithIndex<T>` is a _function_ that takes a sequence element of type `T` and an index
+of type `number` and returns a `boolean`. To distinguish between the second and third overload,
+both of which expect a single parameter, the implementation determines whether or not the value
+passed by the caller is a function (in which case `typeof predicateOrDefault === 'function'`).
+If the value is a function, that function is interpreted as a predicate. Otherwise, the value is
+taken as the default value to be used in case the sequence is empty.
+
+In the typical uses cases in which we are dealing with sequences of objects or primitive types,
+the single implementation method for multiple overloads does not lead to problems. However, there
+is a (theoretical) edge case that creates a challenge. Should we deal with sequences of functions,
+we can no longer distinguish between predicates and default values in case a single parameter is
+passed.
+
+In such a case, both predicates and default values are functions, which are all interpreted as
+predicates. Therefore, the `firstOrDefault(defaultValue: T): T` overload cannot be used and you
+must use the `firstOrDefault(predicate: PredicateWithIndex<T>, defaultValue: T): T` overload or
+the `defaultIfEmpty(defaultValue: T): TLinq` method.
+
+Since this library should be easy to use for developers having experience with LINQ or LINQ to XML
+in C#, this library tries to be consistent with the APIs offered in C# rather than solving for
+(theoretical) edge cases. This makes it easy for most developers most of the time. Therefore, we
+accept the potential challenge posed in the (theoretical) edge case.
