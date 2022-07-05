@@ -90,7 +90,7 @@ export class XName {
   /**
    * Gets the string representation of this `XName`, i.e., either:
    * - `localName`, if the namespace name is the empty string, or
-   * - {`namespaceName`}`localName`, if the namespace name is not empty.
+   * - \{`namespaceName`\}`localName`, if the namespace name is not empty.
    *
    * @returns The string representation.
    */

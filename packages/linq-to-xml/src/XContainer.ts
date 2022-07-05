@@ -18,7 +18,7 @@ import {
 
 /**
  * Represents a node that can contain other nodes.
- * The two classes that derive from {XContainer} are {XDocument} and {XElement}.
+ * The two classes that derive from {@link XContainer} are {@link XDocument} and {@link XElement}.
  */
 export abstract class XContainer extends XNode {
   /** @internal */

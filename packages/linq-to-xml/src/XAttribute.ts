@@ -29,7 +29,7 @@ export class XAttribute extends XObject {
   _next: XAttribute | null;
 
   /**
-   * Initializes a new instance of the {XAttribute} class.
+   * Initializes a new instance.
    *
    * @param name The name of the attribute.
    * @param value The value of the attribute.
