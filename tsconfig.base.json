@@ -32,7 +32,7 @@
     "outDir": "dist",
     "sourceMap": true,
 
-    // INTEROP CONSTTRAINTS
+    // INTEROP CONSTRAINTS
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -46,7 +46,7 @@
     // OUTPUT FORMATTING
     "pretty": true,
 
-    // COMPLETETESS
+    // COMPLETENESS
     "skipLibCheck": true,
     "skipDefaultLibCheck": true
   },
