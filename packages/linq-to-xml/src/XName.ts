@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { ArgumentException, XNamespace } from './internal';
+import { ArgumentException, XNamespace } from './internal.js';
 
 /**
  * Represents XML names.

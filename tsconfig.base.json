@@ -18,8 +18,8 @@
 
     // MODULES
     "baseUrl": ".",
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
       "@openxmldev/linq-to-xml": ["packages/linq-to-xml/src/index.ts"]
     },

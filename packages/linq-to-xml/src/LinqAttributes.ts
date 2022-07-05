@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { XAttribute } from './internal';
-import { LinqIterableBase } from './LinqIterable';
+import { XAttribute } from './internal.js';
+import { LinqIterableBase } from './LinqIterable.js';
 
 /**
  * Provides additional methods specific to a `LinqIterable<XAttribute>`.

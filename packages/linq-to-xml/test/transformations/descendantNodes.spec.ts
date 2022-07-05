@@ -10,7 +10,7 @@ import {
   descendantNodesAndSelf,
 } from '../../src/transformations';
 
-import { createWordDocumentPackage, getSignature, W } from '../TestHelpers';
+import { createWordDocumentPackage, getSignature, W } from '../TestHelpers.js';
 
 const wordPackage: XElement = createWordDocumentPackage();
 const getIterableOfXElement = () => wordPackage.descendants(W.p);

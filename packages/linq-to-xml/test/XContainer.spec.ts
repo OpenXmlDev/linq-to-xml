@@ -10,9 +10,9 @@ import {
   XElement,
   XNode,
   XText,
-} from '../src';
+} from '../src/index.js';
 
-import { W } from './TestHelpers';
+import { W } from './TestHelpers.js';
 
 describe('get firstNode(): XNode | null', () => {
   // TODO: Add unit tests (covered by other unit tests).

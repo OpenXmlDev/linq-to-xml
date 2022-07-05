@@ -14,7 +14,7 @@ import {
   elements,
   nodes,
   remove,
-} from './transformations';
+} from './transformations/index.js';
 
 import {
   linqAttributes,
@@ -24,7 +24,7 @@ import {
   LinqNodes,
   XElement,
   XName,
-} from './internal';
+} from './internal.js';
 
 /**
  * Abstract base class that provides additional methods specific to a `LinqIterable<XElement>`

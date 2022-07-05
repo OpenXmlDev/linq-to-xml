@@ -10,7 +10,7 @@ import {
   XName,
   XNamespace,
   XProcessingInstruction,
-} from './internal';
+} from './internal.js';
 
 /**
  * Provides utility functions for parsing XML.

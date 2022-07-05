@@ -4,12 +4,12 @@
  */
 
 import { PredicateWithIndex } from '@tsdotnet/common-interfaces';
-import { where } from '@tsdotnet/linq/dist/filters';
+import { where } from '@tsdotnet/linq/dist/filters.js';
 
-import { linqNodes, LinqNodes, XElement, XNode, XText } from '../src';
-import { ancestors } from '../src/transformations';
+import { linqNodes, LinqNodes, XElement, XNode, XText } from '../src/index.js';
+import { ancestors } from '../src/transformations/index.js';
 
-import { createWordDocumentPackage, W } from './TestHelpers';
+import { createWordDocumentPackage, W } from './TestHelpers.js';
 
 const testPackage: XElement = createWordDocumentPackage();
 const getLinqNodes = () => testPackage.descendants(W.t).nodes();

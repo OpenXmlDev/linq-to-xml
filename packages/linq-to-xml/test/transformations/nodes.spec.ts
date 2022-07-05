@@ -6,7 +6,7 @@
 import { XElement } from '../../src';
 import { nodes } from '../../src/transformations';
 
-import { createWordDocumentPackage, getSignature, W } from '../TestHelpers';
+import { createWordDocumentPackage, getSignature, W } from '../TestHelpers.js';
 
 const wordPackage: XElement = createWordDocumentPackage();
 const getIterableOfXElement = () =>

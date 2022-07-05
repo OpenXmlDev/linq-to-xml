@@ -7,31 +7,31 @@
 export * from '@tsdotnet/exceptions';
 
 // Internal Classes
-export * from './DomFactory';
-export * from './DomParser';
-export * from './DomReader';
-export * from './Inserter';
-export * from './NamespaceResolver';
-export * from './StringBuilder';
+export * from './DomFactory.js';
+export * from './DomParser.js';
+export * from './DomReader.js';
+export * from './Inserter.js';
+export * from './NamespaceResolver.js';
+export * from './StringBuilder.js';
 
 // Types
-export * from './Stringifyable';
+export * from './Stringifyable.js';
 
 // LINQ to XML Classes
-export * from './XDeclaration';
-export * from './XNamespace';
-export * from './XName';
-export * from './XObject';
-export * from './XNode';
-export * from './XProcessingInstruction';
-export * from './XContainer';
-export * from './XDocument';
-export * from './XElement';
-export * from './XText';
-export * from './XAttribute';
+export * from './XDeclaration.js';
+export * from './XNamespace.js';
+export * from './XName.js';
+export * from './XObject.js';
+export * from './XNode.js';
+export * from './XProcessingInstruction.js';
+export * from './XContainer.js';
+export * from './XDocument.js';
+export * from './XElement.js';
+export * from './XText.js';
+export * from './XAttribute.js';
 
 // Iterables/Enumerables/Collections
-export * from './LinqIterable';
-export * from './LinqAttributes';
-export * from './LinqElements';
-export * from './LinqNodes';
+export * from './LinqIterable.js';
+export * from './LinqAttributes.js';
+export * from './LinqElements.js';
+export * from './LinqNodes.js';

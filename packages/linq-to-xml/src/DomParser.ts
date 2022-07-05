@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { ArgumentException } from './internal';
+import { ArgumentException } from './internal.js';
 
 /**
  * Utility class for parsing strings into DOM `XMLDocument` or `Element` instances.

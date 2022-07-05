@@ -12,7 +12,7 @@ import {
   XElement,
   XName,
   XObject,
-} from './internal';
+} from './internal.js';
 
 /**
  * Represents an XML node.

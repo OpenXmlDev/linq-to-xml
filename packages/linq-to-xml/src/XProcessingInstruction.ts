@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XNode } from './internal';
+import { XNode } from './internal.js';
 
 export class XProcessingInstruction extends XNode {
   public constructor(public target: string, public data: string) {

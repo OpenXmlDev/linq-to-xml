@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XContainer, XNode } from '../internal';
+import { XContainer, XNode } from '../internal.js';
 
 /**
  * For the elements contained in the source sequence, returns the concatenated

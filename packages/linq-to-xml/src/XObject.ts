@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XContainer, XDocument, XElement } from './internal';
+import { XContainer, XDocument, XElement } from './internal.js';
 
 /**
  * Represents a node or an attribute in an XML tree.

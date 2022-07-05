@@ -3,9 +3,9 @@
  * @license MIT
  */
 
-import { XName, XNode } from './internal';
-import { ancestors, remove } from './transformations';
-import { LinqIterableBase, LinqElements } from './internal';
+import { XName, XNode } from './internal.js';
+import { ancestors, remove } from './transformations/index.js';
+import { LinqIterableBase, LinqElements } from './internal.js';
 
 /**
  * Provides additional methods specific to a `LinqIterable<XNode>`.

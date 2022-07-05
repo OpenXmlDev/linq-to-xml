@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XDeclaration } from '../src';
+import { XDeclaration } from '../src/index.js';
 
 describe('toString(): string', () => {
   it('returns the string representation', () => {

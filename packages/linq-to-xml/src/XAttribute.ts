@@ -13,7 +13,7 @@ import {
   XElement,
   XName,
   XNamespace,
-} from './internal';
+} from './internal.js';
 
 /**
  * Represents an XML attribute.

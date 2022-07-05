@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XNamespace } from './internal';
+import { XNamespace } from './internal.js';
 
 /** @internal */
 class NamespaceDeclaration {

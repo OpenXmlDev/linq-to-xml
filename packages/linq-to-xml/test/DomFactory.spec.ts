@@ -3,10 +3,10 @@
  * @license MIT
  */
 
-import { XDocument, XElement, XNode } from '../src';
+import { XDocument, XElement, XNode } from '../src/index.js';
 
-import { DomFactory } from '../src/internal';
-import { PKG_PACKAGE_TEXT } from './TestHelpers';
+import { DomFactory } from '../src/internal.js';
+import { PKG_PACKAGE_TEXT } from './TestHelpers.js';
 
 class UnexpectedXNode extends XNode {
   public constructor() {

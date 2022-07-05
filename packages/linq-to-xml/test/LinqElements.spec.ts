@@ -3,8 +3,6 @@
  * @license MIT
  */
 
-import applyFilters from '@tsdotnet/linq/dist/applyFilters';
-
 import {
   skip,
   skipLast,
@@ -13,9 +11,14 @@ import {
   takeLast,
   takeWhile,
   where,
-} from '@tsdotnet/linq/dist/filters';
+} from '@tsdotnet/linq/dist/filters.js';
 
-import { linqElements, LinqElements, LinqElementsBase, XElement } from '../src';
+import {
+  linqElements,
+  LinqElements,
+  LinqElementsBase,
+  XElement,
+} from '../src/index.js';
 
 import {
   ancestors,
@@ -26,10 +29,11 @@ import {
   descendants,
   descendantsAndSelf,
   elements,
+  filter,
   nodes,
-} from '../src/transformations';
+} from '../src/transformations/index.js';
 
-import { createWordDocumentPackage, W } from './TestHelpers';
+import { createWordDocumentPackage, W } from './TestHelpers.js';
 
 const testPackage: XElement = createWordDocumentPackage();
 const getLinqElements = () => testPackage.descendants(W.p);
@@ -38,10 +42,7 @@ describe('filter(...filters: IterableFilter<XElement>[]): LinqElements', () => {
   it('returns the result of the wrapped function', () => {
     const skipOne = skip<XElement>(1);
     const takeOne = take<XElement>(1);
-    const expectedSequence = applyFilters(getLinqElements(), [
-      skipOne,
-      takeOne,
-    ]);
+    const expectedSequence = filter(getLinqElements(), [skipOne, takeOne]);
 
     const sequence = getLinqElements().filter(skipOne, takeOne);
 
@@ -58,7 +59,7 @@ describe('filter(...filters: IterableFilter<XElement>[]): LinqElements', () => {
 describe('filters(filters: Iterable<IterableFilter<XElement>>): LinqElements', () => {
   it('returns the result of the wrapped function', () => {
     const filters = [skip<XElement>(1), take<XElement>(1)];
-    const expectedSequence = applyFilters(getLinqElements(), filters);
+    const expectedSequence = filter(getLinqElements(), filters);
 
     const sequence = getLinqElements().applyFilters(filters);
 

@@ -3,10 +3,10 @@
  * @license MIT
  */
 
-import { XAttribute, XElement, XText } from '../src';
+import { XAttribute, XElement, XText } from '../src/index.js';
 
-import { Inserter } from '../src/internal';
-import { W } from './TestHelpers';
+import { Inserter } from '../src/internal.js';
+import { W } from './TestHelpers.js';
 
 describe('add(content: any): void', () => {
   it('does nothing if content === null', () => {

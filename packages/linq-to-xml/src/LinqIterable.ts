@@ -12,9 +12,7 @@ import {
   IterableFilter,
   IterableTransform,
   IterableValueTransform,
-} from '@tsdotnet/linq/dist/IterableTransform';
-
-import applyFilters from '@tsdotnet/linq/dist/applyFilters';
+} from '@tsdotnet/linq/dist/IterableTransform.js';
 
 import {
   defaultIfEmpty,
@@ -25,7 +23,7 @@ import {
   takeLast,
   takeWhile,
   where,
-} from '@tsdotnet/linq/dist/filters';
+} from '@tsdotnet/linq/dist/filters.js';
 
 import {
   all,
@@ -38,14 +36,16 @@ import {
   single,
   singleOrDefault,
   toArray,
-} from '@tsdotnet/linq/dist/resolutions';
+} from '@tsdotnet/linq/dist/resolutions.js';
 
-import { groupBy, select, selectMany } from '@tsdotnet/linq/dist/transforms';
+import { groupBy, select, selectMany } from '@tsdotnet/linq/dist/transforms.js';
 
 import {
   Grouping,
   GroupingResult,
-} from '@tsdotnet/linq/dist/transforms/groupBy';
+} from '@tsdotnet/linq/dist/transforms/groupBy.js';
+
+import { filter } from './transformations/index.js';
 
 /**
  * Abstract base class for LINQ iterables.
@@ -104,7 +104,7 @@ export abstract class LinqIterableBase<
    * @returns A filtered sequence.
    */
   applyFilters(filters: Iterable<IterableFilter<T>>): TLinq {
-    return this.create(applyFilters(this.source, filters));
+    return this.create(filter(this.source, filters));
   }
 
   /**

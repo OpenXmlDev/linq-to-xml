@@ -5,7 +5,7 @@ import {
   XName,
   XNamespace,
   XNode,
-} from '../src';
+} from '../src/index.js';
 
 export class PKG {
   public static pkg: XNamespace = XNamespace.get(

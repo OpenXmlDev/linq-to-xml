@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { IterableValueTransform } from '@tsdotnet/linq/dist/IterableTransform';
-import { getAncestors, XElement, XName, XNode } from '../internal';
+import { IterableValueTransform } from '@tsdotnet/linq/dist/IterableTransform.js';
+import { getAncestors, XElement, XName, XNode } from '../internal.js';
 
 /**
  * Returns a function that, for the elements of the source sequence passed to

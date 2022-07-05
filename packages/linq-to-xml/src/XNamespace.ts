@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XName } from './internal';
+import { XName } from './internal.js';
 
 /**
  * Represents XML namespaces.
@@ -60,16 +60,7 @@ export class XNamespace {
   /**
    * Gets the `XNamespace` for the given namespace name.
    *
-   * Notes:
-   * - The ability to provide a namespace prefix (e.g., 'w', 'w14') deviates from
-   *   Linq to XML and might pose a (theoretical) constraint where a namespace
-   *   is used with different prefixes. However, that doesn't happen in our use
-   *   case and makes it easier to process documents.
-   * - Where namespaces are used with different prefixes, An alternative would be
-   *   to add the prefix to the `XName`.
-   *
    * @param namespaceName The namespace name, e.g., 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'.
-   * @param prefix The (default) prefix, e.g., 'w'.
    * @returns The `XNamespace`.
    */
   public static get(namespaceName: string): XNamespace {

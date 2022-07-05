@@ -3,11 +3,16 @@
  * @license MIT
  */
 
-import { where } from '@tsdotnet/linq/dist/filters';
+import { where } from '@tsdotnet/linq/dist/filters.js';
 
-import { linqAttributes, LinqAttributes, XAttribute, XElement } from '../src';
+import {
+  linqAttributes,
+  LinqAttributes,
+  XAttribute,
+  XElement,
+} from '../src/index.js';
 
-import { W } from './TestHelpers';
+import { W } from './TestHelpers.js';
 
 function createBody() {
   return new XElement(

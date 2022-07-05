@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { XNode } from './internal';
-import { StringBuilder } from './StringBuilder';
+import { XNode } from './internal.js';
+import { StringBuilder } from './StringBuilder.js';
 
 /**
  * Represents a text node.

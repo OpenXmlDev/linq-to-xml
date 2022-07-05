@@ -6,7 +6,7 @@
 import { XAttribute, XElement } from '../../src';
 import { remove } from '../../src/transformations';
 
-import { W, W14 } from '../TestHelpers';
+import { W, W14 } from '../TestHelpers.js';
 
 describe('remove<T extends XAttribute | XNode>(): IterableTransform<T, void>', () => {
   it('removes all attributes', () => {

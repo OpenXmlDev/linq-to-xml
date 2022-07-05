@@ -6,7 +6,7 @@
 import { linqIterable, XElement } from '../../src';
 import { attributes } from '../../src/transformations';
 
-import { createWordDocumentPackage, W } from '../TestHelpers';
+import { createWordDocumentPackage, W } from '../TestHelpers.js';
 
 const wordPackage: XElement = createWordDocumentPackage();
 const getIterableOfXElement = () => wordPackage.descendants(W.p);

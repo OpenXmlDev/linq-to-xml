@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { XAttribute, XElement } from '../src';
-import { createWordDocumentPackage, PKG, W, W14 } from './TestHelpers';
+import { XAttribute, XElement } from '../src/index.js';
+import { createWordDocumentPackage, PKG, W, W14 } from './TestHelpers.js';
 
 describe('get nextNode(): XNode | null', () => {
   const wordPackage: XElement = createWordDocumentPackage();

@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { XAttribute, XElement, XNamespace } from '../src';
-import { createWordDocumentPackage, W, W14 } from './TestHelpers';
+import { XAttribute, XElement, XNamespace } from '../src/index.js';
+import { createWordDocumentPackage, W, W14 } from './TestHelpers.js';
 
 describe('constructor(name: XName | string, value: Stringifyable)', () => {
   it('throws for xmlns:<any>=""', () => {

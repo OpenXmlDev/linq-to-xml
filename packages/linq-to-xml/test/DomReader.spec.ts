@@ -8,9 +8,9 @@ import {
   XElement,
   XNamespace,
   XProcessingInstruction,
-} from '../src';
+} from '../src/index.js';
 
-import { DomParser, DomReader } from '../src/internal';
+import { DomParser, DomReader } from '../src/internal.js';
 
 const textWithElementAndTextNode = '<p>Text</p>';
 

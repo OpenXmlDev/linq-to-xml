@@ -21,7 +21,7 @@ import {
   XName,
   XNamespace,
   XNode,
-} from './internal';
+} from './internal.js';
 
 /**
  * Represents an XML element.

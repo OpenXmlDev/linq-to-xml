@@ -3,29 +3,35 @@
  * @license MIT
  */
 
-export { Stringifyable, StringifyableObject } from './Stringifyable';
+export { Stringifyable, StringifyableObject } from './Stringifyable.js';
 
-export { XAttribute } from './XAttribute';
-export { XContainer } from './XContainer';
-export { XDeclaration } from './XDeclaration';
-export { XDocument } from './XDocument';
-export { XElement } from './XElement';
-export { XName } from './XName';
-export { XNamespace } from './XNamespace';
-export { XNode } from './XNode';
-export { XObject } from './XObject';
-export { XProcessingInstruction } from './XProcessingInstruction';
-export { XText } from './XText';
+export { XAttribute } from './XAttribute.js';
+export { XContainer } from './XContainer.js';
+export { XDeclaration } from './XDeclaration.js';
+export { XDocument } from './XDocument.js';
+export { XElement } from './XElement.js';
+export { XName } from './XName.js';
+export { XNamespace } from './XNamespace.js';
+export { XNode } from './XNode.js';
+export { XObject } from './XObject.js';
+export { XProcessingInstruction } from './XProcessingInstruction.js';
+export { XText } from './XText.js';
 
-export * from './transformations';
+export * from './transformations/index.js';
 
 export {
   LinqIterableBase,
   LinqIterable,
   LinqIterableGrouping,
   linqIterable,
-} from './LinqIterable';
+} from './LinqIterable.js';
 
-export { LinqAttributes, linqAttributes } from './LinqAttributes';
-export { LinqElementsBase, LinqElements, linqElements } from './LinqElements';
-export { LinqNodes, linqNodes } from './LinqNodes';
+export { LinqAttributes, linqAttributes } from './LinqAttributes.js';
+
+export {
+  LinqElementsBase,
+  LinqElements,
+  linqElements,
+} from './LinqElements.js';
+
+export { LinqNodes, linqNodes } from './LinqNodes.js';

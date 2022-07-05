@@ -14,7 +14,7 @@ import {
   XName,
   XNode,
   XText,
-} from './internal';
+} from './internal.js';
 
 /**
  * Represents a node that can contain other nodes.

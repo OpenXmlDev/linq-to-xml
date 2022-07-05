@@ -9,7 +9,7 @@ import {
   XContainer,
   XNode,
   XText,
-} from './internal';
+} from './internal.js';
 
 /**
  * Provides tools for inserting content into `XContainer`s.

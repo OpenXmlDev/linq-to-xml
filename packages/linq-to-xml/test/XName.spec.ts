@@ -3,8 +3,8 @@
  * @license MIT
  */
 
-import { XName, XNamespace } from '../src';
-import { W } from './TestHelpers';
+import { XName, XNamespace } from '../src/index.js';
+import { W } from './TestHelpers.js';
 
 const localName = W.document.localName;
 const namespaceName = W.w.namespaceName;

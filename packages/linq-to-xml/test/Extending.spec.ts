@@ -12,20 +12,20 @@ import {
   IterableFilter,
   IterableTransform,
   IterableValueTransform,
-} from '@tsdotnet/linq/dist/IterableTransform';
+} from '@tsdotnet/linq/dist/IterableTransform.js';
 
-import applyFilters from '@tsdotnet/linq/dist/applyFilters';
+import { skip, take, where } from '@tsdotnet/linq/dist/filters.js';
 
-import { skip, take, where } from '@tsdotnet/linq/dist/filters';
-
-import { select } from '@tsdotnet/linq/dist/transforms';
+import { select } from '@tsdotnet/linq/dist/transforms.js';
 
 import {
   first,
   firstOrDefault,
   single,
   singleOrDefault,
-} from '@tsdotnet/linq/dist/resolutions';
+} from '@tsdotnet/linq/dist/resolutions.js';
+
+import { filter } from '../src/transformations/filter.js';
 
 //
 // First Layer: Most Basic Methods
@@ -51,7 +51,7 @@ abstract class LinqBase<T, TLinq extends LinqBase<T, TLinq>>
   }
 
   filters(filters: Iterable<IterableFilter<T>>): TLinq {
-    return this.create(applyFilters(this.source, filters));
+    return this.create(filter(this.source, filters));
   }
 
   /**

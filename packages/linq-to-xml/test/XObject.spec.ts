@@ -11,9 +11,9 @@ import {
   XObject,
   XProcessingInstruction,
   XText,
-} from '../src';
+} from '../src/index.js';
 
-import { W } from './TestHelpers';
+import { W } from './TestHelpers.js';
 
 const node = new XText('Text');
 const t = new XElement(W.t, node);

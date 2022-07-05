@@ -13,7 +13,7 @@ import {
   XNamespace,
   XProcessingInstruction,
   XText,
-} from '../src';
+} from '../src/index.js';
 
 import {
   createWordDocumentPackage,
@@ -23,7 +23,7 @@ import {
   W,
   WML_NAMESPACE_DECLARATIONS,
   W14,
-} from './TestHelpers';
+} from './TestHelpers.js';
 
 const xmlns_pkg = XNamespace.xmlns.getName('pkg');
 const xmlns_w = XNamespace.xmlns.getName('w');

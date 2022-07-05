@@ -6,7 +6,7 @@
 import { linqIterable, XElement } from '../../src';
 import { ancestors, ancestorsAndSelf } from '../../src/transformations';
 
-import { createWordDocumentPackage, PKG, W } from '../TestHelpers';
+import { createWordDocumentPackage, PKG, W } from '../TestHelpers.js';
 
 describe('ancestors<T>(name?: XName | null): IterableValueTransform<T, XElement>', () => {
   const wordPackage: XElement = createWordDocumentPackage();

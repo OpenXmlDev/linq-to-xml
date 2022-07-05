@@ -8,10 +8,15 @@ import {
   XDocument,
   XElement,
   XProcessingInstruction,
-} from '../src';
+} from '../src/index.js';
 
-import { DomParser } from '../src/internal';
-import { PKG_PACKAGE_TEXT, WML_NAMESPACE_DECLARATIONS, W } from './TestHelpers';
+import { DomParser } from '../src/internal.js';
+
+import {
+  PKG_PACKAGE_TEXT,
+  WML_NAMESPACE_DECLARATIONS,
+  W,
+} from './TestHelpers.js';
 
 describe('static load(xmlDocument: XMLDocument): XDocument', () => {
   it('loads a DOM XMLDocument', () => {

@@ -11,7 +11,7 @@ import {
   XDeclaration,
   XElement,
   XNode,
-} from './internal';
+} from './internal.js';
 
 /**
  * Represents an XML document.

@@ -3,10 +3,9 @@
  * @license MIT
  */
 
-import applyFilters from '@tsdotnet/linq/dist/applyFilters';
-import { skip, take } from '@tsdotnet/linq/dist/filters';
-import { select } from '@tsdotnet/linq/dist/transforms';
-import { all } from '@tsdotnet/linq/dist/resolutions';
+import { skip, take } from '@tsdotnet/linq/dist/filters.js';
+import { select } from '@tsdotnet/linq/dist/transforms.js';
+import { all } from '@tsdotnet/linq/dist/resolutions.js';
 
 import {
   linqIterable,
@@ -17,9 +16,11 @@ import {
   XElement,
   XName,
   XNamespace,
-} from '../src';
+} from '../src/index.js';
 
-import { createWordDocumentPackage, W } from './TestHelpers';
+import { filter } from '../src/transformations/filter.js';
+
+import { createWordDocumentPackage, W } from './TestHelpers.js';
 
 // Create a pkg:package with a w:document containing three w:p descendants.
 // Use for reading only. Do not mutate.
@@ -38,10 +39,7 @@ describe('filter(...filters: IterableFilter<T>[]): LinqIterable<T>', () => {
   it('returns the result of the wrapped function', () => {
     const skipOne = skip<XElement>(1);
     const takeOne = take<XElement>(1);
-    const expectedSequence = applyFilters(getLinqIterable(), [
-      skipOne,
-      takeOne,
-    ]);
+    const expectedSequence = filter(getLinqIterable(), [skipOne, takeOne]);
 
     const sequence = getLinqIterable().filter(skipOne, takeOne);
 
@@ -58,7 +56,7 @@ describe('filter(...filters: IterableFilter<T>[]): LinqIterable<T>', () => {
 describe('filters(filters: Iterable<IterableFilter<T>>): LinqIterable<T>', () => {
   it('returns the result of the wrapped function', () => {
     const filters = [skip<XElement>(1), take<XElement>(1)];
-    const expectedSequence = applyFilters(getLinqIterable(), filters);
+    const expectedSequence = filter(getLinqIterable(), filters);
 
     const sequence = getLinqIterable().applyFilters(filters);
 

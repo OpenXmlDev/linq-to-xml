@@ -3,7 +3,7 @@
  * @license MIT
  */
 
-import { XAttribute, XNode } from '../internal';
+import { XAttribute, XNode } from '../internal.js';
 
 /**
  * Removes each element contained in the source sequence from its parent

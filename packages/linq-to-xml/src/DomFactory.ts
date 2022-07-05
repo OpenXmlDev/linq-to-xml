@@ -14,7 +14,7 @@ import {
   XNode,
   XProcessingInstruction,
   XText,
-} from './internal';
+} from './internal.js';
 
 /**
  * Transforms Linq-to-XML into DOM documents or elements, i.e.:
